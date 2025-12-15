@@ -52,3 +52,5 @@ Thumbs.db
 
 # Other
 sysinfo.txt
+/UserSettings
+.vsconfig
