@@ -1,0 +1,54 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+MemoryCaptures/
+
+# Rider
+.idea/
+*.sln
+*.csproj
+
+# Visual Studio
+.vscode/
+*.user
+*.userprefs
+*.pidb
+*.suo
+*.sdf
+*.cache
+*.db
+
+# MonoDevelop
+*.pidb
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Builds
+*.apk
+*.aab
+*.exe
+*.app
+*.zip
+
+# Unity3D Asset meta files
+*.unitypackage
+
+# Git LFS (optional, for large assets - requires setup)
+*.psd
+*.fbx
+*.mp4
+*.wav
+*.tga
+*.png
+
+# Crash and error logs
+*.log
+
+# Other
+sysinfo.txt
