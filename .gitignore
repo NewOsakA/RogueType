@@ -40,12 +40,6 @@ Thumbs.db
 *.unitypackage
 
 # Git LFS (optional, for large assets - requires setup)
-*.psd
-*.fbx
-*.mp4
-*.wav
-*.tga
-*.png
 
 # Crash and error logs
 *.log
@@ -54,3 +48,4 @@ Thumbs.db
 sysinfo.txt
 /UserSettings
 .vsconfig
+RougeType.slnx
