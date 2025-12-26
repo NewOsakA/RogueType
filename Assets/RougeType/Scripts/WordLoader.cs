@@ -3,20 +3,56 @@ using UnityEngine;
 
 public class WordLoader : MonoBehaviour
 {
-    public List<string> wordList;
+    public enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
+
+    public Dictionary<Difficulty, List<string>> wordDict;
 
     void Awake()
     {
-        // Load the text file (note: do not include the .txt extension when using Resources.Load)
+        wordDict = new Dictionary<Difficulty, List<string>>()
+        {
+            { Difficulty.Easy, new List<string>() },
+            { Difficulty.Medium, new List<string>() },
+            { Difficulty.Hard, new List<string>() }
+        };
+
         TextAsset wordFile = Resources.Load<TextAsset>("oxford3000");
-        // Split by newlines and add them to the wordList
-        wordList = new List<string>(wordFile.text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string raw in wordFile.text.Split('\n'))
+        {
+            string word = raw.Trim().ToLower();
+            if (string.IsNullOrEmpty(word)) continue;
+
+            Difficulty diff = ClassifyWord(word);
+            wordDict[diff].Add(word);
+        }
+
+        Debug.Log($"Loaded Words → Easy:{wordDict[Difficulty.Easy].Count} " +
+                  $"Medium:{wordDict[Difficulty.Medium].Count} " +
+                  $"Hard:{wordDict[Difficulty.Hard].Count}");
     }
 
-    // Returns a random word from the list, trimmed and in lowercase.
-    public string GetRandomWord()
+    Difficulty ClassifyWord(string word)
     {
-        int randomIndex = Random.Range(0, wordList.Count);
-        return wordList[randomIndex].Trim().ToLower();
+        if (word.Length <= 4)
+            return Difficulty.Easy;
+
+        if (word.Length <= 7)
+            return Difficulty.Medium;
+
+        return Difficulty.Hard;
+    }
+
+    public string GetRandomWord(Difficulty difficulty)
+    {
+        var list = wordDict[difficulty];
+        if (list.Count == 0) return "";
+
+        return list[Random.Range(0, list.Count)];
     }
 }

@@ -18,6 +18,9 @@ public class TypingManager : MonoBehaviour
     [Header("Word System")]
     public WordLoader wordLoader;
 
+    [Header("Word Difficulty (Default)")]
+    public WordLoader.Difficulty defaultWordDifficulty = WordLoader.Difficulty.Easy;
+
     [Header("Combat")]
     public Enemy activeEnemy;
     private List<Enemy> activeEnemies = new List<Enemy>();
@@ -87,7 +90,6 @@ public class TypingManager : MonoBehaviour
 
     // =========================
     // Typing Logic
-    // =========================
     void CheckLetter(char typedChar)
     {
         if (currentLetterIndex >= currentWord.Length || isGameOver)
@@ -98,7 +100,7 @@ public class TypingManager : MonoBehaviour
         if (char.ToLower(typedChar) == char.ToLower(expectedChar))
         {
             currentLetterIndex++;
-            totalTypedCharacters++; // ✅ นับตัวอักษรถูก (สำคัญกับ WPM)
+            totalTypedCharacters++;
 
             ShootProjectile();
             UpdateWordDisplay();
@@ -154,19 +156,49 @@ public class TypingManager : MonoBehaviour
 
     // =========================
     // Word Handling
-    // =========================
     void LoadNextWord()
     {
+        WordLoader.Difficulty currentDiff = GetMixedDifficulty();
+        WordLoader.Difficulty nextDiff = GetMixedDifficulty();
+
         currentWord = string.IsNullOrEmpty(nextWord)
-            ? wordLoader.GetRandomWord()
+            ? wordLoader.GetRandomWord(currentDiff)
             : nextWord;
 
-        nextWord = wordLoader.GetRandomWord();
-        currentLetterIndex = 0;
+        nextWord = wordLoader.GetRandomWord(nextDiff);
 
+        currentLetterIndex = 0;
         UpdateWordDisplay();
-        nextWordText.text = $"Next: <i>{nextWord}</i>";
+
+        if (nextWordText != null)
+            nextWordText.text = $"Next: <i>{nextWord}</i>";
+
         activeEnemy = null;
+    }
+
+    WordLoader.Difficulty GetMixedDifficulty()
+    {
+        // random value 0 to 1
+        float roll = Random.value; 
+
+        switch (defaultWordDifficulty)
+        {
+            case WordLoader.Difficulty.Easy:
+                return roll < 0.7f
+                    ? WordLoader.Difficulty.Easy
+                    : WordLoader.Difficulty.Medium;
+
+            case WordLoader.Difficulty.Medium:
+                return roll < 0.7f
+                    ? WordLoader.Difficulty.Medium
+                    : WordLoader.Difficulty.Hard;
+
+            case WordLoader.Difficulty.Hard:
+                return WordLoader.Difficulty.Hard;
+
+            default:
+                return WordLoader.Difficulty.Easy;
+        }
     }
 
     void UpdateWordDisplay()
@@ -190,7 +222,6 @@ public class TypingManager : MonoBehaviour
 
     // =========================
     // UI Updates
-    // =========================
     void UpdateWordStats()
     {
         wpmText.text = $"WPM: {Mathf.FloorToInt(GetWPM())}";
@@ -240,7 +271,6 @@ public class TypingManager : MonoBehaviour
 
     // =========================
     // Effects
-    // =========================
     IEnumerator ShakeText()
     {
         isShaking = true;
@@ -266,7 +296,6 @@ public class TypingManager : MonoBehaviour
 
     // =========================
     // Enemy Tracking
-    // =========================
     public void RegisterEnemy(Enemy e)
     {
         if (!activeEnemies.Contains(e))
@@ -287,8 +316,7 @@ public class TypingManager : MonoBehaviour
     }
 
     // =========================
-    // Public API (Used by GameManager / AI)
-    // =========================
+    // Public API Used by GameManager / AI
     public void ResetTypingStats()
     {
         startTime = Time.time;
@@ -296,6 +324,12 @@ public class TypingManager : MonoBehaviour
         totalTypedCharacters = 0;
         wordCount = 0;
     }
+
+    public void SetDefaultWordDifficulty(WordLoader.Difficulty difficulty)
+    {
+        defaultWordDifficulty = difficulty;
+    }
+
 
     public float GetWPM()
     {
