@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public bool isPaused = false;
+
     public GamePhase currentPhase = GamePhase.BaseManagement;
     public int currentWave = 0;
 
@@ -185,4 +187,21 @@ public class GameManager : MonoBehaviour
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("Upgrade");
     }
+
+    public void EndRunWithoutSave()
+    {
+        Debug.Log("Run ended");
+        // reset runtime state
+        // clear enemy and projectile
+        currentWave = 0;
+
+        if (playerStats != null)
+            playerStats.ResetStats();
+
+        foreach (var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
+        {
+            Destroy(enemy.gameObject);
+        }
+    }
+
 }

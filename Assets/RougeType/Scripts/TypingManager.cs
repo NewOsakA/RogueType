@@ -54,6 +54,12 @@ public class TypingManager : MonoBehaviour
 
     private int lastComboBonus = 0;
 
+    private bool IsAlphabet(char c)
+    {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+
+
     // =========================
     void Start()
     {
@@ -72,18 +78,26 @@ public class TypingManager : MonoBehaviour
         if (isGameOver || GameManager.Instance.IsBasePhase())
             return;
 
+        if (GameManager.Instance != null && GameManager.Instance.isPaused)
+            return;
+
         elapsedTime += Time.deltaTime;
         UpdateTimerText();
 
         if (Input.anyKeyDown && !isShaking && !isStunned)
         {
             string input = Input.inputString;
-            if (!string.IsNullOrEmpty(input))
-            {
-                char typedChar = input[0];
-                CheckLetter(typedChar);
-            }
+            if (string.IsNullOrEmpty(input))
+                return;
+
+            char typedChar = input[0];
+
+            if (!IsAlphabet(typedChar))
+                return;
+
+            CheckLetter(char.ToLower(typedChar));
         }
+
 
         UpdateWordStats();
     }
