@@ -1,13 +1,16 @@
 using UnityEngine;
 
-public class ShopUIController : MonoBehaviour
+public class TemporaryUpgradeUIController : MonoBehaviour
 {
-    public GameObject shopPanel; // Assign Canvas_shop here
+    public GameObject shopPanel;
 
     public void OpenShop()
     {
         if (shopPanel != null)
+        {
             shopPanel.SetActive(true);
+            TemporaryUpgradeManager.Instance?.RefreshUI();
+        }
     }
 
     public void CloseShop()
@@ -16,3 +19,4 @@ public class ShopUIController : MonoBehaviour
             shopPanel.SetActive(false);
     }
 }
+

@@ -123,7 +123,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    // ✅ Register enemies summoned by the boss
+    // Register enemies summoned by the boss
     public void RegisterExternalEnemy(Enemy enemy)
     {
         aliveEnemies++;

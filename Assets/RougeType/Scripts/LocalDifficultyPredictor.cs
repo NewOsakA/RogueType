@@ -16,13 +16,13 @@ public class LocalDifficultyPredictor : MonoBehaviour
 
         if (json == null)
         {
-            Debug.LogError("❌ difficulty_model.json not found in Assets/Resources");
+            Debug.LogError("difficulty_model.json not found");
             return;
         }
 
         model = JsonUtility.FromJson<LogisticModelData>(json.text);
 
-        // 🔎 Validate structure
+        // Validate structure
         if (model == null ||
             model.mean == null || model.scale == null ||
             model.coefFlat == null ||
@@ -31,23 +31,23 @@ public class LocalDifficultyPredictor : MonoBehaviour
             model.coefRows <= 0 || model.coefCols <= 0 ||
             model.coefFlat.Length != model.coefRows * model.coefCols)
         {
-            Debug.LogError("❌ Model loaded but structure invalid");
+            Debug.LogError("Model loaded but structure invalid");
             return;
         }
 
         modelReady = true;
-        Debug.Log("✅ Local AI model READY");
+        Debug.Log("Local AI model READY");
     }
 
     public int Predict(PlayerData data)
     {
         if (!modelReady)
         {
-            Debug.LogWarning("⚠️ AI not ready → fallback difficulty");
+            Debug.LogWarning("AI not ready → fallback difficulty");
             return 1; // default = medium
         }
 
-        // 1️⃣ Build feature vector (order must match training)
+        // Build feature vector (order must match training)
         float[] x = {
             data.wpm,
             data.combo_length,
@@ -56,13 +56,13 @@ public class LocalDifficultyPredictor : MonoBehaviour
             data.wave_number
         };
 
-        // 2️⃣ Standardize
+        // Standardize
         for (int i = 0; i < x.Length; i++)
         {
             x[i] = (x[i] - model.mean[i]) / model.scale[i];
         }
 
-        // 3️⃣ Compute logits
+        // Compute logits
         float[] logits = new float[model.classes.Length];
 
         for (int c = 0; c < model.classes.Length; c++)
@@ -71,7 +71,7 @@ public class LocalDifficultyPredictor : MonoBehaviour
 
             for (int i = 0; i < x.Length; i++)
             {
-                // 🔑 index in flattened coef
+                // index in flattened coef
                 int coefIndex = c * model.coefCols + i;
                 sum += model.coefFlat[coefIndex] * x[i];
             }
@@ -79,7 +79,7 @@ public class LocalDifficultyPredictor : MonoBehaviour
             logits[c] = sum;
         }
 
-        // 4️⃣ ArgMax → class
+        // ArgMax → class
         return ArgMax(logits);
     }
 

@@ -37,11 +37,13 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        if (cam == null)
+        if (cam == null && Camera.main != null)
             cam = Camera.main.GetComponent<CameraController>();
 
+        Wall wall = Object.FindFirstObjectByType<Wall>();
+        wall?.ApplyMetaUpgrades();
+
         playerStats?.ApplyMetaUpgrades();
-        FindObjectOfType<Wall>()?.ApplyMetaUpgrades();
 
         UpdateWaveText();
         EnterBaseManagement();
@@ -72,15 +74,35 @@ public class GameManager : MonoBehaviour
 
         cam?.MoveToWave();
 
-        foreach (var spawner in FindObjectsOfType<EnemySpawner>())
+        foreach (var spawner in Object.FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None))
         {
             spawner.BeginWave(currentWave);
+        }
+
+        Wall wall = Object.FindFirstObjectByType<Wall>();
+        if (wall != null)
+        {
+            wall.RechargeShield();
+            wall.StartAutoRepair();
         }
     }
 
     public void EndWave()
     {
         Debug.Log($"Wave {currentWave} Ended");
+
+        if (playerStats != null && playerStats.interestRate > 0f)
+        {
+            int currentGold = CurrencyManager.Instance.GetCurrentCurrency();
+            int interest = Mathf.FloorToInt(currentGold * playerStats.interestRate);
+
+            if (interest > 0)
+            {
+                CurrencyManager.Instance.AddCurrency(interest);
+                Debug.Log($"Interest +{interest} gold");
+            }
+        }
+
 
         if (typingManager != null && difficultyPredictor != null)
         {
@@ -117,10 +139,9 @@ public class GameManager : MonoBehaviour
             {
                 Debug.LogError("AI Predict failed: " + e.Message);
 
-                // fallback จะใช้ก็ต่อเมื่อเริ่มใช้ AI แล้ว
                 if (currentWave >= 3)
                 {
-                    AdjustDifficulty(1); // fallback = medium
+                    AdjustDifficulty(1);
                 }
             }
         }
@@ -139,6 +160,11 @@ public class GameManager : MonoBehaviour
         if (defenseCanvas != null) defenseCanvas.enabled = false;
 
         cam?.MoveToBase();
+        Wall wall = Object.FindFirstObjectByType<Wall>();
+        if (wall != null)
+        {
+            wall.StopAutoRepair();
+        }
     }
 
     void UpdateWaveText()
@@ -196,7 +222,7 @@ public class GameManager : MonoBehaviour
         currentWave = 0;
 
         if (playerStats != null)
-            playerStats.ResetStats();
+            playerStats.ResetRunStats();
 
         foreach (var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
         {

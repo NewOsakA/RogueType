@@ -4,8 +4,8 @@ public class Turret : MonoBehaviour
 {
     [Header("Stats")]
     public float attackRange = 5f;
-    public float attackSpeed = 1f; // Matches what the panel is using
-    public int damage = 1;  // NEW: Damage stat for upgrade
+    public float attackSpeed = 1f;
+    public int damage = 1;
 
     [Header("References")]
     public GameObject projectilePrefab;
@@ -30,7 +30,7 @@ public class Turret : MonoBehaviour
         Enemy closest = null;
         float shortestDistance = Mathf.Infinity;
 
-        // Check priority targets first
+        // Check priority targets
         foreach (Enemy enemy in Enemy.priorityTargets)
         {
             if (enemy == null) continue;
@@ -46,8 +46,7 @@ public class Turret : MonoBehaviour
         if (closest != null)
             return closest;
 
-        // Fallback: all enemies
-        Enemy[] allEnemies = FindObjectsOfType<Enemy>();
+        Enemy[] allEnemies = Object.FindObjectsByType<Enemy>(FindObjectsSortMode.None);
         shortestDistance = Mathf.Infinity;
 
         foreach (Enemy enemy in allEnemies)
@@ -75,7 +74,7 @@ public class Turret : MonoBehaviour
         if (projScript != null)
         {
             projScript.SetTarget(enemy.transform);
-            projScript.SetDamage(damage); // NEW: Pass upgraded damage
+            projScript.SetDamage(damage);
         }
     }
 

@@ -10,9 +10,11 @@ public class Enemy : MonoBehaviour
     public static HashSet<Enemy> priorityTargets = new HashSet<Enemy>();
 
     [Header("Stats")]
+    public int maxHP = 10;
     public int currentHP;
     public int damage;
     public float speed = 2f;
+    public bool isBoss = false;
 
     [Header("UI")]
     public TMP_Text hpText;
@@ -23,35 +25,36 @@ public class Enemy : MonoBehaviour
     [Header("Ability")]
     public EnemyAbility specialAbility;
 
+    [Header("Wall Attack")]
+    public float attackCooldown = 2f;
+    private float lastAttackTime = -Mathf.Infinity;
+    private Wall currentWall;
+
     private TypingManager typingManager;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
 
-    [Header("Wall Attack")]
-    public float attackCooldown = 2f;
-    private float lastAttackTime = -Mathf.Infinity;
-    private Wall currentWall = null;
-
-    // 🔥 Burn State
     private Coroutine burnCoroutine;
-    private bool isBurning = false;
 
     public System.Action OnDeath;
 
+    // Init
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
 
+        currentHP = maxHP;
         UpdateHPText();
 
-        typingManager = FindObjectOfType<TypingManager>();
+        typingManager = Object.FindFirstObjectByType<TypingManager>();
         typingManager?.RegisterEnemy(this);
 
         specialAbility?.Initialize(this);
     }
 
+    // Update
     void Update()
     {
         if (currentWall == null)
@@ -62,15 +65,30 @@ public class Enemy : MonoBehaviour
         {
             currentWall.TakeDamage(damage);
             lastAttackTime = Time.time;
-            Debug.Log($"🧱 {name} hit wall for {damage} damage");
+
             specialAbility?.OnHitWall(currentWall);
         }
 
         specialAbility?.OnUpdate();
     }
 
+    // Damage
     public void TakeDamage(int amount)
     {
+        var stats = GameManager.Instance?.playerStats;
+
+        // Execution (non-boss only)
+        if (stats != null && stats.hasExecution && !isBoss)
+        {
+            float threshold = stats.executionThreshold;
+
+            if (threshold > 0f && currentHP <= Mathf.CeilToInt(maxHP * threshold))
+            {
+                Die();
+                return;
+            }
+        }
+
         specialAbility?.OnTakeDamage(ref amount);
 
         currentHP -= amount;
@@ -81,6 +99,7 @@ public class Enemy : MonoBehaviour
             Die();
     }
 
+    // Die
     void Die()
     {
         if (burnCoroutine != null)
@@ -92,11 +111,17 @@ public class Enemy : MonoBehaviour
         specialAbility?.OnDie();
         typingManager?.UnregisterEnemy(this);
 
+        // Reward
         int reward = currencyReward;
-        if (GameManager.Instance.playerStats != null && GameManager.Instance.playerStats.hasGoldBoost)
+        var stats = GameManager.Instance?.playerStats;
+        if (stats != null)
         {
-            reward = Mathf.RoundToInt(reward * 1.5f); // +50%
-            Debug.Log($"💰 Gold Boost! Extra reward: {reward}");
+            reward = Mathf.RoundToInt(reward * stats.goldMultiplier);
+        }
+
+        if (stats != null && stats.lastFocusedEnemy == this)
+        {
+            stats.ResetFocusedFire();
         }
 
         CurrencyManager.Instance?.AddCurrency(reward);
@@ -106,6 +131,7 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+    // UI
     public void UpdateHPText()
     {
         if (hpText != null)
@@ -118,30 +144,31 @@ public class Enemy : MonoBehaviour
             hpText.transform.rotation = Quaternion.identity;
     }
 
+    // Wall Collision
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Wall"))
-        {
             currentWall = other.GetComponent<Wall>();
-        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Wall") && currentWall != null && other.GetComponent<Wall>() == currentWall)
-        {
+        if (other.CompareTag("Wall") && other.GetComponent<Wall>() == currentWall)
             currentWall = null;
-        }
     }
 
-    public void Initialize(int hp, int dmg, float spd)
+    // INIT From Spawner
+    public void Initialize(int hp, int dmg, float spd, bool boss = false)
     {
+        maxHP = hp;
         currentHP = hp;
         damage = dmg;
         speed = spd;
+        isBoss = boss;
         UpdateHPText();
     }
 
+    // Priority Target
     private void OnMouseDown()
     {
         if (priorityTargets.Contains(this))
@@ -157,52 +184,37 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // 🔥 Burn logic
-    public void ApplyBurn(int dps, float duration)
+    // Burn
+    public void ApplyBurn(int dps)
     {
-        if (isBurning)
-        {
-            Debug.Log($"🔥 {name} is already burning. Burn skipped.");
-            return;
-        }
-
-        Debug.Log($"🔥 Burn applied to {name} for {duration}s at {dps} DPS");
-
         if (burnCoroutine != null)
             StopCoroutine(burnCoroutine);
 
-        burnCoroutine = StartCoroutine(BurnCoroutine(dps, duration));
+        burnCoroutine = StartCoroutine(BurnDamageOverTime(dps));
     }
 
-    private IEnumerator BurnCoroutine(int dps, float duration)
+    private IEnumerator BurnDamageOverTime(int dps)
     {
-        isBurning = true;
-
         if (spriteRenderer != null)
-            spriteRenderer.color = new Color(1f, 0.5f, 0.2f); // 🔥 Orange
+            spriteRenderer.color = new Color(1f, 0.5f, 0.2f);
 
-        float elapsed = 0f;
+        const int TICKS = 3;
 
-        while (elapsed < duration)
+        for (int i = 0; i < TICKS; i++)
         {
-            Debug.Log($"🔥 {name} burn tick: -{dps} HP at {elapsed:0.0}s");
+            yield return new WaitForSeconds(1f);
+            // Debug.Log($"BURN TICK {i + 1}/{TICKS}");
             TakeDamage(dps);
 
             if (currentHP <= 0)
-            {
-                Debug.Log($"🔥 {name} died from burn.");
                 yield break;
-            }
-
-            yield return new WaitForSeconds(1f);
-            elapsed += 1f;
         }
 
-        Debug.Log($"🔥 Burn finished on {name}");
-
         ResetColor();
-        isBurning = false;
+        burnCoroutine = null;
     }
+
+
 
     private void ResetColor()
     {

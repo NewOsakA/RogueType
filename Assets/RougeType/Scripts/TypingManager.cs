@@ -35,7 +35,7 @@ public class TypingManager : MonoBehaviour
     [Header("Penalty")]
     public PenaltyManager penaltyManager;
 
-    // ===== Typing State =====
+    // Typing State
     private string currentWord = "";
     private string nextWord = "";
     private int currentLetterIndex = 0;
@@ -56,11 +56,10 @@ public class TypingManager : MonoBehaviour
 
     private bool IsAlphabet(char c)
     {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ';
     }
+    public bool LastWordPerfect { get; private set; }
 
-
-    // =========================
     void Start()
     {
         ResetTypingStats();
@@ -102,7 +101,6 @@ public class TypingManager : MonoBehaviour
         UpdateWordStats();
     }
 
-    // =========================
     // Typing Logic
     void CheckLetter(char typedChar)
     {
@@ -123,18 +121,31 @@ public class TypingManager : MonoBehaviour
             {
                 wordCount++;
 
-                playerStats?.OnCorrectType(true);
-                penaltyManager?.RegisterCorrectWord();
+                LastWordPerfect = true;
 
+                playerStats?.OnCorrectType(true);
+
+                // Precision Burst
+                if (playerStats != null && playerStats.hasPrecisionBurst)
+                {
+                    playerStats.precisionBurstReady = true;
+                }
+
+                penaltyManager?.RegisterCorrectWord();
                 UpdateComboUI();
                 LoadNextWord();
             }
         }
         else
         {
+            LastWordPerfect = false;
+
             StartCoroutine(ShakeText());
 
             playerStats?.OnCorrectType(false);
+
+            playerStats?.ResetFocusedFire();
+
             penaltyManager?.RegisterMistake();
             UpdateComboUI();
 
@@ -143,35 +154,72 @@ public class TypingManager : MonoBehaviour
         }
     }
 
-    // =========================
     // Projectile
-    // =========================
     void ShootProjectile()
     {
         if (projectilePrefab == null || shootPoint == null)
             return;
 
+        if (playerStats != null && playerStats.hasTypingFrenzy)
+        {
+            StartCoroutine(FireBurst());
+        }
+        else
+        {
+            FireSingleProjectile(1f);
+        }
+    }
+
+    void FireSingleProjectile(float damageMultiplier)
+    {
         GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
         Projectile p = proj.GetComponent<Projectile>();
-
         if (p == null) return;
 
-        float baseDmg = playerStats != null ? playerStats.currentDamage : 1;
-        float finalDmg = penaltyManager != null
-            ? baseDmg * penaltyManager.GetDamageMultiplier()
-            : baseDmg;
+        Enemy target = GetClosestEnemy();
+
+        float baseDmg = playerStats != null ? playerStats.currentDamage : 1f;
+        float finalDmg = baseDmg;
+
+        // Focused Fire
+        if (playerStats != null && target != null)
+        {
+            finalDmg *= playerStats.GetFocusedFireMultiplier(target);
+        }
+
+        // penalty
+        if (penaltyManager != null)
+        {
+            finalDmg *= penaltyManager.GetDamageMultiplier();
+        }
+
+        // typing frenzy multiplier
+        finalDmg *= damageMultiplier;
 
         p.damage = Mathf.RoundToInt(finalDmg);
 
-        Enemy target = GetClosestEnemy();
         if (target != null)
             p.SetTarget(target.transform);
     }
 
-    // =========================
+
+    IEnumerator FireBurst()
+    {
+        int shots = 3;
+        float damageMultiplier = 0.5f;
+
+        for (int i = 0; i < shots; i++)
+        {
+            FireSingleProjectile(damageMultiplier);
+            yield return new WaitForSeconds(0.04f);
+        }
+    }
+
+
     // Word Handling
     void LoadNextWord()
     {
+        LastWordPerfect = false;
         WordLoader.Difficulty currentDiff = GetMixedDifficulty();
         WordLoader.Difficulty nextDiff = GetMixedDifficulty();
 
@@ -234,7 +282,6 @@ public class TypingManager : MonoBehaviour
         wordDisplayText.text = display;
     }
 
-    // =========================
     // UI Updates
     void UpdateWordStats()
     {
@@ -254,9 +301,16 @@ public class TypingManager : MonoBehaviour
         if (comboStreakText == null || playerStats == null)
             return;
 
+        if (!playerStats.comboUpgradeActive)
+        {
+            comboStreakText.text = "";
+            lastComboBonus = 0;
+            return;
+        }
+
         int bonus = playerStats.currentComboBonus;
 
-        if (playerStats.comboCount == 0)
+        if (bonus == 0)
         {
             comboStreakText.text = "";
             lastComboBonus = 0;
@@ -272,8 +326,9 @@ public class TypingManager : MonoBehaviour
             ? "<color=yellow>MAX COMBO!</color>"
             : $"+{bonus} DMG";
 
-        comboStreakText.text = $"Combo: {playerStats.comboCount} ({bonusText})";
+        comboStreakText.text = $"Combo: {bonus} ({bonusText})";
     }
+
 
     IEnumerator FlashComboText()
     {
@@ -283,7 +338,6 @@ public class TypingManager : MonoBehaviour
         comboStreakText.color = originalColor;
     }
 
-    // =========================
     // Effects
     IEnumerator ShakeText()
     {
@@ -308,7 +362,6 @@ public class TypingManager : MonoBehaviour
         isStunned = false;
     }
 
-    // =========================
     // Enemy Tracking
     public void RegisterEnemy(Enemy e)
     {
@@ -329,8 +382,6 @@ public class TypingManager : MonoBehaviour
             : activeEnemies.OrderBy(e => e.transform.position.x).First();
     }
 
-    // =========================
-    // Public API Used by GameManager / AI
     public void ResetTypingStats()
     {
         startTime = Time.time;

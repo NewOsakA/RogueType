@@ -30,7 +30,7 @@ public class BossEnemyAbility : EnemyAbility
         int remaining = maxTotalMinions - totalMinionsSummoned;
         int toSummon = Mathf.Min(burstCount, remaining);
 
-        EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+        EnemySpawner spawner = Object.FindAnyObjectByType<EnemySpawner>();
 
         for (int i = 0; i < toSummon; i++)
         {

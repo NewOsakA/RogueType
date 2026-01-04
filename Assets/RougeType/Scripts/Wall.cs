@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class Wall : MonoBehaviour
 {
@@ -10,7 +11,14 @@ public class Wall : MonoBehaviour
     [Header("UI")]
     public TMP_Text hpText;
 
-    private bool shieldAvailable = false;
+    private int shieldHitsRemaining = 0;
+
+    [Header("Auto Repair")]
+    public int autoRepairAmount = 1; 
+    public float autoRepairInterval = 5f;
+
+    private Coroutine autoRepairCoroutine;
+
 
     void Start()
     {
@@ -18,32 +26,41 @@ public class Wall : MonoBehaviour
         UpdateHPDisplay();
     }
 
-    public void TakeDamage(int amount)
+
+public void TakeDamage(int amount)
+{
+    var playerStats = GameManager.Instance?.playerStats;
+
+    // Shield block
+    if (playerStats != null && shieldHitsRemaining > 0)
     {
-        var playerStats = GameManager.Instance?.playerStats;
-
-        if (playerStats != null && playerStats.hasShield && shieldAvailable)
-        {
-            Debug.Log("Shield blocked wall damage!");
-            shieldAvailable = false;
-            return;
-        }
-
-        currentHP -= amount;
-        currentHP = Mathf.Max(currentHP, 0);
-        UpdateHPDisplay();
-
-        Debug.Log($"Wall took {amount} damage => HP: {currentHP}");
-
-        if (currentHP <= 0)
-        {
-            Debug.Log("Wall destroyed!");
-
-            GameManager.Instance?.OnPlayerDefeated();
-
-            gameObject.SetActive(false);
-        }
+        shieldHitsRemaining--;
+        Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
+        return;
     }
+
+    // Fortress % reduction
+    float reduction = 0f;
+    if (playerStats != null)
+    {
+        reduction = playerStats.fortressDamageReduction;
+    }
+
+    int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
+    finalDamage = Mathf.Max(finalDamage, 0);
+
+    currentHP -= finalDamage;
+    currentHP = Mathf.Max(currentHP, 0);
+    UpdateHPDisplay();
+
+    Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
+
+    if (currentHP <= 0)
+    {
+        GameManager.Instance?.OnPlayerDefeated();
+        gameObject.SetActive(false);
+    }
+}
 
     public void IncreaseMaxHP(int amount)
     {
@@ -56,19 +73,60 @@ public class Wall : MonoBehaviour
     public void RechargeShield()
     {
         var playerStats = GameManager.Instance?.playerStats;
+        if (playerStats == null) return;
 
-        if (playerStats != null && playerStats.hasShield)
+        shieldHitsRemaining = playerStats.shieldHitsPerWave;
+
+        if (shieldHitsRemaining > 0)
         {
-            shieldAvailable = true;
-            Debug.Log("Shield recharged for this wave.");
-        }
-        else
-        {
-            Debug.Log("Shield not recharged — upgrade not unlocked.");
+            Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
         }
     }
 
-    void UpdateHPDisplay()
+
+    public void StartAutoRepair()
+    {
+        if (autoRepairCoroutine != null)
+            StopCoroutine(autoRepairCoroutine);
+
+        autoRepairCoroutine = StartCoroutine(AutoRepairDuringWave());
+    }
+
+    public void StopAutoRepair()
+    {
+        if (autoRepairCoroutine != null)
+        {
+            StopCoroutine(autoRepairCoroutine);
+            autoRepairCoroutine = null;
+        }
+    }
+
+    IEnumerator AutoRepairDuringWave()
+    {
+        while (GameManager.Instance != null &&
+            GameManager.Instance.IsWavePhase() &&
+            currentHP > 0)
+        {
+            var playerStats = GameManager.Instance.playerStats;
+
+            if (playerStats != null && playerStats.hasAutoRepair)
+            {
+                if (currentHP < maxHP)
+                {
+                    currentHP += autoRepairAmount;
+                    currentHP = Mathf.Min(currentHP, maxHP);
+                    UpdateHPDisplay();
+
+                    Debug.Log($"[AutoRepair] Wall +{autoRepairAmount} HP → {currentHP}");
+                }
+            }
+
+            yield return new WaitForSeconds(autoRepairInterval);
+        }
+    }
+
+
+    public void UpdateHPDisplay()
     {
         if (hpText != null)
         {
