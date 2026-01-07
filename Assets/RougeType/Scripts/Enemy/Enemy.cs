@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +21,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Rewards")]
     public int currencyReward = 10;
+    public int essenceReward = 1;
 
     [Header("Ability")]
     public EnemyAbility specialAbility;
@@ -125,6 +126,11 @@ public class Enemy : MonoBehaviour
         }
 
         CurrencyManager.Instance?.AddCurrency(reward);
+
+        if (EssenceManager.Instance != null && essenceReward > 0)
+        {
+            EssenceManager.Instance.AddEssence(essenceReward);
+        }
 
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
