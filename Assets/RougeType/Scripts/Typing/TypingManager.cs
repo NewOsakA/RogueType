@@ -233,7 +233,7 @@ public class TypingManager : MonoBehaviour
         UpdateWordDisplay();
 
         if (nextWordText != null)
-            nextWordText.text = $"Next: <i>{nextWord}</i>";
+            nextWordText.text = $"{nextWord}";
 
         activeEnemy = null;
     }
