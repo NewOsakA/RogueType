@@ -125,6 +125,35 @@ public void TakeDamage(int amount)
         }
     }
 
+    // Items
+    public void Heal(int amount)
+    {
+        currentHP = Mathf.Min(maxHP, currentHP + amount);
+        UpdateHPDisplay();
+
+        Debug.Log($"Wall healed + {amount} Now {currentHP}");
+    }
+
+    public void ActivateDamageReduction(float percent, float duration)
+    {
+        StartCoroutine(DamageReductionRoutine(percent, duration));
+    }
+
+    IEnumerator DamageReductionRoutine(float percent, float duration)
+    {
+        var playerStats = GameManager.Instance?.playerStats;
+        if (playerStats == null) yield break;
+
+        float originalReduction = playerStats.fortressDamageReduction;
+        playerStats.fortressDamageReduction += percent;
+
+        Debug.Log($"Damage reduction {percent * 100}%");
+
+        yield return new WaitForSeconds(duration);
+
+        playerStats.fortressDamageReduction = originalReduction;
+        Debug.Log("Damage reduction ended");
+    }
 
     public void UpdateHPDisplay()
     {

@@ -100,7 +100,6 @@ public class Enemy : MonoBehaviour
             Die();
     }
 
-    // Die
     void Die()
     {
         if (burnCoroutine != null)
@@ -112,12 +111,16 @@ public class Enemy : MonoBehaviour
         specialAbility?.OnDie();
         typingManager?.UnregisterEnemy(this);
 
-        // Reward
         int reward = currencyReward;
         var stats = GameManager.Instance?.playerStats;
         if (stats != null)
         {
             reward = Mathf.RoundToInt(reward * stats.goldMultiplier);
+        }
+
+        if (ExecutionCreditSystem.Instance != null)
+        {
+            reward = ExecutionCreditSystem.Instance.ApplyBonus(reward);
         }
 
         if (stats != null && stats.lastFocusedEnemy == this)
@@ -131,7 +134,6 @@ public class Enemy : MonoBehaviour
         {
             EssenceManager.Instance.AddEssence(essenceReward);
         }
-
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
         Destroy(gameObject);
