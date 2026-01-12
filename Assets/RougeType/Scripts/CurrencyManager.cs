@@ -44,6 +44,6 @@ public class CurrencyManager : MonoBehaviour
     void UpdateCurrencyUI()
     {
         if (currencyText != null)
-            currencyText.text = $"Currency: {currency}";
+            currencyText.text = $"C: {currency}";
     }
 }

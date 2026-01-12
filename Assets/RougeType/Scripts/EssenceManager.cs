@@ -7,7 +7,7 @@ public class EssenceManager : MonoBehaviour
     public static EssenceManager Instance;
 
     [Header("Essence")]
-    public int currentEssence = 0;
+    public int essence = 0;
     public TMP_Text essenceText;
 
     public event Action<int> OnEssenceChanged;
@@ -29,32 +29,33 @@ public class EssenceManager : MonoBehaviour
 
     public void AddEssence(int amount)
     {
-        currentEssence += amount;
-        currentEssence = Mathf.Max(0, currentEssence);
+        essence += amount;
+        essence = Mathf.Max(0, essence);
 
         UpdateEssenceText();
-        OnEssenceChanged?.Invoke(currentEssence);
+        OnEssenceChanged?.Invoke(essence);
     }
 
     public bool TryConsumeEssence(int amount)
     {
-        if (currentEssence < amount)
+        if (essence < amount)
             return false;
 
-        currentEssence -= amount;
+        essence -= amount;
         UpdateEssenceText();
-        OnEssenceChanged?.Invoke(currentEssence);
+        OnEssenceChanged?.Invoke(essence);
         return true;
     }
 
     public int GetEssence()
     {
-        return currentEssence;
+        return essence;
     }
 
     private void UpdateEssenceText()
     {
         if (essenceText != null)
-            essenceText.text = currentEssence.ToString();
+            essenceText.text = $"C: {essence}";
+            // essenceText.text = Essence.ToString();
     }
 }

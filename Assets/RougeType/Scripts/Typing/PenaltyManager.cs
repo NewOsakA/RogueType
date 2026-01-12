@@ -71,11 +71,9 @@ public class PenaltyManager : MonoBehaviour
     {
         correctStreak++;
 
-        // ลด mistake เมื่อพิมพ์ถูก
         if (mistakeCount > 0)
             mistakeCount--;
 
-        // พิมพ์ถูกติดกันพอ → clear penalty
         if (penaltyActive && correctStreak >= correctWordsToClearPenalty)
         {
             Debug.Log("Penalty cleared by correct typing streak");
@@ -137,11 +135,11 @@ public class PenaltyManager : MonoBehaviour
         {
             if (penaltyActive)
             {
-                penaltyStatusText.text = $"Current Penalty: {currentPenalty} ({penaltyTimer:F1}s left)";
+                penaltyStatusText.text = $"Penalty: {currentPenalty} ({penaltyTimer:F1}s left)";
             }
             else
             {
-                penaltyStatusText.text = "Current Penalty: None";
+                penaltyStatusText.text = "Penalty: None";
             }
         }
     }
