@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Glass Cannon
+  m_Name: FragileCanon
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Glass Cannon
-  description: 'Greatly increase arcane blast damage by 50% but also lost 50% wall
-    hp '
-  cost: 3000
+  upgradeName: Fragile Canon
+  description: 'YOLO
+
+    You only have 1 live with powerful blast '
+  cost: 1000
   prerequisites:
-  - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
+  - {fileID: 11400000, guid: 7e8134d4c65f74e19b4360db74026701, type: 2}
   prerequisiteMode: 1
-  effectType: 19
-  intValue: 0
+  effectType: 0
+  intValue: 5
   floatValue: 0
-  exclusive: 1
-  exclusiveGroup: 3
+  exclusive: 0
+  exclusiveGroup: 0

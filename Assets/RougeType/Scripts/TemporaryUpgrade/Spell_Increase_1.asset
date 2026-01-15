@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Glass Cannon
+  m_Name: Spell_Increase_1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Glass Cannon
-  description: 'Greatly increase arcane blast damage by 50% but also lost 50% wall
-    hp '
-  cost: 3000
+  upgradeName: Double Blast
+  description: 'Fire additional arcane blast
+
+    -20% damage per blast'
+  cost: 1000
   prerequisites:
-  - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
+  - {fileID: 11400000, guid: ae02f880dc42b40788ab5d5b6c0b34d1, type: 2}
   prerequisiteMode: 1
-  effectType: 19
+  effectType: 0
   intValue: 0
   floatValue: 0
-  exclusive: 1
-  exclusiveGroup: 3
+  exclusive: 0
+  exclusiveGroup: 0

@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Damage_2
+  m_Name: TypingFrenzy
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: damage 2
-  description: Increase damage by 1
-  cost: 150
+  upgradeName: Typing Frenzy
+  description: "Have Chance to fire 5 Arcane Blast in total  \n-20% Arcane damage
+    per blast"
+  cost: 2000
   prerequisites:
-  - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
-  prerequisiteMode: 0
+  - {fileID: 11400000, guid: 5fd7143f26dd142f8a3cc7be9fa13eac, type: 2}
+  prerequisiteMode: 1
   effectType: 0
-  intValue: 1
+  intValue: 0
   floatValue: 0
   exclusive: 0
   exclusiveGroup: 0

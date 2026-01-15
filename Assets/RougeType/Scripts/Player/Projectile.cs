@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
 
     [Header("Explosive Shot")]
     public float explosionRadius = 2.5f;
-    public float explosionDamageMultiplier = 0.6f;
+    public float explosionDamageMultiplier = 0.3f;
 
     private Vector3 moveDirection;
     private Transform target;

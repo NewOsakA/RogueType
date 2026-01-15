@@ -40,7 +40,8 @@ public enum ExclusiveGroup
 {
     None,
     Common,
-    Rare
+    Rare,
+    Epic
 }
 
 public enum UpgradeEffectType
@@ -76,5 +77,8 @@ public enum UpgradeEffectType
     PrecisionBurst,
     FocusedFire,
     GlassCannon
+
+    // Todo: Add more effects as needed
+
 }
 
