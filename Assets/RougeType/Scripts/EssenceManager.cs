@@ -55,7 +55,7 @@ public class EssenceManager : MonoBehaviour
     private void UpdateEssenceText()
     {
         if (essenceText != null)
-            essenceText.text = $"C: {essence}";
+            essenceText.text = $"E: {essence}";
             // essenceText.text = Essence.ToString();
     }
 }
