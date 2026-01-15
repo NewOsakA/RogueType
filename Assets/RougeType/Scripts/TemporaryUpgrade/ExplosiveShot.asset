@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplosiveShot
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: ExplosiveShot
-  description: Deal 30% damage to nearby enemy
+  description: Deal additional 30% damage to nearby target enemy
   cost: 1000
   prerequisites:
   - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
