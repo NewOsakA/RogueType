@@ -10,7 +10,6 @@ public class TypingManager : MonoBehaviour
     public TMP_Text wordDisplayText;
     public TMP_Text wpmText;
     public TMP_Text wordCountText;
-    public TMP_Text nextWordText;
     public TMP_Text timerText;
     public TMP_Text gameOverText;
     public TMP_Text comboStreakText;
@@ -36,9 +35,9 @@ public class TypingManager : MonoBehaviour
     public PenaltyManager penaltyManager;
 
     // Typing State
-    private string currentWord = "";
-    private string nextWord = "";
+    private Queue<string> wordQueue = new Queue<string>();
     private int currentLetterIndex = 0;
+    [SerializeField] private int previewWordCount = 3;
 
     // Gameplay stats
     private int wordCount = 0;
@@ -63,7 +62,7 @@ public class TypingManager : MonoBehaviour
     void Start()
     {
         ResetTypingStats();
-        LoadNextWord();
+        InitializeWordStream();
 
         if (gameOverText != null)
             gameOverText.gameObject.SetActive(false);
@@ -104,12 +103,14 @@ public class TypingManager : MonoBehaviour
     // Typing Logic
     void CheckLetter(char typedChar)
     {
-        if (currentLetterIndex >= currentWord.Length || isGameOver)
+        string word = CurrentWord;
+
+        if (currentLetterIndex >= word.Length || isGameOver)
             return;
 
-        char expectedChar = currentWord[currentLetterIndex];
+        char expectedChar = word[currentLetterIndex];
 
-        if (char.ToLower(typedChar) == char.ToLower(expectedChar))
+        if (typedChar == char.ToLower(expectedChar))
         {
             currentLetterIndex++;
             totalTypedCharacters++;
@@ -117,35 +118,18 @@ public class TypingManager : MonoBehaviour
             ShootProjectile();
             UpdateWordDisplay();
 
-            if (currentLetterIndex >= currentWord.Length)
+            if (currentLetterIndex >= word.Length)
             {
-                wordCount++;
-
-                LastWordPerfect = true;
-
-                playerStats?.OnCorrectType(true);
-
-                // Precision Burst
-                if (playerStats != null && playerStats.hasPrecisionBurst)
-                {
-                    playerStats.precisionBurstReady = true;
-                }
-
-                penaltyManager?.RegisterCorrectWord();
-                UpdateComboUI();
-                LoadNextWord();
+                AdvanceWord();
             }
         }
         else
         {
             LastWordPerfect = false;
-
             StartCoroutine(ShakeText());
 
             playerStats?.OnCorrectType(false);
-
             playerStats?.ResetFocusedFire();
-
             penaltyManager?.RegisterMistake();
             UpdateComboUI();
 
@@ -217,25 +201,43 @@ public class TypingManager : MonoBehaviour
 
 
     // Word Handling
-    void LoadNextWord()
+    void InitializeWordStream()
     {
-        LastWordPerfect = false;
-        WordLoader.Difficulty currentDiff = GetMixedDifficulty();
-        WordLoader.Difficulty nextDiff = GetMixedDifficulty();
+        wordQueue.Clear();
 
-        currentWord = string.IsNullOrEmpty(nextWord)
-            ? wordLoader.GetRandomWord(currentDiff)
-            : nextWord;
-
-        nextWord = wordLoader.GetRandomWord(nextDiff);
+        for (int i = 0; i < previewWordCount; i++)
+        {
+            wordQueue.Enqueue(wordLoader.GetRandomWord(GetMixedDifficulty()));
+        }
 
         currentLetterIndex = 0;
         UpdateWordDisplay();
+    }
 
-        if (nextWordText != null)
-            nextWordText.text = $"{nextWord}";
+    string CurrentWord => wordQueue.Peek();
 
-        activeEnemy = null;
+    void AdvanceWord()
+    {
+        wordQueue.Dequeue();
+        wordQueue.Enqueue(wordLoader.GetRandomWord(GetMixedDifficulty()));
+
+        currentLetterIndex = 0;
+        wordCount++;
+        LastWordPerfect = true;
+
+        playerStats?.OnCorrectType(true);
+        penaltyManager?.RegisterCorrectWord();
+        UpdateComboUI();
+        UpdateWordDisplay();
+    }
+
+    public void ResetWordsForNewWave()
+    {
+        currentLetterIndex = 0;
+        LastWordPerfect = false;
+        isStunned = false;
+
+        InitializeWordStream();
     }
 
     WordLoader.Difficulty GetMixedDifficulty()
@@ -266,17 +268,31 @@ public class TypingManager : MonoBehaviour
     void UpdateWordDisplay()
     {
         string display = "";
+        int wordIndex = 0;
 
-        for (int i = 0; i < currentWord.Length; i++)
+        foreach (string word in wordQueue)
         {
-            char c = currentWord[i];
+            if (wordIndex == 0)
+            {
+                for (int i = 0; i < word.Length; i++)
+                {
+                    char c = word[i];
 
-            if (i < currentLetterIndex)
-                display += $"<color=green>{c}</color>";
-            else if (i == currentLetterIndex)
-                display += $"<u>{c}</u>";
+                    if (i < currentLetterIndex)
+                        display += $"<color=green>{c}</color>";
+                    else if (i == currentLetterIndex)
+                        display += $"<u>{c}</u>";
+                    else
+                        display += c;
+                }
+            }
             else
-                display += c;
+            {
+                display += $"<color=white>{word}</color>";
+            }
+
+            display += "   ";
+            wordIndex++;
         }
 
         wordDisplayText.text = display;

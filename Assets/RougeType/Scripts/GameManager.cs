@@ -73,6 +73,8 @@ public class GameManager : MonoBehaviour
         if (defenseCanvas != null) defenseCanvas.enabled = true;
 
         cam?.MoveToWave();
+        // Reset word every turn
+        typingManager?.ResetWordsForNewWave();
 
         foreach (var spawner in Object.FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None))
         {
