@@ -222,6 +222,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -388,6 +389,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373635860}
   m_CullTransparentMesh: 1
+--- !u!1001 &508464017
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1949471447524065116, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_Name
+      value: MetaGameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1267.4993
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 477.3574
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.99944
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5259655691661871680, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,6 +774,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -949,6 +1008,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1093,6 +1153,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1370,10 +1431,6 @@ MonoBehaviour:
   metaCoinText: {fileID: 729261428}
   damageLevelText: {fileID: 1701304025}
   wallHpLevelText: {fileID: 9394780}
-  goldBonusLevelText: {fileID: 0}
-  damageBaseCost: 10
-  wallHpBaseCost: 10
-  goldBonusBaseCost: 10
 --- !u!4 &1976056230
 Transform:
   m_ObjectHideFlags: 0
@@ -1397,3 +1454,4 @@ SceneRoots:
   - {fileID: 888213673}
   - {fileID: 1870379770}
   - {fileID: 1976056230}
+  - {fileID: 508464017}

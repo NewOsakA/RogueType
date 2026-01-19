@@ -6,7 +6,7 @@ public class CurrencyManager : MonoBehaviour
     public static CurrencyManager Instance;
 
     public int currency = 0;
-    public TMP_Text currencyText; // 👈 Drag your UI text here
+    public TMP_Text currencyText; 
 
     void Awake()
     {
@@ -36,10 +36,14 @@ public class CurrencyManager : MonoBehaviour
         }
         return false;
     }
+    public int GetCurrentCurrency()
+    {
+        return currency;
+    }
 
     void UpdateCurrencyUI()
     {
         if (currencyText != null)
-            currencyText.text = $"Currency: {currency}";
+            currencyText.text = $"C: {currency}";
     }
 }
