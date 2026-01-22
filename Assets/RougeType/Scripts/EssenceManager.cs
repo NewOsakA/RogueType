@@ -25,6 +25,7 @@ public class EssenceManager : MonoBehaviour
     private void Start()
     {
         UpdateEssenceText();
+        OnEssenceChanged?.Invoke(essence);
     }
 
     public void AddEssence(int amount)
@@ -45,6 +46,11 @@ public class EssenceManager : MonoBehaviour
         UpdateEssenceText();
         OnEssenceChanged?.Invoke(essence);
         return true;
+    }
+
+    public bool HasEnoughEssence(int amount)
+    {
+        return essence >= amount;
     }
 
     public int GetEssence()

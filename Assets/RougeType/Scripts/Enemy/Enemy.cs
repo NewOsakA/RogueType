@@ -223,12 +223,30 @@ public class Enemy : MonoBehaviour
         ResetColor();
         burnCoroutine = null;
     }
-
-
-
     private void ResetColor()
     {
         if (spriteRenderer != null)
             spriteRenderer.color = priorityTargets.Contains(this) ? Color.red : originalColor;
+    }
+
+    // Skill apply to enemy
+    public void PushBack(float distance)
+    {
+        transform.position += Vector3.right * distance;
+    }
+
+    public void ApplySlow(float slowPercent, float duration)
+    {
+        StartCoroutine(SlowRoutine(slowPercent, duration));
+    }
+
+    IEnumerator SlowRoutine(float slowPercent, float duration)
+    {
+        float originalSpeed = speed;
+        speed *= (1f - slowPercent);
+
+        yield return new WaitForSeconds(duration);
+
+        speed = originalSpeed;
     }
 }
