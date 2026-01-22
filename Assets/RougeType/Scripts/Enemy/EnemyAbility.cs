@@ -1,3 +1,4 @@
+// EnemyAbility.cs
 using UnityEngine;
 
 public abstract class EnemyAbility : MonoBehaviour
