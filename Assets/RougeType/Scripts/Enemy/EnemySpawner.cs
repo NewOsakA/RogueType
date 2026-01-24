@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 [System.Serializable]
 public class EnemySpawnEntry
@@ -118,12 +119,20 @@ public class EnemySpawner : MonoBehaviour
     void HandleEnemyDeath()
     {
         aliveEnemies--;
-        if (allSpawned && aliveEnemies <= 0)
+        StartCoroutine(CheckWaveEndNextFrame());
+    }
+
+    IEnumerator CheckWaveEndNextFrame()
+    {
+        yield return null; // wait 1 frame
+
+        if (waveActive && allSpawned && aliveEnemies <= 0)
         {
             waveActive = false;
             GameManager.Instance.EndWave();
         }
     }
+
 
     // Register enemies summoned by the boss
     public void RegisterExternalEnemy(Enemy enemy)
