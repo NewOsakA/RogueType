@@ -25870,7 +25870,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.data[5].unlockWave
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.data[0].spawnWeight
