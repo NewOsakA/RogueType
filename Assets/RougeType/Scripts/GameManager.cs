@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// GameManager.cs
+
+using UnityEngine;
 using TMPro;
 
 public enum GamePhase { BaseManagement, WaveDefense }

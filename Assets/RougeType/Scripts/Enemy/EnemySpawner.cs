@@ -13,11 +13,21 @@ public class EnemySpawnEntry
     public int spawnWeight = 1;
 }
 
+[System.Serializable]
+public class BossSpawnEntry
+{
+    public GameObject prefab;
+    public int unlockWave = 5;
+    public int spawnWeight = 1;
+}
+
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Enemy Types")]
     public List<EnemySpawnEntry> enemyTypes;
-    public GameObject bossPrefab;
+    // public GameObject bossPrefab;
+    [Header("Boss Types")]
+    public List<BossSpawnEntry> bossTypes;
     public int bossEveryXWaves = 5;
 
     [Header("Spawn Settings")]
@@ -77,9 +87,28 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
         GameObject newEnemy = null;
 
-        if (isBossWave && bossPrefab != null)
+        if (isBossWave)
         {
-            newEnemy = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+            var availableBosses = bossTypes
+                .Where(b => currentWave >= b.unlockWave)
+                .ToList();
+
+            if (availableBosses.Count == 0)
+                return;
+
+            int totalWeight = availableBosses.Sum(b => b.spawnWeight);
+            int random = Random.Range(0, totalWeight);
+            int runningWeight = 0;
+
+            foreach (var boss in availableBosses)
+            {
+                runningWeight += boss.spawnWeight;
+                if (random < runningWeight)
+                {
+                    newEnemy = Instantiate(boss.prefab, spawnPos, Quaternion.identity);
+                    break;
+                }
+            }
         }
         else
         {
