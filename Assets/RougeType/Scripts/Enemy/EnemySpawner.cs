@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Enemy Types")]
     public List<EnemySpawnEntry> enemyTypes;
-    // public GameObject bossPrefab;
+
     [Header("Boss Types")]
     public List<BossSpawnEntry> bossTypes;
     public int bossEveryXWaves = 5;
@@ -44,20 +44,20 @@ public class EnemySpawner : MonoBehaviour
     private float timer;
     private float nextSpawnInterval;
     private int enemiesToSpawn;
-    private int aliveEnemies;
     private bool waveActive = false;
     private bool isBossWave = false;
-    private bool allSpawned = false;
 
     public void BeginWave(int wave)
     {
         int waveIndex = Mathf.Max(0, wave - 1);
-        waveActive = true;
-        allSpawned = false;
 
+        waveActive = true;
         isBossWave = (wave % bossEveryXWaves == 0);
-        enemiesToSpawn = isBossWave ? 1 : baseEnemyCount + waveIndex * enemyCountIncrease;
-        aliveEnemies = 0;
+
+        enemiesToSpawn = isBossWave
+            ? 1
+            : baseEnemyCount + waveIndex * enemyCountIncrease;
+
         timer = 0f;
         nextSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
     }
@@ -67,24 +67,31 @@ public class EnemySpawner : MonoBehaviour
         if (!waveActive || GameManager.Instance.IsBasePhase())
             return;
 
+        if (enemiesToSpawn <= 0)
+        {
+            waveActive = false; // stop spawning
+            return;
+        }
+
         timer += Time.deltaTime;
-        if (timer >= nextSpawnInterval && enemiesToSpawn > 0)
+        if (timer >= nextSpawnInterval)
         {
             SpawnEnemy(GameManager.Instance.currentWave);
             enemiesToSpawn--;
+
             timer = 0f;
             nextSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
-
-            if (enemiesToSpawn <= 0)
-            {
-                allSpawned = true;
-            }
         }
     }
 
     void SpawnEnemy(int currentWave)
     {
-        Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
+        Vector3 spawnPos = new Vector3(
+            spawnX,
+            Random.Range(minY, maxY),
+            0f
+        );
+
         GameObject newEnemy = null;
 
         if (isBossWave)
@@ -93,17 +100,16 @@ public class EnemySpawner : MonoBehaviour
                 .Where(b => currentWave >= b.unlockWave)
                 .ToList();
 
-            if (availableBosses.Count == 0)
-                return;
+            if (availableBosses.Count == 0) return;
 
             int totalWeight = availableBosses.Sum(b => b.spawnWeight);
-            int random = Random.Range(0, totalWeight);
-            int runningWeight = 0;
+            int roll = Random.Range(0, totalWeight);
 
+            int acc = 0;
             foreach (var boss in availableBosses)
             {
-                runningWeight += boss.spawnWeight;
-                if (random < runningWeight)
+                acc += boss.spawnWeight;
+                if (roll < acc)
                 {
                     newEnemy = Instantiate(boss.prefab, spawnPos, Quaternion.identity);
                     break;
@@ -112,61 +118,25 @@ public class EnemySpawner : MonoBehaviour
         }
         else
         {
-            var availableEntries = enemyTypes
+            var availableEnemies = enemyTypes
                 .Where(e => currentWave >= e.unlockWave)
                 .ToList();
 
-            if (availableEntries.Count == 0) return;
+            if (availableEnemies.Count == 0) return;
 
-            int totalWeight = availableEntries.Sum(e => e.spawnWeight);
-            int random = Random.Range(0, totalWeight);
-            int runningWeight = 0;
+            int totalWeight = availableEnemies.Sum(e => e.spawnWeight);
+            int roll = Random.Range(0, totalWeight);
 
-            foreach (var entry in availableEntries)
+            int acc = 0;
+            foreach (var entry in availableEnemies)
             {
-                runningWeight += entry.spawnWeight;
-                if (random < runningWeight)
+                acc += entry.spawnWeight;
+                if (roll < acc)
                 {
                     newEnemy = Instantiate(entry.prefab, spawnPos, Quaternion.identity);
                     break;
                 }
             }
         }
-
-        if (newEnemy != null)
-        {
-            aliveEnemies++;
-
-            Enemy enemy = newEnemy.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.OnDeath += HandleEnemyDeath;
-            }
-        }
-    }
-
-    void HandleEnemyDeath()
-    {
-        aliveEnemies--;
-        StartCoroutine(CheckWaveEndNextFrame());
-    }
-
-    IEnumerator CheckWaveEndNextFrame()
-    {
-        yield return null; // wait 1 frame
-
-        if (waveActive && allSpawned && aliveEnemies <= 0)
-        {
-            waveActive = false;
-            GameManager.Instance.EndWave();
-        }
-    }
-
-
-    // Register enemies summoned by the boss
-    public void RegisterExternalEnemy(Enemy enemy)
-    {
-        aliveEnemies++;
-        enemy.OnDeath += HandleEnemyDeath;
     }
 }

@@ -55,6 +55,8 @@ public class Enemy : MonoBehaviour
         typingManager?.RegisterEnemy(this);
 
         specialAbility?.Initialize(this);
+
+        GameManager.Instance?.RegisterEnemy();
     }
 
     // Update
@@ -138,6 +140,7 @@ public class Enemy : MonoBehaviour
         }
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
+        GameManager.Instance?.UnregisterEnemy();
         Destroy(gameObject);
     }
 

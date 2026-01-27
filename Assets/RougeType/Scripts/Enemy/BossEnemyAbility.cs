@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// BossEnemyAbility.cs
+
+using UnityEngine;
 
 public class BossEnemyAbility : EnemyAbility
 {
@@ -30,8 +32,6 @@ public class BossEnemyAbility : EnemyAbility
         int remaining = maxTotalMinions - totalMinionsSummoned;
         int toSummon = Mathf.Min(burstCount, remaining);
 
-        EnemySpawner spawner = Object.FindAnyObjectByType<EnemySpawner>();
-
         for (int i = 0; i < toSummon; i++)
         {
             float offsetX = Random.Range(1f, 2.5f) * (i % 2 == 0 ? 1 : -1); // alternate left/right
@@ -45,9 +45,6 @@ public class BossEnemyAbility : EnemyAbility
             if (minion != null)
             {
                 minion.Initialize(10, 2, 1.5f);
-
-                if (spawner != null)
-                    spawner.RegisterExternalEnemy(minion);
             }
             else
             {

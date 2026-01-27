@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public GamePhase currentPhase = GamePhase.BaseManagement;
     public int currentWave = 0;
+    private int globalAliveEnemies = 0;
 
     [Header("UI Elements")]
     public GameObject nextWaveButton;
@@ -55,6 +56,11 @@ public class GameManager : MonoBehaviour
     {
         if (!IsBasePhase()) return;
 
+        foreach (var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
+        {
+            Destroy(enemy.gameObject);
+        }
+
         currentWave++;
         Debug.Log($"Starting Wave {currentWave}");
 
@@ -67,6 +73,8 @@ public class GameManager : MonoBehaviour
 
     void EnterWaveDefense()
     {
+        globalAliveEnemies = 0;
+
         currentPhase = GamePhase.WaveDefense;
 
         if (nextWaveButton != null) nextWaveButton.SetActive(false);
@@ -233,5 +241,21 @@ public class GameManager : MonoBehaviour
             Destroy(enemy.gameObject);
         }
     }
+
+    public void RegisterEnemy()
+    {
+        globalAliveEnemies++;
+    }
+
+    public void UnregisterEnemy()
+    {
+        globalAliveEnemies = Mathf.Max(0, globalAliveEnemies - 1);
+
+        if (IsWavePhase() && globalAliveEnemies == 0)
+        {
+            EndWave();
+        }
+    }
+
 
 }

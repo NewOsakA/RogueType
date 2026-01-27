@@ -42,13 +42,6 @@ public class SlimeSplitAbility : EnemyAbility
                     smallSlimeSpeed,
                     boss: false
                 );
-
-                // Register with spawner so wave completion works
-                EnemySpawner spawner = Object.FindFirstObjectByType<EnemySpawner>();
-                if (spawner != null)
-                {
-                    spawner.RegisterExternalEnemy(slimeEnemy);
-                }
             }
         }
     }
