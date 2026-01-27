@@ -16,7 +16,7 @@ public class ArrowProjectile : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(Vector3.left * speed * Time.deltaTime);
+        transform.position += -transform.right * speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
