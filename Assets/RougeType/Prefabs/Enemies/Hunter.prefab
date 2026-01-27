@@ -531,5 +531,5 @@ MonoBehaviour:
   spreadAngle: 10
   archerEnemyPrefab: {fileID: 1835511350366655920, guid: 0ea344cfaa46e488bb9a211abeed1e23, type: 3}
   summonCount: 3
-  summonCooldown: 8
+  summonCooldown: 10
   summonOffsetY: 1.5
