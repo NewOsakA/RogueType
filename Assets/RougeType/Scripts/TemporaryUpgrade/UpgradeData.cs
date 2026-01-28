@@ -41,7 +41,9 @@ public enum ExclusiveGroup
     None,
     Common,
     Rare,
-    Epic
+    Epic,
+    Ally_upg_1,
+    Ally_upg_2,
 }
 
 public enum UpgradeEffectType
