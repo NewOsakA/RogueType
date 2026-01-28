@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: Ally_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Ally 1
-  description: Recruit an ally to help you fight
-  cost: 1000
-  prerequisites: []
+  upgradeName: Ally 2
+  description: Recruit another ally to help you fight
+  cost: 2000
+  prerequisites:
+  - {fileID: 11400000, guid: fdbae3fc0549a403fb7738d775ece15b, type: 2}
   prerequisiteMode: 1
   effectType: 0
   intValue: 0

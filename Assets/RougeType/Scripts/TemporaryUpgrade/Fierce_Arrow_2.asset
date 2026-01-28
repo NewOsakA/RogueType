@@ -16,7 +16,7 @@ MonoBehaviour:
   description: Ally 2 increase damage by 50%
   cost: 500
   prerequisites:
-  - {fileID: 11400000, guid: ded755334d9684dd7b640666376b6c68, type: 2}
+  - {fileID: 11400000, guid: 1ca18f5ed0a024176901c47fa4e5163a, type: 2}
   prerequisiteMode: 1
   effectType: 0
   intValue: 0
