@@ -10,17 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Arcane_7
+  m_Name: Income_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Arcane 7
-  description: Increase damage by 1
-  cost: 100
+  upgradeName: Gold multiplier
+  description: Gold mutiplier +10%
+  cost: 250
   prerequisites:
-  - {fileID: 11400000, guid: aa7be79baef4f4a56b39453142f63908, type: 2}
+  - {fileID: 11400000, guid: 7a9f98a95971a4d2f83ff6390e605d4b, type: 2}
   prerequisiteMode: 1
-  effects:
-  - type: 0
-    intValue: 1
-    floatValue: 0
+  effectType: 11
+  intValue: 0
+  floatValue: 0.1
   exclusive: 0
   exclusiveGroup: 0

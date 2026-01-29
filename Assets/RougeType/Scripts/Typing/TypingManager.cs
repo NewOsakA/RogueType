@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// TypingManager.cs
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -144,14 +146,35 @@ public class TypingManager : MonoBehaviour
         if (projectilePrefab == null || shootPoint == null)
             return;
 
+        int count = playerStats != null
+            ? Mathf.Max(1, playerStats.projectileCount)
+            : 1;
+
+        Debug.Log("Projectile Count: " + count);
+
+        float damageMultiplier = playerStats != null
+            ? playerStats.multiShotDamageMultiplier
+            : 1f;    
+
         if (playerStats != null && playerStats.hasTypingFrenzy)
         {
             StartCoroutine(FireBurst());
         }
         else
         {
-            FireSingleProjectile(1f);
+            Debug.Log("Firing " + count + " projectiles.");
+            StartCoroutine(FireMultipleProjectiles(count, damageMultiplier));
         }
+    }
+
+    IEnumerator FireMultipleProjectiles(int count, float damageMultiplier)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            FireSingleProjectile(damageMultiplier);
+            yield return new WaitForSeconds(0.04f);
+        }
+       
     }
 
     void FireSingleProjectile(float damageMultiplier)
@@ -179,6 +202,8 @@ public class TypingManager : MonoBehaviour
 
         // typing frenzy multiplier
         finalDmg *= damageMultiplier;
+
+        Debug.Log("Damage: " + finalDmg);
 
         p.damage = Mathf.RoundToInt(finalDmg);
 

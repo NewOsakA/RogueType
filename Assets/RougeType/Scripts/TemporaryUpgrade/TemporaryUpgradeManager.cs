@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// TemporaryUpgradeManager.cs
+
+using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 
@@ -27,6 +29,11 @@ public class TemporaryUpgradeManager : MonoBehaviour
     public PlayerStats playerStats;
     public Wall wall;
 
+
+    [Header("Currency")]
+    public CurrencyManager currencyManager;
+    public TMP_Text currencyText;
+
     // Runtime State
     private HashSet<UpgradeData> unlockedUpgrades = new HashSet<UpgradeData>();
     private HashSet<ExclusiveGroup> takenExclusiveGroups = new HashSet<ExclusiveGroup>();
@@ -40,6 +47,17 @@ public class TemporaryUpgradeManager : MonoBehaviour
             FindObjectsInactive.Include,
             FindObjectsSortMode.None
         );
+
+        CurrencyShow();
+    }
+
+    public void CurrencyShow()
+    {
+        if (currencyManager != null && currencyText != null)
+        {
+            int currentCurrency = currencyManager.GetCurrentCurrency();
+            currencyText.text = $"C: {currentCurrency}";
+        }
     }
 
     // UI
@@ -153,7 +171,7 @@ public class TemporaryUpgradeManager : MonoBehaviour
             return;
         }
 
-        ApplyEffect(data);
+        ApplyUpgrade(data);
 
         // Save State
         unlockedUpgrades.Add(data);
@@ -177,34 +195,44 @@ public class TemporaryUpgradeManager : MonoBehaviour
             if (node != null)
                 node.Refresh();
         }
+
+        CurrencyShow();
+    }
+
+    public void ApplyUpgrade(UpgradeData data)
+    {
+        foreach (var effect in data.effects)
+        {
+            ApplyEffect(effect);
+        }
     }
 
     // Apply Upgrade Effect
-    private void ApplyEffect(UpgradeData data)
+    private void ApplyEffect(UpgradeEffect effect)
     {
-        switch (data.effectType)
+        switch (effect.type)
         {
             case UpgradeEffectType.IncreaseDamage:
-                playerStats.IncreaseDamage(data.intValue);
+                playerStats.IncreaseDamage(effect.intValue);
                 break;
 
             case UpgradeEffectType.Burn:
                 playerStats.hasBurn = true;
-                playerStats.burnDamagePerSecond += data.intValue;
+                playerStats.burnDamagePerSecond += effect.intValue;
                 break;
 
             case UpgradeEffectType.Execution:
                 playerStats.hasExecution = true;
                 playerStats.executionThreshold =
-                    Mathf.Clamp01(playerStats.executionThreshold + data.floatValue);
+                    Mathf.Clamp01(playerStats.executionThreshold + effect.floatValue);
                 break;
 
             case UpgradeEffectType.IncreaseWallHP:
-                wall.IncreaseMaxHP(data.intValue);
+                wall.IncreaseMaxHP(effect.intValue);
                 break;
 
             case UpgradeEffectType.Shield:
-                playerStats.shieldHitsPerWave = data.intValue;
+                playerStats.shieldHitsPerWave = effect.intValue;
                 break;
 
             case UpgradeEffectType.AutoRepair:
@@ -213,38 +241,38 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
             case UpgradeEffectType.Fortress:
                 playerStats.fortressDamageReduction =
-                    Mathf.Clamp01(playerStats.fortressDamageReduction + data.floatValue);
+                    Mathf.Clamp01(playerStats.fortressDamageReduction + effect.floatValue);
                 break;
 
             case UpgradeEffectType.ComboDamage:
-                playerStats.maxComboBonus += data.intValue;
+                playerStats.maxComboBonus += effect.intValue;
                 break;
 
             case UpgradeEffectType.Combo:
                 playerStats.comboUpgradeActive = true;
-                playerStats.perfectStreakGoal = Mathf.Max(1, data.intValue);
+                playerStats.perfectStreakGoal = Mathf.Max(1, effect.intValue);
                 break;
 
             case UpgradeEffectType.CritChance:
-                playerStats.critChance += data.floatValue;
+                playerStats.critChance += effect.floatValue;
                 break;
 
             case UpgradeEffectType.CritBoost:
-                playerStats.critMultiplier = data.floatValue;
+                playerStats.critMultiplier = effect.floatValue;
                 break;
 
             case UpgradeEffectType.GoldMultiplier:
-                playerStats.goldMultiplier += data.floatValue;
+                playerStats.goldMultiplier += effect.floatValue;
                 break;
 
             case UpgradeEffectType.Interest:
                 playerStats.interestRate =
-                    Mathf.Clamp01(playerStats.interestRate + data.floatValue);
+                    Mathf.Clamp01(playerStats.interestRate + effect.floatValue);
                 break;
 
             case UpgradeEffectType.DiscountShop:
                 playerStats.shopDiscount =
-                    Mathf.Clamp01(playerStats.shopDiscount + data.floatValue);
+                    Mathf.Clamp01(playerStats.shopDiscount + effect.floatValue);
                 break;
 
             case UpgradeEffectType.ChainShot:
@@ -276,6 +304,21 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
                 playerStats.IncreaseDamage(0);
                 break;
+
+            case UpgradeEffectType.AOEBoost:
+                playerStats.explosionRadiusMultiplier += effect.floatValue;
+                break;
+
+            case UpgradeEffectType.MultiShot:
+                playerStats.projectileCount = Mathf.Max(
+                    playerStats.projectileCount,
+                    effect.intValue
+                );
+                break;
+
+            case UpgradeEffectType.MultiShotPenalty:
+                playerStats.multiShotDamageMultiplier *= effect.floatValue;
+                break;    
         }
     }
 }

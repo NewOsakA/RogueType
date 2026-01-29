@@ -16,7 +16,8 @@ MonoBehaviour:
   description: Gain bonus gold equal to 5% of your current gold at the end of each
     wave.
   cost: 1000
-  prerequisites: []
+  prerequisites:
+  - {fileID: 11400000, guid: 249b615a28d8143e3a67158b65da8b51, type: 2}
   prerequisiteMode: 1
   effectType: 12
   intValue: 0

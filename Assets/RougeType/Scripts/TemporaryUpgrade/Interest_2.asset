@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Arcane_7
+  m_Name: Interest_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Arcane 7
-  description: Increase damage by 1
-  cost: 100
+  upgradeName: Interest
+  description: Gain bonus gold equal to 5% of your current gold at the end of each
+    wave.
+  cost: 2000
   prerequisites:
-  - {fileID: 11400000, guid: aa7be79baef4f4a56b39453142f63908, type: 2}
+  - {fileID: 11400000, guid: 7802b5e7ace064161ae2c3f78626cd14, type: 2}
   prerequisiteMode: 1
-  effects:
-  - type: 0
-    intValue: 1
-    floatValue: 0
+  effectType: 12
+  intValue: 0
+  floatValue: 0.05
   exclusive: 0
   exclusiveGroup: 0

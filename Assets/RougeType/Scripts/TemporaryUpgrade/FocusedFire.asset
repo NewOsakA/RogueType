@@ -17,8 +17,9 @@ MonoBehaviour:
   cost: 3000
   prerequisites: []
   prerequisiteMode: 1
-  effectType: 18
-  intValue: 0
-  floatValue: 0
+  effects:
+  - type: 18
+    intValue: 0
+    floatValue: 0
   exclusive: 1
   exclusiveGroup: 1

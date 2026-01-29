@@ -10,17 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Arcane_7
+  m_Name: WallHp_6
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Arcane 7
-  description: Increase damage by 1
+  upgradeName: Wall Hp
+  description: Increase wall hp by 10
   cost: 100
   prerequisites:
-  - {fileID: 11400000, guid: aa7be79baef4f4a56b39453142f63908, type: 2}
-  prerequisiteMode: 1
-  effects:
-  - type: 0
-    intValue: 1
-    floatValue: 0
+  - {fileID: 11400000, guid: dfde730c014fc46c39aaeb034ae2fdb0, type: 2}
+  prerequisiteMode: 0
+  effectType: 3
+  intValue: 10
+  floatValue: 0
   exclusive: 0
   exclusiveGroup: 0

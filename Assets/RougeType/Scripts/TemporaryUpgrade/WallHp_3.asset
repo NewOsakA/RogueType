@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: WallHp_3
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: Wall Hp
-  description: Increase wall hp by 50
-  cost: 300
+  description: Increase wall hp by 10
+  cost: 100
   prerequisites:
   - {fileID: 11400000, guid: 87860fa2189674984ad044c2d89e3c99, type: 2}
   prerequisiteMode: 0
   effectType: 3
-  intValue: 50
+  intValue: 10
   floatValue: 0
   exclusive: 0
   exclusiveGroup: 0
