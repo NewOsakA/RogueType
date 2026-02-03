@@ -1,7 +1,6 @@
-﻿// GameManager.cs
-
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 public enum GamePhase { BaseManagement, WaveDefense }
 
@@ -30,6 +29,11 @@ public class GameManager : MonoBehaviour
     [Header("AI (Local Model)")]
     public LocalDifficultyPredictor difficultyPredictor;
 
+    [Header("Word Adaptation")]
+    private float prevAcc = 1f;
+    private int prevMistakes = 0;
+    private Dictionary<FingerZone, int> prevZoneMistakes = null;
+
     void Awake()
     {
         if (Instance == null)
@@ -47,6 +51,10 @@ public class GameManager : MonoBehaviour
         wall?.ApplyMetaUpgrades();
 
         playerStats?.ApplyMetaUpgrades();
+
+        prevZoneMistakes = new Dictionary<FingerZone, int>();
+        foreach (FingerZone z in System.Enum.GetValues(typeof(FingerZone)))
+            prevZoneMistakes[z] = 0;
 
         UpdateWaveText();
         EnterBaseManagement();
@@ -156,6 +164,30 @@ public class GameManager : MonoBehaviour
                     AdjustDifficulty(1);
                 }
             }
+        }
+
+        // word adaptation update
+        if (typingManager != null && BanditWordTrainer.Instance != null)
+        {
+            float accNow = typingManager.GetAccuracy();
+            int mistakesNow = typingManager.GetMistakeCount();
+            var zoneNow = typingManager.GetZoneMistakesSnapshot();
+
+            bool stress = BanditWordTrainer.IsStressHigh(prevAcc, accNow, prevMistakes, mistakesNow);
+
+            BanditWordTrainer.Instance.OnWaveEnded(
+                currentWave,
+                prevAcc,
+                accNow,
+                zoneNow,
+                prevZoneMistakes,
+                stress
+            );
+
+            // update prev for next wave
+            prevAcc = accNow;
+            prevMistakes = mistakesNow;
+            prevZoneMistakes = new Dictionary<FingerZone, int>(zoneNow);
         }
 
         EnterBaseManagement();
