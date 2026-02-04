@@ -19,30 +19,36 @@ public class BanditWordTrainer : MonoBehaviour
     public static BanditWordTrainer Instance;
 
     [Header("Learning Settings")]
-    // Amount of leaning
     [Range(0f, 0.5f)] public float epsilon = 0.2f;
     public int applyFromWave = 5;
     public bool silentLearningBeforeApply = true;
+
+    // prevent bias by increase random rate and force to change policy for early wave
+    [Header("Early Exploration")]
+    [Tooltip("Increase exploration for the first few waves after start/apply From Wave.")]
+    [Range(0f, 0.9f)] public float earlyEpsilon = 0.45f;
+    [Tooltip("How many waves to use earlyEpsilon.")]
+    public int earlyEpsilonWaves = 4;
+
+    [Header("Try Each Policy Once")]
+    [Tooltip("Force trying each policy at least once before exploitation.")]
+    public bool forceTryAllPoliciesOnce = true;
 
     [Header("Word Length Mix (avoid length bias)")]
     public float shortRatio = 0.50f;
     public float mediumRatio = 0.30f;
     public float longRatio = 0.20f;
 
-    // bandit score simple average reward
     private readonly Dictionary<TrainingPattern, float> avgReward = new();
     private readonly Dictionary<TrainingPattern, int> trials = new();
 
-    // state for previous decision
     private TrainingPattern lastChosenPattern = TrainingPattern.Balanced;
     private FingerZone lastWeakestZone;
     private FingerZone lastSecondZone;
     private bool hasLastDecision = false;
 
-    // Check that last wave is stress or not 'prev wave will not use to train'
     private bool lastDecisionForcedByStress = false;
 
-    // current policy used for next wave word generation
     private TrainingPattern currentPattern = TrainingPattern.Balanced;
     private FingerZone currentWeakestZone;
     private FingerZone currentSecondZone;
@@ -68,34 +74,32 @@ public class BanditWordTrainer : MonoBehaviour
         bool stressHigh
     )
     {
-        // Update reward for the pattern that was chosen For This wave
+        // 1) Update reward for the pattern used in THIS wave
         if (hasLastDecision)
         {
-            if (silentLearningBeforeApply || waveNumber >= applyFromWave)
-            {
-                if (!lastDecisionForcedByStress)
-                {
-                    float reward = ComputeReward(
-                        lastChosenPattern,
-                        accuracyPrevWave, accuracyThisWave,
-                        mistakesPrevWave, mistakesThisWave,
-                        lastWeakestZone
-                    );
+            bool canLearn = silentLearningBeforeApply || waveNumber >= applyFromWave;
 
-                    UpdateBandit(lastChosenPattern, reward);
-                }
+            if (canLearn && !lastDecisionForcedByStress)
+            {
+                float reward = ComputeReward(
+                    lastChosenPattern,
+                    accuracyPrevWave, accuracyThisWave,
+                    mistakesPrevWave, mistakesThisWave,
+                    lastWeakestZone
+                );
+
+                UpdateBandit(lastChosenPattern, reward);
+
+                DebugPrintPolicyScores($"after Wave {waveNumber}");
             }
         }
 
-        // Choose pattern for Next wave based on current wave mistakes
+        // 2) Choose pattern for NEXT wave
         ChoosePolicyForNextWave(waveNumber, mistakesThisWave, stressHigh);
     }
 
-    public bool ShouldApplyPolicy(int waveNumber)
-        => waveNumber >= applyFromWave;
-
-    public bool IsWarmupPhase(int wave)
-        => wave < applyFromWave;
+    public bool ShouldApplyPolicy(int waveNumber) => waveNumber >= applyFromWave;
+    public bool IsWarmupPhase(int wave) => wave < applyFromWave;
 
     public (TrainingPattern pattern, FingerZone weakest, FingerZone second, float[] zoneWeights, (float s, float m, float l) lenMix)
         GetCurrentPolicy()
@@ -117,14 +121,29 @@ public class BanditWordTrainer : MonoBehaviour
 
         TrainingPattern chosen;
 
+        // If stress: force a safer policy (you can switch to AntiStreak if you want)
         if (stressHigh)
         {
             chosen = TrainingPattern.FocusWeakest25;
         }
         else
         {
-            bool explore = UnityEngine.Random.value < epsilon;
+            // A) Force try each policy at least once (prevents early lock)
+            if (forceTryAllPoliciesOnce)
+            {
+                var untried = trials.Where(kv => kv.Value == 0).Select(kv => kv.Key).ToList();
+                if (untried.Count > 0)
+                {
+                    chosen = untried[UnityEngine.Random.Range(0, untried.Count)];
+                    ApplyNextPolicy(chosen, z1, z2, stressHigh);
+                    return;
+                }
+            }
 
+            // B) Early exploration boost for first few waves
+            float eps = GetEpsilonForWave(waveNumber);
+
+            bool explore = UnityEngine.Random.value < eps;
             if (explore)
             {
                 chosen = RandomPattern();
@@ -135,22 +154,38 @@ public class BanditWordTrainer : MonoBehaviour
             }
         }
 
-        // Set policy for next wave
+        ApplyNextPolicy(chosen, z1, z2, stressHigh);
+    }
+
+    float GetEpsilonForWave(int waveNumber)
+    {
+        // Make exploration higher in early game to collect data widely
+        if (waveNumber <= earlyEpsilonWaves) return Mathf.Max(epsilon, earlyEpsilon);
+        return epsilon;
+    }
+
+    void ApplyNextPolicy(TrainingPattern chosen, FingerZone z1, FingerZone z2, bool forcedByStress)
+    {
         currentPattern = chosen;
         currentWeakestZone = z1;
         currentSecondZone = z2;
 
-        // Save last decision for next reward update
         lastChosenPattern = chosen;
         lastWeakestZone = z1;
         lastSecondZone = z2;
 
-        // if override cause by 'stress' will not use to train
-        lastDecisionForcedByStress = stressHigh;
+        lastDecisionForcedByStress = forcedByStress;
         hasLastDecision = true;
 
         var best = avgReward.OrderByDescending(kv => kv.Value).First();
-        Debug.Log($"[Bandit] NextWavePolicy | Pattern:{chosen} | Z1:{z1} Z2:{z2} | BestAvg:{best.Key}:{best.Value:F2} | Forced:{stressHigh}");
+        Debug.Log(
+            $"[Bandit] NextWavePolicy\n" +
+            $" - chosen : {chosen}\n" +
+            $" - zones  : Z1={z1}, Z2={z2}\n" +
+            $" - eps    : {GetEpsilonForWave(GameManager.Instance.currentWave):F2}\n" +
+            $" - forced : {forcedByStress}\n" +
+            $" - bestSoFar : {best.Key} ({best.Value:F2})"
+        );
     }
 
     TrainingPattern RandomPattern()
@@ -177,8 +212,7 @@ public class BanditWordTrainer : MonoBehaviour
     {
         float r = 0f;
 
-        // 1) accuracy delta for rewarding
-        // accuracy improves = 'reward' if not 'penalty'
+        // 1) Reward based on accuracy change between waves
         float accDelta = accNow - accPrev;
         if (accDelta > 0.01f) r += 1f;
         else if (accDelta < -0.03f) r -= 1f;
@@ -186,8 +220,6 @@ public class BanditWordTrainer : MonoBehaviour
         // 2) Reward based on typing mistakes
         if (pattern == TrainingPattern.AntiStreak || pattern == TrainingPattern.Balanced)
         {
-            // For Anti-Streak / Balanced:
-            // Evaluate overall typing stability using total mistakes
             int prevTotal = mPrev.Values.Sum();
             int nowTotal = mNow.Values.Sum();
 
@@ -196,8 +228,6 @@ public class BanditWordTrainer : MonoBehaviour
         }
         else
         {
-            // For focus-based policies:
-            // Evaluate improvement only on the targeted finger zone
             int prevMist = mPrev.TryGetValue(focusedZone, out var pm) ? pm : 0;
             int nowMist = mNow.TryGetValue(focusedZone, out var nm) ? nm : 0;
 
@@ -243,6 +273,7 @@ public class BanditWordTrainer : MonoBehaviour
                 break;
 
             case TrainingPattern.AntiStreak:
+                // keep most zones active, but slightly bias away from the weakest-only tunnel.
                 SetAll(0f);
                 w[i1] = 0.05f;
                 w[i2] = 0.10f;
@@ -256,7 +287,6 @@ public class BanditWordTrainer : MonoBehaviour
                 break;
         }
 
-        // normalize
         float sum = w.Sum();
         if (sum <= 0f) return Enumerable.Repeat(1f / 8f, 8).ToArray();
         for (int i = 0; i < w.Length; i++) w[i] /= sum;
@@ -264,11 +294,30 @@ public class BanditWordTrainer : MonoBehaviour
         return w;
     }
 
-    // use in GameManager to simple detect current stress
     public static bool IsStressHigh(float accPrev, float accNow, int mistakesPrev, int mistakesNow)
     {
         if (accNow < accPrev - 0.08f) return true;
         if (mistakesNow > mistakesPrev + 8) return true;
         return false;
     }
+
+    // for debuging
+    void DebugPrintPolicyScores(string header = "")
+    {
+        string msg = "[Bandit Scores]";
+        if (!string.IsNullOrEmpty(header))
+            msg += $" {header}";
+
+        foreach (var p in Enum.GetValues(typeof(TrainingPattern)))
+        {
+            var pattern = (TrainingPattern)p;
+            float avg = avgReward[pattern];
+            int n = trials[pattern];
+
+            msg += $"\n - {pattern,-15} | avg:{avg,5:F2} | trials:{n}";
+        }
+
+        Debug.Log(msg);
+    }
+
 }

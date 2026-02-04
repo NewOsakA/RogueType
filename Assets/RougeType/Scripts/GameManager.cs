@@ -173,7 +173,14 @@ public class GameManager : MonoBehaviour
             int mistakesNow = typingManager.GetMistakeCount();
             var zoneNow = typingManager.GetZoneMistakesSnapshot();
 
-            bool stress = BanditWordTrainer.IsStressHigh(prevAcc, accNow, prevMistakes, mistakesNow);
+            bool stress = false;
+            // Not detect stress in warm-up waves
+            if (currentWave >= BanditWordTrainer.Instance.applyFromWave)
+            {
+                stress = BanditWordTrainer.IsStressHigh(
+                    prevAcc, accNow, prevMistakes, mistakesNow
+                );
+            }
 
             BanditWordTrainer.Instance.OnWaveEnded(
                 currentWave,

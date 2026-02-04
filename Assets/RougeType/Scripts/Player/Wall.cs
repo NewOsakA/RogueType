@@ -35,7 +35,7 @@ public void TakeDamage(int amount)
     if (playerStats != null && shieldHitsRemaining > 0)
     {
         shieldHitsRemaining--;
-        Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
+        // Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
         return;
     }
 
@@ -53,7 +53,7 @@ public void TakeDamage(int amount)
     currentHP = Mathf.Max(currentHP, 0);
     UpdateHPDisplay();
 
-    Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
+    // Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
 
     if (currentHP <= 0)
     {
@@ -79,7 +79,7 @@ public void TakeDamage(int amount)
 
         if (shieldHitsRemaining > 0)
         {
-            Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
+            // Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
         }
     }
 
@@ -131,7 +131,7 @@ public void TakeDamage(int amount)
         currentHP = Mathf.Min(maxHP, currentHP + amount);
         UpdateHPDisplay();
 
-        Debug.Log($"Wall healed + {amount} Now {currentHP}");
+        // Debug.Log($"Wall healed + {amount} Now {currentHP}");
     }
 
     public void ActivateDamageReduction(float percent, float duration)

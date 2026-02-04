@@ -27876,6 +27876,9 @@ MonoBehaviour:
   epsilon: 0.2
   applyFromWave: 5
   silentLearningBeforeApply: 1
+  earlyEpsilon: 0.45
+  earlyEpsilonWaves: 4
+  forceTryAllPoliciesOnce: 1
   shortRatio: 0.5
   mediumRatio: 0.3
   longRatio: 0.2
@@ -38579,11 +38582,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.data[0].spawnWeight
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.data[1].spawnWeight
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.data[2].spawnWeight
