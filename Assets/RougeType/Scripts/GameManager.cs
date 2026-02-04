@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public LocalDifficultyPredictor difficultyPredictor;
 
     [Header("Word Adaptation")]
+    private float prevWPM = 0f;
     private float prevAcc = 1f;
     private int prevMistakes = 0;
     private Dictionary<FingerZone, int> prevZoneMistakes = null;
@@ -170,6 +171,7 @@ public class GameManager : MonoBehaviour
         if (typingManager != null && BanditWordTrainer.Instance != null)
         {
             float accNow = typingManager.GetAccuracy();
+            float wpmNow = typingManager.GetWPM();
             int mistakesNow = typingManager.GetMistakeCount();
             var zoneNow = typingManager.GetZoneMistakesSnapshot();
 
@@ -178,7 +180,9 @@ public class GameManager : MonoBehaviour
             if (currentWave >= BanditWordTrainer.Instance.applyFromWave)
             {
                 stress = BanditWordTrainer.IsStressHigh(
-                    prevAcc, accNow, prevMistakes, mistakesNow
+                    prevAcc, accNow,
+                    prevMistakes, mistakesNow,
+                    prevWPM, wpmNow
                 );
             }
 
@@ -193,6 +197,7 @@ public class GameManager : MonoBehaviour
 
             // update prev for next wave
             prevAcc = accNow;
+            prevWPM = wpmNow;
             prevMistakes = mistakesNow;
             prevZoneMistakes = new Dictionary<FingerZone, int>(zoneNow);
         }
