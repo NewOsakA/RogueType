@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     public CameraController cam;
     public PlayerStats playerStats;
-    public PenaltyManager penaltyManager;
     public TypingManager typingManager;
 
     [Header("AI (Local Model)")]
@@ -72,9 +71,6 @@ public class GameManager : MonoBehaviour
 
         currentWave++;
         Debug.Log($"Starting Wave {currentWave}");
-
-        if (penaltyManager != null)
-            penaltyManager.SetWave(currentWave);
 
         UpdateWaveText();
         EnterWaveDefense();
@@ -201,6 +197,13 @@ public class GameManager : MonoBehaviour
             prevMistakes = mistakesNow;
             prevZoneMistakes = new Dictionary<FingerZone, int>(zoneNow);
         }
+
+        Debug.Log(
+            $"[DEBUG]" +
+            $"Mistake:{typingManager.GetMistakeCount()} " +
+            $"Acc:{typingManager.GetAccuracy():F2} " +
+            $"Typed:{typingManager.GetComboLength()}"
+        );
 
         EnterBaseManagement();
     }

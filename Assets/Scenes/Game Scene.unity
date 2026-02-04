@@ -1049,7 +1049,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 585367524}
   - {fileID: 610192776}
   - {fileID: 437701809}
   - {fileID: 1621586206}
@@ -1077,7 +1076,6 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1186785711370128877, guid: 53128b8e8a2952c4292fe07742cae2de, type: 3}
   shootPoint: {fileID: 938322507}
   playerStats: {fileID: 938322508}
-  penaltyManager: {fileID: 585367523}
   warmupEasyWeight: 0.5
   warmupMediumWeight: 0.3
   warmupHardWeight: 0.2
@@ -6531,7 +6529,6 @@ RectTransform:
   - {fileID: 1755099203}
   - {fileID: 944083454}
   - {fileID: 784001805}
-  - {fileID: 1869778626}
   - {fileID: 641554579}
   - {fileID: 1821529216}
   m_Father: {fileID: 2010368613}
@@ -8852,58 +8849,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8101846111869123050, guid: 948b4a5d03addee4cbc18eb006e4bc86, type: 3}
   m_PrefabInstance: {fileID: 4651163883794094688}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &585367522
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 585367524}
-  - component: {fileID: 585367523}
-  m_Layer: 0
-  m_Name: PenaltyManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &585367523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585367522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd39f096f8971584289569eab99f240f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waveThresholdDamagePenalty: 0
-  waveThresholdStunPenalty: 0
-  damageReductionPercent: 0.25
-  stunDurationSeconds: 2
-  durationReducedDamage: 5
-  durationStun: 2
-  penaltyStatusText: {fileID: 1869778627}
-  correctWordsToClearPenalty: 2
---- !u!4 &585367524
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585367522}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.417204, y: -6.6801224, z: -0.44945717}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 47587746}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &589175179
 GameObject:
   m_ObjectHideFlags: 0
@@ -11929,7 +11874,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -615.26, y: 290.7635}
+  m_AnchoredPosition: {x: -622, y: 374.84}
   m_SizeDelta: {x: 641.48, y: 84.08}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &784001806
@@ -18602,7 +18547,7 @@ PrefabInstance:
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: penaltyManager
       value: 
-      objectReference: {fileID: 585367523}
+      objectReference: {fileID: 0}
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: difficultyPredictor
       value: 
@@ -27882,6 +27827,12 @@ MonoBehaviour:
   shortRatio: 0.5
   mediumRatio: 0.3
   longRatio: 0.2
+  useUCBExploit: 1
+  baseC: 0.3
+  autoC: 1
+  autoCMin: 0.15
+  autoCMax: 1.5
+  rewardStatAlpha: 0.15
 --- !u!1 &1626317390
 GameObject:
   m_ObjectHideFlags: 0
@@ -32550,143 +32501,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1868801967}
-  m_CullTransparentMesh: 1
---- !u!1 &1869778625
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1869778626}
-  - component: {fileID: 1869778628}
-  - component: {fileID: 1869778627}
-  m_Layer: 5
-  m_Name: PenaltyText (TMP)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1869778626
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869778625}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 385661519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -615.2596, y: 372.72}
-  m_SizeDelta: {x: 641.4813, y: 79.827}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1869778627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869778625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: 'Penalty:'
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1869778628
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869778625}
   m_CullTransparentMesh: 1
 --- !u!1 &1871096506
 GameObject:

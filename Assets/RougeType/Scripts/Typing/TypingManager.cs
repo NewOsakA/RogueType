@@ -29,9 +29,6 @@ public class TypingManager : MonoBehaviour
     [Header("Player Reference")]
     public PlayerStats playerStats;
 
-    [Header("Penalty")]
-    public PenaltyManager penaltyManager;
-
     [Header("Warm-up Word Mix")]
     [Range(0f, 1f)] public float warmupEasyWeight = 0.5f;
     [Range(0f, 1f)] public float warmupMediumWeight = 0.3f;
@@ -46,6 +43,7 @@ public class TypingManager : MonoBehaviour
 
     // Gameplay stats
     private int wordCount = 0;
+    private int mistakeCount = 0;
 
     // Typing stats (for WPM)
     private int totalTypedCharacters = 0;
@@ -55,7 +53,6 @@ public class TypingManager : MonoBehaviour
     private Dictionary<FingerZone, int> zoneMistakes = new Dictionary<FingerZone, int>();
     private bool isShaking = false;
     private bool isGameOver = false;
-    private bool isStunned = false;
 
     private int lastComboBonus = 0;
 
@@ -86,7 +83,7 @@ public class TypingManager : MonoBehaviour
         elapsedTime += Time.deltaTime;
         UpdateTimerText();
 
-        if (Input.anyKeyDown && !isShaking && !isStunned)
+        if (Input.anyKeyDown && !isShaking)
         {
             string input = Input.inputString;
             if (string.IsNullOrEmpty(input))
@@ -129,6 +126,7 @@ public class TypingManager : MonoBehaviour
         }
         else
         {
+            mistakeCount++;
             // Track finger-zone mistake
             if (FingerZoneMap.TryGetZone(typedChar, out var zone))
             {
@@ -140,11 +138,7 @@ public class TypingManager : MonoBehaviour
 
             playerStats?.OnCorrectType(false);
             playerStats?.ResetFocusedFire();
-            penaltyManager?.RegisterMistake();
             UpdateComboUI();
-
-            if (penaltyManager != null && penaltyManager.ShouldStun())
-                StartCoroutine(StunInput(penaltyManager.stunDurationSeconds));
         }
     }
 
@@ -200,12 +194,6 @@ public class TypingManager : MonoBehaviour
         if (playerStats != null && target != null)
         {
             finalDmg *= playerStats.GetFocusedFireMultiplier(target);
-        }
-
-        // penalty
-        if (penaltyManager != null)
-        {
-            finalDmg *= penaltyManager.GetDamageMultiplier();
         }
 
         // typing frenzy multiplier
@@ -269,7 +257,6 @@ public class TypingManager : MonoBehaviour
         LastWordPerfect = true;
 
         playerStats?.OnCorrectType(true);
-        penaltyManager?.RegisterCorrectWord();
         UpdateComboUI();
         UpdateWordDisplay();
     }
@@ -309,10 +296,10 @@ public class TypingManager : MonoBehaviour
 
     public void ResetWordsForNewWave()
     {
+        ResetTypingStats();
         ResetZoneMistakes();
         currentLetterIndex = 0;
         LastWordPerfect = false;
-        isStunned = false;
 
         InitializeWordStream();
     }
@@ -423,13 +410,6 @@ public class TypingManager : MonoBehaviour
         isShaking = false;
     }
 
-    IEnumerator StunInput(float duration)
-    {
-        isStunned = true;
-        yield return new WaitForSeconds(duration);
-        isStunned = false;
-    }
-
     // Enemy Tracking
     public void RegisterEnemy(Enemy e)
     {
@@ -456,6 +436,7 @@ public class TypingManager : MonoBehaviour
         elapsedTime = 0f;
         totalTypedCharacters = 0;
         wordCount = 0;
+        mistakeCount = 0;
     }
 
     public float GetWPM()
@@ -468,7 +449,7 @@ public class TypingManager : MonoBehaviour
 
     public int GetMistakeCount()
     {
-        return penaltyManager != null ? penaltyManager.GetMistakeCount() : 0;
+        return mistakeCount;
     }
 
     public float GetAccuracy()
