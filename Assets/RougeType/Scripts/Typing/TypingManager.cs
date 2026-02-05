@@ -49,6 +49,12 @@ public class TypingManager : MonoBehaviour
     private int totalTypedCharacters = 0;
     private float startTime;
     private float elapsedTime = 0f;
+
+    // Reaction time
+    private float lastKeyTime = 0f;
+    private float reactionTimeSum = 0f;
+    private int reactionSampleCount = 0;
+
     // Finger-zone mistake tracking
     private Dictionary<FingerZone, int> zoneMistakes = new Dictionary<FingerZone, int>();
     private bool isShaking = false;
@@ -113,6 +119,14 @@ public class TypingManager : MonoBehaviour
 
         if (typedChar == char.ToLower(expectedChar))
         {
+            float now = Time.time;
+            if (lastKeyTime > 0f)
+            {
+                reactionTimeSum += (now - lastKeyTime);
+                reactionSampleCount++;
+            }
+            lastKeyTime = now;
+
             currentLetterIndex++;
             totalTypedCharacters++;
 
@@ -437,7 +451,12 @@ public class TypingManager : MonoBehaviour
         totalTypedCharacters = 0;
         wordCount = 0;
         mistakeCount = 0;
+
+        lastKeyTime = 0f;
+        reactionTimeSum = 0f;
+        reactionSampleCount = 0;
     }
+
 
     public float GetWPM()
     {
@@ -513,5 +532,12 @@ public class TypingManager : MonoBehaviour
                 return (FingerZone)i;
         }
         return FingerZone.LeftIndex; // fallback
+    }
+
+    public float GetReactionTimeAvg()
+    {
+        return reactionSampleCount > 0
+            ? reactionTimeSum / reactionSampleCount
+            : 0f;
     }
 }

@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public GamePhase currentPhase = GamePhase.BaseManagement;
     public int currentWave = 0;
     private int globalAliveEnemies = 0;
+    private int totalEnemySpawned = 0;
+    private float totalEnemyLifetime = 0f;
 
     [Header("UI Elements")]
     public GameObject nextWaveButton;
@@ -79,6 +81,8 @@ public class GameManager : MonoBehaviour
     void EnterWaveDefense()
     {
         globalAliveEnemies = 0;
+        totalEnemySpawned = 0;
+        totalEnemyLifetime = 0f;
 
         currentPhase = GamePhase.WaveDefense;
 
@@ -205,6 +209,18 @@ public class GameManager : MonoBehaviour
             $"Typed:{typingManager.GetComboLength()}"
         );
 
+        // TrainingDatalogger
+        if (TrainingDataLogger.Instance != null && typingManager != null)
+        {
+            int label = 1;
+
+            TrainingDataLogger.Instance.Log(
+                typingManager,
+                this,
+                label
+            );
+        }
+
         EnterBaseManagement();
     }
 
@@ -292,6 +308,7 @@ public class GameManager : MonoBehaviour
     public void RegisterEnemy()
     {
         globalAliveEnemies++;
+        totalEnemySpawned++;
     }
 
     public void UnregisterEnemy()
@@ -304,5 +321,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void RegisterEnemyLifetime(float time)
+    {
+        totalEnemyLifetime += time;
+    }
+
+    public float GetAvgTimePerEnemy()
+    {
+        return totalEnemySpawned > 0
+            ? totalEnemyLifetime / totalEnemySpawned
+            : 0f;
+    }
+
+    public int GetTotalEnemy()
+    {
+        return totalEnemySpawned;
+    }
 
 }

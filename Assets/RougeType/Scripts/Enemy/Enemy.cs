@@ -38,12 +38,15 @@ public class Enemy : MonoBehaviour
     private Color originalColor;
 
     private Coroutine burnCoroutine;
+    private float spawnTime;
 
     public System.Action OnDeath;
 
     // Init
     void Start()
     {
+        spawnTime = Time.time;
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
@@ -140,6 +143,9 @@ public class Enemy : MonoBehaviour
         }
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
+        float aliveTime = Time.time - spawnTime;
+        GameManager.Instance?.RegisterEnemyLifetime(aliveTime);
+
         GameManager.Instance?.UnregisterEnemy();
         Destroy(gameObject);
     }
