@@ -1,6 +1,4 @@
-﻿// TypingManager.cs
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -344,7 +342,7 @@ public class TypingManager : MonoBehaviour
                 display += $"<color=white>{word}</color>";
             }
 
-            display += "   ";
+            display += "  ";
             wordIndex++;
         }
 
