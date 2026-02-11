@@ -358,9 +358,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minionPrefab: {fileID: 1835511350366655920, guid: 11d3513ff579c024086abd4e68a4473a, type: 3}
-  summonInterval: 10
+  summonCooldown: 10
   burstCount: 3
   maxTotalMinions: 9
+  offsetXMin: 1
+  offsetXMax: 2.5
+  offsetYRange: 1.5
 --- !u!1 &8546949873849048722
 GameObject:
   m_ObjectHideFlags: 0

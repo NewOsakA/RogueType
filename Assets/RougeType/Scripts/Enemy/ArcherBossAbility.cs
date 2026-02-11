@@ -84,7 +84,13 @@ public class ArcherBossAbility : EnemyAbility
             Vector3 spawnPos = enemy.transform.position;
             spawnPos.y += Random.Range(-summonOffsetY, summonOffsetY);
 
-            Object.Instantiate(archerEnemyPrefab, spawnPos, Quaternion.identity);
+            GameObject obj = Object.Instantiate(
+                archerEnemyPrefab,
+                spawnPos,
+                Quaternion.identity
+            );
+
+            GameManager.Instance.RegisterEnemy();
 
             yield return new WaitForSeconds(0.3f); // stagger spawn
         }
