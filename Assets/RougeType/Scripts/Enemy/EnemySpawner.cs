@@ -49,6 +49,8 @@ public class EnemySpawner : MonoBehaviour
 
     public void BeginWave(int wave)
     {
+        GameManager.Instance.RegisterSpawner();
+
         int waveIndex = Mathf.Max(0, wave - 1);
 
         waveActive = true;
@@ -70,6 +72,8 @@ public class EnemySpawner : MonoBehaviour
         if (enemiesToSpawn <= 0)
         {
             waveActive = false; // stop spawning
+
+            GameManager.Instance.NotifySpawnerFinished();
             return;
         }
 
@@ -112,6 +116,7 @@ public class EnemySpawner : MonoBehaviour
                 if (roll < acc)
                 {
                     newEnemy = Instantiate(boss.prefab, spawnPos, Quaternion.identity);
+                    GameManager.Instance.RegisterEnemy();
                     break;
                 }
             }
@@ -134,6 +139,7 @@ public class EnemySpawner : MonoBehaviour
                 if (roll < acc)
                 {
                     newEnemy = Instantiate(entry.prefab, spawnPos, Quaternion.identity);
+                    GameManager.Instance.RegisterEnemy();
                     break;
                 }
             }

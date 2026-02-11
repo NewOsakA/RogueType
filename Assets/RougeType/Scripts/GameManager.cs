@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// GameManager.cs
+
+using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 
@@ -14,6 +16,8 @@ public class GameManager : MonoBehaviour
     public int currentWave = 0;
     private int globalAliveEnemies = 0;
     private int totalEnemySpawned = 0;
+    private bool allEnemiesSpawned = false;
+    private int activeSpawners = 0;
     private float totalEnemyLifetime = 0f;
 
     [Header("UI Elements")]
@@ -83,6 +87,8 @@ public class GameManager : MonoBehaviour
         globalAliveEnemies = 0;
         totalEnemySpawned = 0;
         totalEnemyLifetime = 0f;
+        allEnemiesSpawned = false;
+        activeSpawners = 0;
 
         currentPhase = GamePhase.WaveDefense;
 
@@ -311,11 +317,33 @@ public class GameManager : MonoBehaviour
         totalEnemySpawned++;
     }
 
+    public void NotifySpawnerFinished()
+    {
+        activeSpawners--;
+
+        if (activeSpawners <= 0)
+        {
+            allEnemiesSpawned = true;
+            CheckWaveEnd();
+        }
+    }
+
+    public void RegisterSpawner()
+    {
+        activeSpawners++;
+    }
+
     public void UnregisterEnemy()
     {
         globalAliveEnemies = Mathf.Max(0, globalAliveEnemies - 1);
+        CheckWaveEnd();
+    }
 
-        if (IsWavePhase() && globalAliveEnemies == 0)
+    private void CheckWaveEnd()
+    {
+        if (!IsWavePhase()) return;
+
+        if (allEnemiesSpawned && globalAliveEnemies == 0)
         {
             EndWave();
         }

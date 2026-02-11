@@ -59,7 +59,7 @@ public class Enemy : MonoBehaviour
 
         specialAbility?.Initialize(this);
 
-        GameManager.Instance?.RegisterEnemy();
+        // GameManager.Instance?.RegisterEnemy();
     }
 
     // Update

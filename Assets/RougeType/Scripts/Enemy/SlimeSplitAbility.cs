@@ -33,6 +33,8 @@ public class SlimeSplitAbility : EnemyAbility
                 Quaternion.identity
             );
 
+            GameManager.Instance.RegisterEnemy();
+
             Enemy slimeEnemy = slimeObj.GetComponent<Enemy>();
             if (slimeEnemy != null)
             {
