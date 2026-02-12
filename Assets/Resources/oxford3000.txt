@@ -459,7 +459,6 @@ cat
 catch
 category
 cause
-CD
 cease
 ceiling
 celebrate
@@ -3146,7 +3145,6 @@ Tuesday
 tune
 tunnel
 turn
-TV
 twelfth
 twelve
 twentieth
@@ -3844,7 +3842,6 @@ subjects
 requires
 jersey
 quotes
-xxx
 jack
 magazines
 quiz
