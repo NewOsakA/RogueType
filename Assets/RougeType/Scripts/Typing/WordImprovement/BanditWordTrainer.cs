@@ -279,63 +279,84 @@ public class BanditWordTrainer : MonoBehaviour
     {
         float r = 0f;
 
-        // (1) accuracy delta
         float accDelta = accNow - accPrev;
-        if (accDelta > 0.01f) r += 1f;
-        else if (accDelta < -0.03f) r -= 1f;
 
-        // totals
-        int prevTotal = mPrev.Values.Sum();
+        if (accDelta > 0.01f)
+            r += 1f;
+        else if (accDelta < -0.03f)
+            r -= 1f;
+
+        int prevTotal = Mathf.Max(1, mPrev.Values.Sum());
         int nowTotal  = mNow.Values.Sum();
 
-        // (2) mistakes part depends on policy
+        float totalRatio = (float)nowTotal / prevTotal;
+
         switch (pattern)
         {
             case TrainingPattern.Balanced:
             {
-                // more tolerance (spread across all zones)
-                if (nowTotal < prevTotal) r += 1f;
-                else if (nowTotal > prevTotal + 6) r -= 1f;
+                // > 10%
+                if (totalRatio < 0.9f)
+                    r += 1f;
+                // > 30%
+                else if (totalRatio > 1.3f)     
+                    r -= 1f;
                 break;
             }
 
             case TrainingPattern.FocusWeakest:
             {
-                int prevMist = mPrev.TryGetValue(z1, out var pm) ? pm : 0;
+                int prevMist = Mathf.Max(1, mPrev.TryGetValue(z1, out var pm) ? pm : 0);
                 int nowMist  = mNow.TryGetValue(z1, out var nm) ? nm : 0;
 
-                if (nowMist < prevMist) r += 1f;
-                else if (nowMist > prevMist + 2) r -= 1f;
+                float ratio = (float)nowMist / prevMist;
+                // >15%
+                if (ratio < 0.85f)         
+                    r += 1f;
+                // >40%
+                else if (ratio > 1.4f)
+                    r -= 1f;
                 break;
             }
 
             case TrainingPattern.FocusTop2:
             {
-                int prev1 = mPrev.TryGetValue(z1, out var p1) ? p1 : 0;
+                int prev1 = Mathf.Max(1, mPrev.TryGetValue(z1, out var p1) ? p1 : 0);
                 int now1  = mNow.TryGetValue(z1, out var n1) ? n1 : 0;
 
-                int prev2 = mPrev.TryGetValue(z2, out var p2) ? p2 : 0;
+                int prev2 = Mathf.Max(1, mPrev.TryGetValue(z2, out var p2) ? p2 : 0);
                 int now2  = mNow.TryGetValue(z2, out var n2) ? n2 : 0;
 
-                int prevSum = prev1 + prev2;
-                int nowSum  = now1 + now2;
+                float prevSum = prev1 + prev2;
+                float nowSum  = now1 + now2;
 
-                if (nowSum < prevSum) r += 1f;
-                else if (nowSum > prevSum + 3) r -= 1f;
+                float ratio = nowSum / Mathf.Max(1f, prevSum);
+
+                // >10%
+                if (ratio < 0.9f)
+                    r += 1f;
+                // >35%
+                else if (ratio > 1.35f)
+                    r -= 1f;
                 break;
             }
 
             case TrainingPattern.ConsistencyTrainer:
             {
-                // reward: error distribution becomes more stable
                 float stdPrev = ZoneStd(mPrev);
                 float stdNow  = ZoneStd(mNow);
 
-                if (stdNow < stdPrev) r += 1f;
-                else if (stdNow > stdPrev + 0.8f) r -= 1f;
+                // >10%
+                if (stdNow < stdPrev * 0.9f)
+                    r += 1f;
+                // >30%
+                else if (stdNow > stdPrev * 1.3f)
+                    r -= 1f;
 
-                // bonus: accuracy doesn't swing too much
-                if (Mathf.Abs(accDelta) < 0.02f) r += 0.5f;
+                // slight bonus if accuracy stable
+                if (Mathf.Abs(accDelta) < 0.015f)
+                    r += 0.5f;
+
                 break;
             }
         }
