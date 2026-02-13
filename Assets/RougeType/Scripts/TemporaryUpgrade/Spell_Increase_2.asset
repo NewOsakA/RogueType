@@ -15,13 +15,17 @@ MonoBehaviour:
   upgradeName: Triple Blast
   description: 'Fire additional arcane blast
 
-    -20% damage per blast'
+    -40% damage per blast'
   cost: 1000
   prerequisites:
   - {fileID: 11400000, guid: 6ba950461d4cb458f9a9b19167596e33, type: 2}
   prerequisiteMode: 1
-  effectType: 0
-  intValue: 0
-  floatValue: 0
+  effects:
+  - type: 23
+    intValue: 3
+    floatValue: 0
+  - type: 24
+    intValue: 0
+    floatValue: 0.6
   exclusive: 0
   exclusiveGroup: 0

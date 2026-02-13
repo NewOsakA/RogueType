@@ -216,6 +216,10 @@ public class TemporaryUpgradeManager : MonoBehaviour
                 playerStats.IncreaseDamage(effect.intValue);
                 break;
 
+            case UpgradeEffectType.DecreaseDamage:
+                playerStats.IncreaseDamage(-effect.intValue);
+                break;
+
             case UpgradeEffectType.Burn:
                 playerStats.hasBurn = true;
                 playerStats.burnDamagePerSecond += effect.intValue;
@@ -307,6 +311,10 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
             case UpgradeEffectType.AOEBoost:
                 playerStats.explosionRadiusMultiplier += effect.floatValue;
+                break;
+
+            case UpgradeEffectType.AOEDamage:
+                playerStats.explosiveDamageMultiplier += effect.floatValue;
                 break;
 
             case UpgradeEffectType.MultiShot:

@@ -73,6 +73,7 @@ public class PlayerStats : MonoBehaviour
     // EXPLOSION RADIUS
     [Header("Explosive Shot")]
     public float explosionRadiusMultiplier = 1f;
+    public float explosiveDamageMultiplier = 1f;
 
     // MULTI SHOT
     [Header("Multi Shot")]

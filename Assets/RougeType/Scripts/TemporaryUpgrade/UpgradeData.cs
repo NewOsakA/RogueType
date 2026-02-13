@@ -47,6 +47,7 @@ public enum UpgradeEffectType
 {
     // POWER
     IncreaseDamage,
+    DecreaseDamage,
     Burn,
     Execution,
 
@@ -79,6 +80,7 @@ public enum UpgradeEffectType
 
     // Upgrade
     AOEBoost,
+    AOEDamage,
     MultiShot, 
     MultiShotPenalty,  
 
