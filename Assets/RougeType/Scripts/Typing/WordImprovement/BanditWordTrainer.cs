@@ -10,7 +10,6 @@ public enum TrainingPattern
     Balanced,
     FocusWeakest,
     FocusTop2,
-    AntiStreak,
     ConsistencyTrainer
 }
 
@@ -117,6 +116,8 @@ public class BanditWordTrainer : MonoBehaviour
                 DebugPrintPolicyScores($"after Wave {waveNumber} | C={GetCurrentC():F2}");
             }
         }
+        // reset recovery flag AFTER reward logic
+        lastDecisionForcedByStress = false;
 
         // 2) Choose policy for NEXT wave
         ChoosePolicyForNextWave(waveNumber, mistakesThisWave, stressHigh);
@@ -128,7 +129,12 @@ public class BanditWordTrainer : MonoBehaviour
     public (TrainingPattern pattern, FingerZone weakest, FingerZone second, float[] zoneWeights, (float s, float m, float l) lenMix)
         GetCurrentPolicy()
     {
-        float[] w = BuildZoneWeights(currentPattern, currentWeakestZone, currentSecondZone);
+        float[] w;
+        if (lastDecisionForcedByStress)
+            w = BuildRecoveryWeights(currentWeakestZone, currentSecondZone);
+        else
+            w = BuildZoneWeights(currentPattern, currentWeakestZone, currentSecondZone);
+
         return (currentPattern, currentWeakestZone, currentSecondZone, w, (shortRatio, mediumRatio, longRatio));
     }
 
@@ -143,10 +149,9 @@ public class BanditWordTrainer : MonoBehaviour
     {
         (FingerZone z1, FingerZone z2) = GetTop2Zones(mistakesThisWave);
 
-        // Use AntiStreak(override) if stress high
         if (stressHigh)
         {
-            ApplyNextPolicy(TrainingPattern.AntiStreak, z1, z2, true, waveNumber);
+            ApplyRecoveryMode(z1, z2, waveNumber);
             return;
         }
 
@@ -294,14 +299,6 @@ public class BanditWordTrainer : MonoBehaviour
                 break;
             }
 
-            case TrainingPattern.AntiStreak:
-            {
-                // slightly stricter than Balanced
-                if (nowTotal < prevTotal) r += 1f;
-                else if (nowTotal > prevTotal + 4) r -= 1f;
-                break;
-            }
-
             case TrainingPattern.FocusWeakest:
             {
                 int prevMist = mPrev.TryGetValue(z1, out var pm) ? pm : 0;
@@ -393,20 +390,6 @@ public class BanditWordTrainer : MonoBehaviour
                 w[i2] = 0.20f;
                 break;
 
-            case TrainingPattern.AntiStreak:
-                // keep most zones active; avoid tunnel on weakest
-                SetAll(0f);
-                w[i1] = 0.05f;
-                w[i2] = 0.10f;
-                float remain = 1f - (w[i1] + w[i2]);
-                float each = remain / 6f;
-                for (int i = 0; i < w.Length; i++)
-                {
-                    if (i == i1 || i == i2) continue;
-                    w[i] = each;
-                }
-                break;
-
             case TrainingPattern.ConsistencyTrainer:
                 // near-uniform, slightly downweight the top weak zones
                 SetAll(1f / 8f);
@@ -422,6 +405,29 @@ public class BanditWordTrainer : MonoBehaviour
 
         return w;
     }
+
+    float[] BuildRecoveryWeights(FingerZone z1, FingerZone z2)
+    {
+        float[] w = new float[8];
+
+        int i1 = (int)z1;
+        int i2 = (int)z2;
+
+        w[i1] = 0.05f;
+        w[i2] = 0.10f;
+
+        float remain = 1f - (w[i1] + w[i2]);
+        float each = remain / 6f;
+
+        for (int i = 0; i < w.Length; i++)
+        {
+            if (i == i1 || i == i2) continue;
+            w[i] = each;
+        }
+
+        return w;
+    }
+
     // Helpers
     TrainingPattern RandomPattern()
     {
@@ -443,22 +449,41 @@ public class BanditWordTrainer : MonoBehaviour
         float wpmPrev, float wpmNow
     )
     {
-        bool accDrop = accNow < accPrev - 0.08f;
+        // 1) Normalize Accuracy Drop
+        float accDrop = Mathf.Max(0f, accPrev - accNow);
+        float normAcc = Mathf.Clamp01(accDrop / 0.15f); 
 
+        // 2) Normalize Mistake Spike
         int deltaMist = mistakesNow - mistakesPrev;
-        bool mistakeSpike =
-            (mistakesNow >= 10 && deltaMist >= 8) ||
-            (deltaMist >= 12);
+        float normMist = 0f;
 
-        float wpmDelta = wpmNow - wpmPrev;
-        bool wpmSpike = wpmDelta >= 8f;
+        if (deltaMist > 0)
+            normMist = Mathf.Clamp01(deltaMist / 12f); 
 
-        int signals = 0;
-        if (accDrop) signals++;
-        if (mistakeSpike) signals++;
-        if (wpmSpike) signals++;
+        // 3) Normalize WPM Drop (for Net WPM)
+        float wpmDrop = Mathf.Max(0f, wpmPrev - wpmNow);
+        float normWpm = Mathf.Clamp01(wpmDrop / 15f);
 
-        return signals >= 2;
+        // Weighted Stress Score 
+        float stressScore =
+            0.6f * normAcc +
+            0.3f * normMist +
+            0.1f * normWpm;
+
+        return stressScore >= 0.7f;
+    }
+
+    void ApplyRecoveryMode(FingerZone z1, FingerZone z2, int waveNumber)
+    {
+        currentPattern = TrainingPattern.Balanced; 
+
+        currentWeakestZone = z1;
+        currentSecondZone = z2;
+
+        lastDecisionForcedByStress = true;
+        hasLastDecision = false;
+
+        Debug.Log("Stress detected, Applying AntiStreak behavior");
     }
 
     void DebugPrintPolicyScores(string header = "")
