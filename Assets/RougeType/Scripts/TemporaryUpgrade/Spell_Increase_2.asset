@@ -21,10 +21,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ba950461d4cb458f9a9b19167596e33, type: 2}
   prerequisiteMode: 1
   effects:
-  - type: 23
+  - type: 24
     intValue: 3
     floatValue: 0
-  - type: 24
+  - type: 25
     intValue: 0
     floatValue: 0.6
   exclusive: 0

@@ -47,12 +47,17 @@ public enum UpgradeEffectType
 {
     // POWER
     IncreaseDamage,
+    IncreaseDamagePercentage,
     DecreaseDamage,
+    DecreaseDamagePercentage,
     Burn,
     Execution,
 
     // DEFENSE
     IncreaseWallHP,
+    IncreaseWallHPPercentage,
+    DecreaseWallHP,
+    DecreaseWallHPPercentage,
     Shield,
     AutoRepair,
     Fortress,
@@ -83,6 +88,8 @@ public enum UpgradeEffectType
     AOEDamage,
     MultiShot, 
     MultiShotPenalty,  
+    SetWallHPToOne,
+    AutoRepairUpgrade,
 
 
 }

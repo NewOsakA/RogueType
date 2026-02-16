@@ -215,9 +215,19 @@ public class TemporaryUpgradeManager : MonoBehaviour
             case UpgradeEffectType.IncreaseDamage:
                 playerStats.IncreaseDamage(effect.intValue);
                 break;
+            
+            case UpgradeEffectType.IncreaseDamagePercentage:
+                int increaseAmount = Mathf.RoundToInt(playerStats.currentDamage * effect.floatValue);
+                playerStats.IncreaseDamage(increaseAmount);
+                break;
 
             case UpgradeEffectType.DecreaseDamage:
                 playerStats.IncreaseDamage(-effect.intValue);
+                break;
+
+            case UpgradeEffectType.DecreaseDamagePercentage:
+                int decreaseAmount = Mathf.RoundToInt(playerStats.currentDamage * effect.floatValue);
+                playerStats.IncreaseDamage(-decreaseAmount);
                 break;
 
             case UpgradeEffectType.Burn:
@@ -233,6 +243,20 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
             case UpgradeEffectType.IncreaseWallHP:
                 wall.IncreaseMaxHP(effect.intValue);
+                break;
+
+            case UpgradeEffectType.IncreaseWallHPPercentage:
+                int increaseHPAmount = Mathf.RoundToInt(wall.maxHP * effect.floatValue);
+                wall.IncreaseMaxHP(increaseHPAmount);
+                break;
+
+            case UpgradeEffectType.DecreaseWallHP:
+                wall.IncreaseMaxHP(-effect.intValue);
+                break;
+
+            case UpgradeEffectType.DecreaseWallHPPercentage:
+                int reductionAmount = Mathf.RoundToInt(wall.maxHP * effect.floatValue);
+                wall.IncreaseMaxHP(-reductionAmount);
                 break;
 
             case UpgradeEffectType.Shield:
@@ -326,7 +350,17 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
             case UpgradeEffectType.MultiShotPenalty:
                 playerStats.multiShotDamageMultiplier *= effect.floatValue;
-                break;    
+                break;  
+
+            case UpgradeEffectType.SetWallHPToOne:
+                wall.currentHP = 1;
+                wall.maxHP = 1;
+                wall.UpdateHPDisplay();
+                break;  
+
+            case UpgradeEffectType.AutoRepairUpgrade:
+                wall.autoRepairAmount += effect.intValue;
+                break;
         }
     }
 }

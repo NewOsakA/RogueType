@@ -14,7 +14,7 @@ public class Wall : MonoBehaviour
     private int shieldHitsRemaining = 0;
 
     [Header("Auto Repair")]
-    public int autoRepairAmount = 1; 
+    public int autoRepairAmount = 5; 
     public float autoRepairInterval = 5f;
 
     private Coroutine autoRepairCoroutine;
@@ -65,7 +65,7 @@ public void TakeDamage(int amount)
     public void IncreaseMaxHP(int amount)
     {
         maxHP += amount;
-        currentHP = maxHP;
+        currentHP += amount;
         UpdateHPDisplay();
         Debug.Log($"Wall HP upgraded to {maxHP}");
     }

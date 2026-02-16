@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe728dceeeb25a4ba5ec41381caf81d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 250
-  currentHP: 180
+  maxHP: 2000
+  currentHP: 2000
   damage: 20
   speed: 0.7
   isBoss: 0
