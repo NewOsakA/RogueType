@@ -1,29 +1,26 @@
 {
   "dependencies": {
     "com.github.asus4.onnxruntime": {
-      "version": "0.4.4",
+      "version": "file:com.github.asus4.onnxruntime",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://registry.npmjs.com"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.github.asus4.onnxruntime-extensions": {
-      "version": "0.4.4",
+      "version": "file:com.github.asus4.onnxruntime-extensions",
       "depth": 0,
-      "source": "registry",
+      "source": "embedded",
       "dependencies": {
         "com.github.asus4.onnxruntime": "0.4.4"
-      },
-      "url": "https://registry.npmjs.com"
+      }
     },
     "com.github.asus4.onnxruntime.unity": {
-      "version": "0.4.4",
+      "version": "file:com.github.asus4.onnxruntime.unity",
       "depth": 0,
-      "source": "registry",
+      "source": "embedded",
       "dependencies": {
         "com.github.asus4.onnxruntime": "0.4.4"
-      },
-      "url": "https://registry.npmjs.com"
+      }
     },
     "com.unity.2d.animation": {
       "version": "13.0.2",
