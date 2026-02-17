@@ -1,6 +1,4 @@
-﻿// EnemySpawner.cs
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
@@ -66,19 +64,15 @@ public class EnemySpawner : MonoBehaviour
 
     void Update()
     {
-        if (!waveActive || GameManager.Instance.IsBasePhase())
+        if (!waveActive)
             return;
 
-        if (enemiesToSpawn <= 0)
-        {
-            waveActive = false; // stop spawning
-
-            GameManager.Instance.NotifySpawnerFinished();
+        if (GameManager.Instance.IsBasePhase())
             return;
-        }
 
         timer += Time.deltaTime;
-        if (timer >= nextSpawnInterval)
+
+        if (enemiesToSpawn > 0 && timer >= nextSpawnInterval)
         {
             SpawnEnemy(GameManager.Instance.currentWave);
             enemiesToSpawn--;
@@ -86,7 +80,15 @@ public class EnemySpawner : MonoBehaviour
             timer = 0f;
             nextSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
         }
+
+        if (enemiesToSpawn <= 0 && waveActive)
+        {
+            waveActive = false;
+            // Debug.Log("Spawner finished spawning");
+            GameManager.Instance.NotifySpawnerFinished();
+        }
     }
+
 
     void SpawnEnemy(int currentWave)
     {

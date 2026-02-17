@@ -1,5 +1,3 @@
-// ArcherBossAbility.cs
-
 using System.Collections;
 using UnityEngine;
 

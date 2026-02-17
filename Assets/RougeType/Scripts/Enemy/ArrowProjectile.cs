@@ -1,5 +1,3 @@
-// ArrowProjectile.cs
-
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]

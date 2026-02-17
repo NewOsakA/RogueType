@@ -1,5 +1,3 @@
-// SlimeSplitAbility.cs
-
 using UnityEngine;
 
 public class SlimeSplitAbility : EnemyAbility

@@ -1,6 +1,4 @@
-﻿// BossEnemyAbility.cs
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class BossEnemyAbility : EnemyAbility

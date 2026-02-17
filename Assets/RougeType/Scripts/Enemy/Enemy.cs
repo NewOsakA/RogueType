@@ -1,5 +1,3 @@
-// Enemy.cs
-
 using UnityEngine;
 using TMPro;
 using System.Collections;
@@ -41,6 +39,7 @@ public class Enemy : MonoBehaviour
     private float spawnTime;
 
     public System.Action OnDeath;
+    private bool isDead = false;
 
     // Init
     void Start()
@@ -109,6 +108,9 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         if (burnCoroutine != null)
         {
             StopCoroutine(burnCoroutine);
@@ -141,12 +143,15 @@ public class Enemy : MonoBehaviour
         {
             EssenceManager.Instance.AddEssence(essenceReward);
         }
+
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
+
         float aliveTime = Time.time - spawnTime;
         GameManager.Instance?.RegisterEnemyLifetime(aliveTime);
 
         GameManager.Instance?.UnregisterEnemy();
+
         Destroy(gameObject);
     }
 

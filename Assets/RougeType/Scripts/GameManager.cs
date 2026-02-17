@@ -1,8 +1,15 @@
-﻿// GameManager.cs
-
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+
+[System.Serializable]
+public class DifficultySettings
+{
+    public float spawnRateMultiplier = 1f;
+    public int additionalEnemyCount = 0;
+    public float hpMultiplier = 1f;
+    public float specialWeightMultiplier = 1f;
+}
 
 public enum GamePhase { BaseManagement, WaveDefense }
 
@@ -31,7 +38,11 @@ public class GameManager : MonoBehaviour
     public PlayerStats playerStats;
     public TypingManager typingManager;
 
-    [Header("Word Adaptation")]
+    //Model
+    [Header("Difficulty Prediction (ONNX)")]
+    public OnnxDifficultyPredictor onnxPredictor;
+
+    [Header("Word Adaptation (Bandit)")]
     private float prevWPM = 0f;
     private float prevAcc = 1f;
     private int prevMistakes = 0;
@@ -125,6 +136,29 @@ public class GameManager : MonoBehaviour
                 CurrencyManager.Instance.AddCurrency(interest);
                 Debug.Log($"Interest +{interest} gold");
             }
+        }
+
+        Debug.Log($"ONNX check | predictor:{onnxPredictor != null} | typing:{typingManager != null}");
+        // Difficulty Prediction
+        if (onnxPredictor != null && typingManager != null)
+        {
+            float wpm = typingManager.GetWPM();
+            float acc = typingManager.GetAccuracy();
+            float mistakes = typingManager.GetMistakeCount();
+            float reaction = typingManager.GetReactionTimeAvg();
+            float avgTime = GetAvgTimePerEnemy();
+
+            int prediction = onnxPredictor.Predict(
+                wpm,
+                acc,
+                mistakes,
+                reaction,
+                avgTime
+            );
+
+            // Debug.Log($"[ONNX logistic] Prediction: {prediction}");
+
+            AdjustDifficulty(prediction);
         }
 
         // word adaptation update
@@ -269,15 +303,18 @@ public class GameManager : MonoBehaviour
     {
         globalAliveEnemies++;
         totalEnemySpawned++;
+        // Debug.Log($"Alive++ = {globalAliveEnemies}");
     }
 
     public void NotifySpawnerFinished()
     {
         activeSpawners--;
+        // Debug.Log("Spawner-- = " + activeSpawners);
 
         if (activeSpawners <= 0)
         {
             allEnemiesSpawned = true;
+            // Debug.Log("All spawners finished!");
             CheckWaveEnd();
         }
     }
@@ -290,6 +327,7 @@ public class GameManager : MonoBehaviour
     public void UnregisterEnemy()
     {
         globalAliveEnemies = Mathf.Max(0, globalAliveEnemies - 1);
+        // Debug.Log($"Alive-- = {globalAliveEnemies}");
         CheckWaveEnd();
     }
 
@@ -297,7 +335,7 @@ public class GameManager : MonoBehaviour
     {
         if (!IsWavePhase()) return;
 
-        if (allEnemiesSpawned && globalAliveEnemies == 0)
+        if (allEnemiesSpawned && globalAliveEnemies <= 0)
         {
             EndWave();
         }

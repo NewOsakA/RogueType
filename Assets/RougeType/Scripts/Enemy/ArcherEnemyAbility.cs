@@ -1,11 +1,10 @@
-// ArcherEnemyAbility.cs
-
 using UnityEngine;
 
 public class ArcherEnemyAbility : EnemyAbility
 {
     [Header("Archer Settings")]
-    public float stopXPosition = 0f;          // World X where archer stops
+    // World X where archer stops
+    public float stopXPosition = 0f;
     public float shootCooldown = 2f;
 
     [Header("Projectile")]
