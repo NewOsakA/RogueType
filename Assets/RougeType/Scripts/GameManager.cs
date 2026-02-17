@@ -31,9 +31,6 @@ public class GameManager : MonoBehaviour
     public PlayerStats playerStats;
     public TypingManager typingManager;
 
-    [Header("AI (Local Model)")]
-    public LocalDifficultyPredictor difficultyPredictor;
-
     [Header("Word Adaptation")]
     private float prevWPM = 0f;
     private float prevAcc = 1f;
@@ -127,49 +124,6 @@ public class GameManager : MonoBehaviour
             {
                 CurrencyManager.Instance.AddCurrency(interest);
                 Debug.Log($"Interest +{interest} gold");
-            }
-        }
-
-
-        if (typingManager != null && difficultyPredictor != null)
-        {
-            PlayerData data = new PlayerData
-            {
-                wpm = typingManager.GetWPM(),
-                combo_length = typingManager.GetComboLength(),
-                mistake_count = typingManager.GetMistakeCount(),
-                recent_accuracy = typingManager.GetAccuracy(),
-                wave_number = currentWave
-            };
-
-            try
-            {
-                int prediction = difficultyPredictor.Predict(data);
-
-                Debug.Log(
-                    $"[AI] Wave {currentWave} | Pred:{prediction} | " +
-                    $"WPM:{data.wpm:F1} Combo:{data.combo_length} " +
-                    $"Mistake:{data.mistake_count} Acc:{data.recent_accuracy:F2}"
-                );
-
-                // Apply model at wave 3
-                if (currentWave >= 3)
-                {
-                    AdjustDifficulty(prediction);
-                }
-                else
-                {
-                    Debug.Log("AI adjustment skipped (warm-up wave)");
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError("AI Predict failed: " + e.Message);
-
-                if (currentWave >= 3)
-                {
-                    AdjustDifficulty(1);
-                }
             }
         }
 
