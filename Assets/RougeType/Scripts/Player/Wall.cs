@@ -11,6 +11,9 @@ public class Wall : MonoBehaviour
     [Header("UI")]
     public TMP_Text hpText;
 
+    [Header("UI - Health Bar")]
+    public HealthBar healthBar;
+
     private int shieldHitsRemaining = 0;
 
     [Header("Auto Repair")]
@@ -19,10 +22,15 @@ public class Wall : MonoBehaviour
 
     private Coroutine autoRepairCoroutine;
 
-
     void Start()
     {
         currentHP = maxHP;
+
+        if (healthBar == null)
+            healthBar = Object.FindFirstObjectByType<HealthBar>(); // fallback
+
+        healthBar?.SetMaxHealth(maxHP);
+
         UpdateHPDisplay();
     }
 
@@ -159,7 +167,12 @@ public void TakeDamage(int amount)
     {
         if (hpText != null)
         {
-            hpText.text = $"Wall HP: {currentHP}";
+            hpText.text = $"{currentHP}";
+        }
+        if (healthBar != null)
+        {
+            healthBar.slider.maxValue = maxHP;
+            healthBar.SetHealth(currentHP);
         }
     }
 
