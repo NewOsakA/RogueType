@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
 
 [System.Serializable]
 public class EnemySpawnEntry
@@ -9,6 +8,9 @@ public class EnemySpawnEntry
     public GameObject prefab;
     public int unlockWave = 1;
     public int spawnWeight = 1;
+
+    [Header("Special Enemy")]
+    public bool isSpecial = false;
 }
 
 [System.Serializable]
@@ -35,62 +37,81 @@ public class EnemySpawner : MonoBehaviour
     public float minSpawnInterval = 0.5f;
     public float maxSpawnInterval = 2f;
 
-    [Header("Enemy Scaling")]
-    public int baseEnemyCount = 5;
+    [Header("Enemy Count Progression (Baseline)")]
+    public int baseEnemyCount = 4;
     public int enemyCountIncrease = 2;
 
+    [Header("HP Progression (Game Progression)")]
+    public int hpIncreaseEveryXWaves = 11;
+    public float hpIncreasePercent = 0.10f;
+
+    [Header("Boss Scaling")]
+    public bool bossUseWaveProgression = true;
+    public bool bossUseDifficultyScaling = false;
+    public float bossExtraHpMultiplier = 0.15f;
+    
     private float timer;
     private float nextSpawnInterval;
     private int enemiesToSpawn;
     private bool waveActive = false;
     private bool isBossWave = false;
+    private int currentWaveLocal = 1;
 
     public void BeginWave(int wave)
     {
         GameManager.Instance.RegisterSpawner();
 
+        currentWaveLocal = wave;
         int waveIndex = Mathf.Max(0, wave - 1);
 
         waveActive = true;
         isBossWave = (wave % bossEveryXWaves == 0);
 
+        var diff = GameManager.Instance.GetDifficulty();
+
+        int baseline = baseEnemyCount + waveIndex * enemyCountIncrease;
+
         enemiesToSpawn = isBossWave
             ? 1
-            : baseEnemyCount + waveIndex * enemyCountIncrease;
+            : Mathf.Max(0, baseline + diff.additionalEnemyCount);
 
         timer = 0f;
-        nextSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
+
+        nextSpawnInterval = GetNextInterval(diff);
     }
 
     void Update()
     {
-        if (!waveActive)
-            return;
-
-        if (GameManager.Instance.IsBasePhase())
-            return;
+        if (!waveActive) return;
+        if (GameManager.Instance.IsBasePhase()) return;
 
         timer += Time.deltaTime;
 
         if (enemiesToSpawn > 0 && timer >= nextSpawnInterval)
         {
-            SpawnEnemy(GameManager.Instance.currentWave);
+            SpawnEnemy(currentWaveLocal);
             enemiesToSpawn--;
 
             timer = 0f;
-            nextSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
+
+            var diff = GameManager.Instance.GetDifficulty();
+            nextSpawnInterval = GetNextInterval(diff);
         }
 
         if (enemiesToSpawn <= 0 && waveActive)
         {
             waveActive = false;
-            // Debug.Log("Spawner finished spawning");
             GameManager.Instance.NotifySpawnerFinished();
         }
     }
 
+    float GetNextInterval(DifficultySettings diff)
+    {
+        float m = Mathf.Max(0.05f, diff.spawnRateMultiplier);
+        return Random.Range(minSpawnInterval * m, maxSpawnInterval * m);
+    }
 
-    void SpawnEnemy(int currentWave)
+    void SpawnEnemy(int wave)
     {
         Vector3 spawnPos = new Vector3(
             spawnX,
@@ -103,22 +124,25 @@ public class EnemySpawner : MonoBehaviour
         if (isBossWave)
         {
             var availableBosses = bossTypes
-                .Where(b => currentWave >= b.unlockWave)
+                .Where(b => wave >= b.unlockWave && b.prefab != null)
                 .ToList();
 
             if (availableBosses.Count == 0) return;
 
-            int totalWeight = availableBosses.Sum(b => b.spawnWeight);
-            int roll = Random.Range(0, totalWeight);
+            int totalWeight = availableBosses.Sum(b => Mathf.Max(0, b.spawnWeight));
+            if (totalWeight <= 0) return;
 
+            int roll = Random.Range(0, totalWeight);
             int acc = 0;
+
             foreach (var boss in availableBosses)
             {
-                acc += boss.spawnWeight;
+                acc += Mathf.Max(0, boss.spawnWeight);
                 if (roll < acc)
                 {
                     newEnemy = Instantiate(boss.prefab, spawnPos, Quaternion.identity);
                     GameManager.Instance.RegisterEnemy();
+                    ApplyHpScaling(newEnemy, wave);
                     break;
                 }
             }
@@ -126,25 +150,91 @@ public class EnemySpawner : MonoBehaviour
         else
         {
             var availableEnemies = enemyTypes
-                .Where(e => currentWave >= e.unlockWave)
+                .Where(e => wave >= e.unlockWave && e.prefab != null)
                 .ToList();
 
             if (availableEnemies.Count == 0) return;
 
-            int totalWeight = availableEnemies.Sum(e => e.spawnWeight);
-            int roll = Random.Range(0, totalWeight);
+            var diff = GameManager.Instance.GetDifficulty();
 
+            int GetWeight(EnemySpawnEntry e)
+            {
+                int w = Mathf.Max(0, e.spawnWeight);
+                if (e.isSpecial)
+                    w = Mathf.RoundToInt(w * diff.specialWeightMultiplier);
+                return Mathf.Max(0, w);
+            }
+
+            int totalWeight = availableEnemies.Sum(e => GetWeight(e));
+            if (totalWeight <= 0) return;
+
+            int roll = Random.Range(0, totalWeight);
             int acc = 0;
+
             foreach (var entry in availableEnemies)
             {
-                acc += entry.spawnWeight;
+                acc += GetWeight(entry);
                 if (roll < acc)
                 {
                     newEnemy = Instantiate(entry.prefab, spawnPos, Quaternion.identity);
                     GameManager.Instance.RegisterEnemy();
+                    ApplyHpScaling(newEnemy, wave);
                     break;
                 }
             }
         }
+    }
+    void ApplyHpScaling(GameObject enemyObj, int wave)
+    {
+        if (enemyObj == null) return;
+
+        var enemy = enemyObj.GetComponent<Enemy>();
+        if (enemy == null) return;
+
+        var diff = GameManager.Instance.GetDifficulty();
+
+        float finalMultiplier = 1f;
+
+        if (enemy.isBoss)
+        {
+            int bossCount = wave / bossEveryXWaves;
+
+            float bossScaling = Mathf.Pow(bossExtraHpMultiplier, bossCount);
+
+            finalMultiplier = bossScaling;
+
+            if (bossUseWaveProgression && hpIncreaseEveryXWaves > 0)
+            {
+                int step = wave / hpIncreaseEveryXWaves;
+                finalMultiplier *= (1f + step * hpIncreasePercent);
+            }
+
+            if (bossUseDifficultyScaling)
+            {
+                finalMultiplier *= diff.hpMultiplier;
+            }
+
+            Debug.Log($"Boss scaling x{finalMultiplier:F2}");
+        }
+        else
+        {
+            int step = (hpIncreaseEveryXWaves > 0)
+                ? (wave / hpIncreaseEveryXWaves)
+                : 0;
+
+            float progressionMul = 1f + step * hpIncreasePercent;
+
+            finalMultiplier = progressionMul * diff.hpMultiplier;
+        }
+
+        int scaledHp = Mathf.RoundToInt(enemy.maxHP * finalMultiplier);
+        scaledHp = Mathf.Max(1, scaledHp);
+
+        enemy.Initialize(
+            scaledHp,
+            enemy.damage,
+            enemy.speed,
+            enemy.isBoss
+        );
     }
 }

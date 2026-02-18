@@ -41,6 +41,12 @@ public class GameManager : MonoBehaviour
     //Model
     [Header("Difficulty Prediction (ONNX)")]
     public OnnxDifficultyPredictor onnxPredictor;
+    
+    [Header("Adaptive Difficulty")]
+    public DifficultySettings easySettings;
+    public DifficultySettings balancedSettings;
+    public DifficultySettings hardSettings;
+    private DifficultySettings currentDifficulty;
 
     [Header("Word Adaptation (Bandit)")]
     private float prevWPM = 0f;
@@ -58,6 +64,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        if (balancedSettings == null)
+            balancedSettings = new DifficultySettings();
+
+        if (easySettings == null)
+            easySettings = new DifficultySettings();
+
+        if (hardSettings == null)
+            hardSettings = new DifficultySettings();
+
+        currentDifficulty = balancedSettings;
+
         if (cam == null && Camera.main != null)
             cam = Camera.main.GetComponent<CameraController>();
 
@@ -134,13 +151,20 @@ public class GameManager : MonoBehaviour
             if (interest > 0)
             {
                 CurrencyManager.Instance.AddCurrency(interest);
-                Debug.Log($"Interest +{interest} gold");
+                // Debug.Log($"Interest +{interest} gold");
             }
         }
 
         Debug.Log($"ONNX check | predictor:{onnxPredictor != null} | typing:{typingManager != null}");
         // Difficulty Prediction
-        if (onnxPredictor != null && typingManager != null)
+        bool isBossWave = false;
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+        if (spawner != null)
+        {
+            isBossWave = currentWave % spawner.bossEveryXWaves == 0;
+        }
+
+        if (!isBossWave && onnxPredictor != null && typingManager != null)
         {
             float wpm = typingManager.GetWPM();
             float acc = typingManager.GetAccuracy();
@@ -156,10 +180,13 @@ public class GameManager : MonoBehaviour
                 avgTime
             );
 
-            // Debug.Log($"[ONNX logistic] Prediction: {prediction}");
-
             AdjustDifficulty(prediction);
         }
+        else
+        {
+            Debug.Log("Boss wave → skip difficulty prediction");
+        }
+
 
         // word adaptation update
         if (typingManager != null && BanditWordTrainer.Instance != null)
@@ -246,22 +273,19 @@ public class GameManager : MonoBehaviour
     {
         switch (prediction)
         {
-            case 0:
-                Debug.Log("AI: Game too hard → Lower difficulty");
-                // TODO
-                break;
-
-            case 1:
-                Debug.Log("AI: Difficulty balanced → Keep current");
-                break;
-
-            case 2:
+            case 0: // Easy
+                currentDifficulty = easySettings;
                 Debug.Log("AI: Game too easy → Increase difficulty");
-                // TODO
                 break;
 
-            default:
-                Debug.LogWarning($"Unknown prediction {prediction}");
+            case 1: // Balance
+                currentDifficulty = balancedSettings;
+                Debug.Log("AI: Balanced");
+                break;
+
+            case 2: // Hard
+                currentDifficulty = hardSettings;
+                Debug.Log("AI: Game too hard → Decrease difficulty");
                 break;
         }
     }
@@ -358,4 +382,17 @@ public class GameManager : MonoBehaviour
         return totalEnemySpawned;
     }
 
+    public DifficultySettings GetDifficulty()
+    {
+        return currentDifficulty;
+    }
+
+    bool IsNextWaveBoss()
+    {
+        var spawner = Object.FindFirstObjectByType<EnemySpawner>();
+        if (spawner == null) return false;
+
+        int nextWave = currentWave + 1;
+        return nextWave % spawner.bossEveryXWaves == 0;
+    }
 }

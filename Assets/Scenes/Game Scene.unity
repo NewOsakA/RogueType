@@ -18754,6 +18754,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1065107379}
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: currentWave
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: playerStats
       value: 
       objectReference: {fileID: 938322508}
@@ -18784,6 +18788,38 @@ PrefabInstance:
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: difficultyPredictor
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: easySettings.hpMultiplier
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: hardSettings.hpMultiplier
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: easySettings.spawnRateMultiplier
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: hardSettings.spawnRateMultiplier
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: easySettings.additionalEnemyCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: hardSettings.additionalEnemyCount
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: easySettings.specialWeightMultiplier
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: hardSettings.specialWeightMultiplier
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 2940791255423395433, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: m_LocalPosition.x
@@ -38457,8 +38493,16 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
+      propertyPath: bossExtraHpMultiplier
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyTypes.Array.size
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
+      propertyPath: hpIncreaseEveryXWaves
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: enemyPrefabs.Array.size
@@ -38523,6 +38567,18 @@ PrefabInstance:
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: bossTypes.Array.data[2].unlockWave
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
+      propertyPath: enemyTypes.Array.data[2].isSpecial
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
+      propertyPath: enemyTypes.Array.data[3].isSpecial
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
+      propertyPath: enemyTypes.Array.data[4].isSpecial
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2268003290509606735, guid: 5c89257c331b6ff4284cb5eeb1136972, type: 3}
       propertyPath: bossTypes.Array.data[0].spawnWeight
