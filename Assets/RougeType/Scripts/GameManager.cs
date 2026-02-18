@@ -305,8 +305,7 @@ public class GameManager : MonoBehaviour
         MetaGameManager.Instance.AddMetaCoins(reward);
 
         Debug.Log($"Earned {reward} coins from Wave {currentWave}");
-
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Upgrade");
+        typingManager?.TriggerGameOver();
     }
 
     public void EndRunWithoutSave()
@@ -384,6 +383,7 @@ public class GameManager : MonoBehaviour
         return totalEnemySpawned;
     }
 
+<<<<<<< Updated upstream
     public DifficultySettings GetDifficulty()
     {
         return currentDifficulty;
@@ -398,3 +398,6 @@ public class GameManager : MonoBehaviour
         return nextWave % spawner.bossEveryXWaves == 0;
     }
 }
+=======
+}
+>>>>>>> Stashed changes

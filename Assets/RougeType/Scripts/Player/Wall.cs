@@ -21,6 +21,7 @@ public class Wall : MonoBehaviour
     public float autoRepairInterval = 5f;
 
     private Coroutine autoRepairCoroutine;
+    private bool isDead = false;
 
     void Start()
     {
@@ -35,40 +36,65 @@ public class Wall : MonoBehaviour
     }
 
 
-public void TakeDamage(int amount)
-{
-    var playerStats = GameManager.Instance?.playerStats;
-
-    // Shield block
-    if (playerStats != null && shieldHitsRemaining > 0)
+    public void TakeDamage(int amount)
     {
-        shieldHitsRemaining--;
-        // Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
-        return;
+        if (isDead) return;
+
+        var playerStats = GameManager.Instance?.playerStats;
+
+        // Shield block
+        if (playerStats != null && shieldHitsRemaining > 0)
+        {
+            shieldHitsRemaining--;
+            // Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
+            return;
+        }
+
+        // Fortress % reduction
+        float reduction = 0f;
+        if (playerStats != null)
+        {
+            reduction = playerStats.fortressDamageReduction;
+        }
+
+        int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
+        finalDamage = Mathf.Max(finalDamage, 0);
+
+        currentHP -= finalDamage;
+        currentHP = Mathf.Max(currentHP, 0);
+        UpdateHPDisplay();
+
+        // Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
+
+        if (currentHP <= 0)
+        {
+            isDead = true;
+            GameManager.Instance?.OnPlayerDefeated();
+            gameObject.SetActive(false);
+            Die();
+        }
     }
 
-    // Fortress % reduction
-    float reduction = 0f;
-    if (playerStats != null)
+    void Die()
     {
-        reduction = playerStats.fortressDamageReduction;
+        Time.timeScale = 0f; // Pause game
+
+        GameOverUI gameOverUI = Object.FindFirstObjectByType<GameOverUI>(FindObjectsInactive.Include);
+
+        if (gameOverUI != null)
+        {
+            GameStats stats = GameStats.Instance;
+            gameOverUI.Show(
+                score: stats != null ? stats.Score : 0,
+                totalTime: stats != null ? stats.TotalPlayTime : 0f,
+                highestWave: stats != null ? stats.HighestWave : 0,
+                currency: stats != null ? stats.CurrentCurrency : 0,
+                essence: stats != null ? stats.CurrentEssence : 0,
+                highestWPM: stats != null ? stats.HighestWPM : 0f
+            );
+        }
     }
 
-    int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
-    finalDamage = Mathf.Max(finalDamage, 0);
-
-    currentHP -= finalDamage;
-    currentHP = Mathf.Max(currentHP, 0);
-    UpdateHPDisplay();
-
-    // Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
-
-    if (currentHP <= 0)
-    {
-        GameManager.Instance?.OnPlayerDefeated();
-        gameObject.SetActive(false);
-    }
-}
 
     public void IncreaseMaxHP(int amount)
     {
