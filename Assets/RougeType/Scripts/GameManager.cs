@@ -211,8 +211,10 @@ public class GameManager : MonoBehaviour
                 currentWave,
                 prevAcc,
                 accNow,
-                zoneNow,
+                prevWPM,
+                wpmNow,
                 prevZoneMistakes,
+                zoneNow,
                 stress
             );
 

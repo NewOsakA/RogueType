@@ -8,9 +8,9 @@ public enum WordLengthBucket { Short, Medium, Long }
 public enum TrainingPattern
 {
     Balanced,
-    FocusWeakest,
-    FocusTop2,
-    ConsistencyTrainer
+    TargetedWeakness,
+    ConsistencyTrainer,
+    SpeedTrainer
 }
 
 public class BanditWordTrainer : MonoBehaviour
@@ -29,48 +29,28 @@ public class BanditWordTrainer : MonoBehaviour
     [Header("Try Each Policy Once")]
     public bool forceTryAllPoliciesOnce = true;
 
-    [Header("Word Length Mix (avoid length bias)")]
-    public float shortRatio = 0.50f;
-    public float mediumRatio = 0.30f;
-    public float longRatio = 0.20f;
-
-    [Header("Upper Confidence Bound Exploit (avg + confidence bonus)")]
+    [Header("UCB Exploit")]
     public bool useUCBExploit = true;
-
-    [Tooltip("If Auto C is ON, this is just a fallback.")]
-    [Range(0.05f, 2.0f)] public float baseC = 0.30f;
-
-    [Tooltip("Automatically adapt C from reward noise (std dev).")]
+    [Range(0.05f, 2f)] public float baseC = 0.3f;
     public bool autoC = true;
-
-    [Tooltip("Clamp for auto C (min).")]
-    [Range(0.05f, 2.0f)] public float autoCMin = 0.15f;
-
-    [Tooltip("Clamp for auto C (max).")]
-    [Range(0.05f, 4.0f)] public float autoCMax = 1.50f;
-
-    [Tooltip("How quickly auto C reacts (higher = faster).")]
+    [Range(0.05f, 2f)] public float autoCMin = 0.15f;
+    [Range(0.05f, 4f)] public float autoCMax = 1.5f;
     [Range(0.01f, 0.5f)] public float rewardStatAlpha = 0.15f;
 
-    // bandit score
     private readonly Dictionary<TrainingPattern, float> avgReward = new();
     private readonly Dictionary<TrainingPattern, int> trials = new();
 
-    // last decision (used to score reward when wave ends)
-    private TrainingPattern lastChosenPattern = TrainingPattern.Balanced;
-    private FingerZone lastWeakestZone;
-    private FingerZone lastSecondZone;
-    private bool hasLastDecision = false;
-
-    // if decision was forced by stress, don't train from it
-    private bool lastDecisionForcedByStress = false;
-
-    // current policy used for generating words in the next wave
     private TrainingPattern currentPattern = TrainingPattern.Balanced;
     private FingerZone currentWeakestZone;
     private FingerZone currentSecondZone;
 
-    // reward noise stats for auto C
+    private TrainingPattern lastChosenPattern;
+    private FingerZone lastWeakestZone;
+    private FingerZone lastSecondZone;
+
+    private bool hasLastDecision = false;
+    private bool lastDecisionForcedByStress = false;
+
     private bool rewardStatInit = false;
     private float rewardMean = 0f;
     private float rewardVar = 0f;
@@ -89,14 +69,14 @@ public class BanditWordTrainer : MonoBehaviour
 
     public void OnWaveEnded(
         int waveNumber,
-        float accuracyPrevWave,
-        float accuracyThisWave,
-        Dictionary<FingerZone, int> mistakesThisWave,
-        Dictionary<FingerZone, int> mistakesPrevWave,
-        bool stressHigh
-    )
+        float accPrev,
+        float accNow,
+        float wpmPrev,
+        float wpmNow,
+        Dictionary<FingerZone, int> mPrev,
+        Dictionary<FingerZone, int> mNow,
+        bool stressHigh)
     {
-        // 1) Update reward for the pattern used in THIS wave
         if (hasLastDecision)
         {
             bool canLearn = silentLearningBeforeApply || waveNumber >= applyFromWave;
@@ -105,92 +85,70 @@ public class BanditWordTrainer : MonoBehaviour
             {
                 float reward = ComputeReward(
                     lastChosenPattern,
-                    accuracyPrevWave, accuracyThisWave,
-                    mistakesPrevWave, mistakesThisWave,
-                    lastWeakestZone,
-                    lastSecondZone
+                    accPrev, accNow,
+                    wpmPrev, wpmNow,
+                    mPrev, mNow,
+                    lastWeakestZone
                 );
 
                 UpdateRewardStats(reward);
                 UpdateBandit(lastChosenPattern, reward);
+
                 DebugPrintPolicyScores($"after Wave {waveNumber} | C={GetCurrentC():F2}");
             }
         }
-        // reset recovery flag AFTER reward logic
+
         lastDecisionForcedByStress = false;
 
-        // 2) Choose policy for NEXT wave
-        ChoosePolicyForNextWave(waveNumber, mistakesThisWave, stressHigh);
+        ChoosePolicyForNextWave(waveNumber, mNow, stressHigh);
     }
 
-    public bool ShouldApplyPolicy(int waveNumber) => waveNumber >= applyFromWave;
-    public bool IsWarmupPhase(int wave) => wave < applyFromWave;
-
-    public (TrainingPattern pattern, FingerZone weakest, FingerZone second, float[] zoneWeights, (float s, float m, float l) lenMix)
-        GetCurrentPolicy()
+    void ChoosePolicyForNextWave(
+        int wave,
+        Dictionary<FingerZone, int> mistakes,
+        bool stressHigh)
     {
-        float[] w;
-        if (lastDecisionForcedByStress)
-            w = BuildRecoveryWeights(currentWeakestZone, currentSecondZone);
-        else
-            w = BuildZoneWeights(currentPattern, currentWeakestZone, currentSecondZone);
-
-        return (currentPattern, currentWeakestZone, currentSecondZone, w, (shortRatio, mediumRatio, longRatio));
-    }
-
-    void UpdateBandit(TrainingPattern pattern, float reward)
-    {
-        trials[pattern] += 1;
-        int n = trials[pattern];
-        avgReward[pattern] = avgReward[pattern] + (reward - avgReward[pattern]) / n;
-    }
-
-    void ChoosePolicyForNextWave(int waveNumber, Dictionary<FingerZone, int> mistakesThisWave, bool stressHigh)
-    {
-        (FingerZone z1, FingerZone z2) = GetTop2Zones(mistakesThisWave);
+        (FingerZone z1, FingerZone z2) = GetTop2Zones(mistakes);
 
         if (stressHigh)
         {
-            ApplyRecoveryMode(z1, z2, waveNumber);
+            ApplyRecoveryMode(z1, z2);
             return;
         }
 
-        // Force try each policy at least once to prevents early lock
         if (forceTryAllPoliciesOnce)
         {
-            var untried = trials.Where(kv => kv.Value == 0).Select(kv => kv.Key).ToList();
+            var untried = trials.Where(x => x.Value == 0)
+                                .Select(x => x.Key)
+                                .ToList();
+
             if (untried.Count > 0)
             {
                 var chosen = untried[UnityEngine.Random.Range(0, untried.Count)];
-                ApplyNextPolicy(chosen, z1, z2, false, waveNumber);
+                ApplyNextPolicy(chosen, z1, z2, false);
                 return;
             }
         }
 
-        // epsilon-greedy
-        float eps = GetEpsilonForWave(waveNumber);
+        float eps = wave <= earlyEpsilonWaves
+            ? Mathf.Max(epsilon, earlyEpsilon)
+            : epsilon;
+
         bool explore = UnityEngine.Random.value < eps;
 
-        TrainingPattern pick;
-        if (explore)
-        {
-            pick = RandomPattern();
-        }
-        else
-        {
-            pick = useUCBExploit ? SelectBestByUCB() : avgReward.OrderByDescending(kv => kv.Value).First().Key;
-        }
+        TrainingPattern pick = explore
+            ? RandomPattern()
+            : useUCBExploit ? SelectBestByUCB()
+                            : avgReward.OrderByDescending(x => x.Value).First().Key;
 
-        ApplyNextPolicy(pick, z1, z2, false, waveNumber);
+        ApplyNextPolicy(pick, z1, z2, false);
     }
 
-    float GetEpsilonForWave(int waveNumber)
-    {
-        if (waveNumber <= earlyEpsilonWaves) return Mathf.Max(epsilon, earlyEpsilon);
-        return epsilon;
-    }
-
-    void ApplyNextPolicy(TrainingPattern chosen, FingerZone z1, FingerZone z2, bool forcedByStress, int waveNumberForLog)
+    void ApplyNextPolicy(
+        TrainingPattern chosen,
+        FingerZone z1,
+        FingerZone z2,
+        bool forced)
     {
         currentPattern = chosen;
         currentWeakestZone = z1;
@@ -200,29 +158,39 @@ public class BanditWordTrainer : MonoBehaviour
         lastWeakestZone = z1;
         lastSecondZone = z2;
 
-        lastDecisionForcedByStress = forcedByStress;
+        lastDecisionForcedByStress = forced;
         hasLastDecision = true;
 
-        var bestAvg = avgReward.OrderByDescending(kv => kv.Value).First();
+        var len = GetLengthMixForPattern(chosen);
+
         Debug.Log(
             $"[Bandit] NextWavePolicy\n" +
             $" - chosen : {chosen}\n" +
             $" - zones  : Z1={z1}, Z2={z2}\n" +
-            $" - eps    : {GetEpsilonForWave(waveNumberForLog):F2}\n" +
-            $" - forced : {forcedByStress}\n" +
-            $" - bestAvgOnly : {bestAvg.Key} ({bestAvg.Value:F2})\n" +
             $" - exploitMode : {(useUCBExploit ? "UCB" : "AVG")}\n" +
-            $" - C(auto) : {GetCurrentC():F2}"
+            $" - C(auto) : {GetCurrentC():F2}\n" +
+            $" - LengthMix : S={len.s:F2} M={len.m:F2} L={len.l:F2}"
         );
     }
 
-    // UCB
+    void ApplyRecoveryMode(FingerZone z1, FingerZone z2)
+    {
+        currentPattern = TrainingPattern.Balanced;
+        currentWeakestZone = z1;
+        currentSecondZone = z2;
+
+        lastDecisionForcedByStress = true;
+        hasLastDecision = false;
+
+        Debug.Log("[Bandit] Stress detected → Recovery Mode");
+    }
+
     TrainingPattern SelectBestByUCB()
     {
         float C = GetCurrentC();
         int total = trials.Values.Sum();
 
-        TrainingPattern bestPolicy = TrainingPattern.Balanced;
+        TrainingPattern best = TrainingPattern.Balanced;
         float bestScore = float.NegativeInfinity;
 
         foreach (TrainingPattern p in Enum.GetValues(typeof(TrainingPattern)))
@@ -233,16 +201,138 @@ public class BanditWordTrainer : MonoBehaviour
             float bonus = C * Mathf.Sqrt(Mathf.Log(total + 1) / (n + 1));
             float score = avg + bonus;
 
+            Debug.Log($"[Bandit-UCB] {p} | avg={avg:F2} bonus={bonus:F2} score={score:F2}");
+
             if (score > bestScore)
             {
                 bestScore = score;
-                bestPolicy = p;
+                best = p;
             }
         }
 
-        Debug.Log($"[Bandit-UCB] totalTrials={total} | C={C:F2} | best={bestPolicy} | score={bestScore:F2}");
-        return bestPolicy;
+        Debug.Log($"[Bandit-UCB] total={total} | best={best}");
+        return best;
     }
+
+    float GetCurrentC()
+    {
+        if (!autoC) return baseC;
+
+        float std = Mathf.Sqrt(Mathf.Max(0.0001f, rewardVar));
+        float c = baseC * (1f + std);
+
+        return Mathf.Clamp(c, autoCMin, autoCMax);
+    }
+
+    float ComputeReward(
+        TrainingPattern pattern,
+        float accPrev,
+        float accNow,
+        float wpmPrev,
+        float wpmNow,
+        Dictionary<FingerZone, int> mPrev,
+        Dictionary<FingerZone, int> mNow,
+        FingerZone weakestZone)
+    {
+        float reward = 0f;
+
+        float accDelta = accNow - accPrev;
+        float wpmDelta = wpmNow - wpmPrev;
+
+        int totalPrev = Mathf.Max(5, mPrev.Values.Sum());
+        int totalNow  = mNow.Values.Sum();
+
+        switch (pattern)
+        {
+            case TrainingPattern.Balanced:
+            {
+                float totalRatio = (float)totalNow / totalPrev;
+
+                if (accDelta > 0.015f && totalRatio < 0.95f)
+                    reward = +1f;
+                else if (accDelta < -0.03f || totalRatio > 1.15f)
+                    reward = -1f;
+                else
+                    reward = 0f;
+
+                break;
+            }
+
+            case TrainingPattern.TargetedWeakness:
+            {
+                int prev = Mathf.Max(4,
+                    mPrev.ContainsKey(weakestZone) ? mPrev[weakestZone] : 0);
+
+                int now = mNow.ContainsKey(weakestZone)
+                    ? mNow[weakestZone]
+                    : 0;
+
+                float ratio = (float)now / prev;
+
+                if (ratio < 0.8f)
+                    reward = +1f;
+                else if (ratio > 1.25f)
+                    reward = -1f;
+                else
+                    reward = 0f;
+
+                break;
+            }
+
+            case TrainingPattern.ConsistencyTrainer:
+            {
+                float stdPrev = ZoneStd(mPrev);
+                float stdNow  = ZoneStd(mNow);
+
+                float stdRatio = stdPrev > 0
+                    ? stdNow / stdPrev
+                    : 1f;
+
+                if (stdRatio < 0.85f)
+                    reward = +1f;
+                else if (stdRatio > 1.25f)
+                    reward = -1f;
+                else
+                    reward = 0f;
+
+                break;
+            }
+
+            case TrainingPattern.SpeedTrainer:
+            {
+                if (wpmDelta > 3f && accDelta > -0.02f)
+                    reward = +1f;
+                else if (wpmDelta < -3f || accDelta < -0.05f)
+                    reward = -1f;
+                else
+                    reward = 0f;
+
+                break;
+            }
+        }
+        return reward;
+    }
+
+    float ZoneStd(Dictionary<FingerZone, int> m)
+    {
+        float mean = (float)m.Values.Average();
+        float var = 0f;
+
+        foreach (var v in m.Values)
+        {
+            float d = v - mean;
+            var += d * d;
+        }
+
+        return Mathf.Sqrt(var / m.Count);
+    }
+
+    void UpdateBandit(TrainingPattern p, float r)
+    {
+        trials[p]++;
+        avgReward[p] += (r - avgReward[p]) / trials[p];
+    }
+
     void UpdateRewardStats(float r)
     {
         if (!rewardStatInit)
@@ -255,237 +345,122 @@ public class BanditWordTrainer : MonoBehaviour
 
         float delta = r - rewardMean;
         rewardMean += rewardStatAlpha * delta;
-
         rewardVar = (1f - rewardStatAlpha) * (rewardVar + rewardStatAlpha * delta * delta);
     }
 
-    float GetCurrentC()
+    public (TrainingPattern pattern,
+            FingerZone weakest,
+            FingerZone second,
+            float[] zoneWeights,
+            (float s, float m, float l) lenMix)
+        GetCurrentPolicy()
     {
-        if (!autoC) return baseC;
-        float std = Mathf.Sqrt(Mathf.Max(0.0001f, rewardVar));
-        float c = baseC * (1f + std);
-        return Mathf.Clamp(c, autoCMin, autoCMax);
+        float[] zoneWeights =
+            lastDecisionForcedByStress
+            ? BuildRecoveryWeights(currentWeakestZone, currentSecondZone)
+            : BuildZoneWeights(currentPattern, currentWeakestZone, currentSecondZone);
+
+        var lenMix = GetLengthMixForPattern(currentPattern);
+
+        return (currentPattern,
+                currentWeakestZone,
+                currentSecondZone,
+                zoneWeights,
+                lenMix);
     }
 
-    // Reward
-    float ComputeReward(
+    float[] BuildZoneWeights(
         TrainingPattern pattern,
-        float accPrev, float accNow,
-        Dictionary<FingerZone, int> mPrev,
-        Dictionary<FingerZone, int> mNow,
         FingerZone z1,
-        FingerZone z2
-    )
-    {
-        float r = 0f;
-
-        float accDelta = accNow - accPrev;
-
-        if (accDelta > 0.01f)
-            r += 1f;
-        else if (accDelta < -0.03f)
-            r -= 1f;
-
-        int prevTotal = Mathf.Max(1, mPrev.Values.Sum());
-        int nowTotal  = mNow.Values.Sum();
-
-        float totalRatio = (float)nowTotal / prevTotal;
-
-        switch (pattern)
-        {
-            case TrainingPattern.Balanced:
-            {
-                // > 10%
-                if (totalRatio < 0.9f)
-                    r += 1f;
-                // > 30%
-                else if (totalRatio > 1.3f)     
-                    r -= 1f;
-                break;
-            }
-
-            case TrainingPattern.FocusWeakest:
-            {
-                int prevMist = Mathf.Max(1, mPrev.TryGetValue(z1, out var pm) ? pm : 0);
-                int nowMist  = mNow.TryGetValue(z1, out var nm) ? nm : 0;
-
-                float ratio = (float)nowMist / prevMist;
-                // >15%
-                if (ratio < 0.85f)         
-                    r += 1f;
-                // >40%
-                else if (ratio > 1.4f)
-                    r -= 1f;
-                break;
-            }
-
-            case TrainingPattern.FocusTop2:
-            {
-                int prev1 = Mathf.Max(1, mPrev.TryGetValue(z1, out var p1) ? p1 : 0);
-                int now1  = mNow.TryGetValue(z1, out var n1) ? n1 : 0;
-
-                int prev2 = Mathf.Max(1, mPrev.TryGetValue(z2, out var p2) ? p2 : 0);
-                int now2  = mNow.TryGetValue(z2, out var n2) ? n2 : 0;
-
-                float prevSum = prev1 + prev2;
-                float nowSum  = now1 + now2;
-
-                float ratio = nowSum / Mathf.Max(1f, prevSum);
-
-                // >10%
-                if (ratio < 0.9f)
-                    r += 1f;
-                // >35%
-                else if (ratio > 1.35f)
-                    r -= 1f;
-                break;
-            }
-
-            case TrainingPattern.ConsistencyTrainer:
-            {
-                float stdPrev = ZoneStd(mPrev);
-                float stdNow  = ZoneStd(mNow);
-
-                // >10%
-                if (stdNow < stdPrev * 0.9f)
-                    r += 1f;
-                // >30%
-                else if (stdNow > stdPrev * 1.3f)
-                    r -= 1f;
-
-                // slight bonus if accuracy stable
-                if (Mathf.Abs(accDelta) < 0.015f)
-                    r += 0.5f;
-
-                break;
-            }
-        }
-
-        return r;
-    }
-
-    float ZoneStd(Dictionary<FingerZone, int> m)
-    {
-        if (m == null || m.Count == 0) return 0f;
-
-        float mean = (float)m.Values.Average();
-        float var = 0f;
-
-        foreach (var v in m.Values)
-        {
-            float d = v - mean;
-            var += d * d;
-        }
-
-        var /= m.Count;
-        return Mathf.Sqrt(Mathf.Max(0f, var));
-    }
-    // Zone weights
-    float[] BuildZoneWeights(TrainingPattern pattern, FingerZone z1, FingerZone z2)
+        FingerZone z2)
     {
         float[] w = new float[8];
 
-        void SetAll(float val)
-        {
-            for (int i = 0; i < w.Length; i++) w[i] = val;
-        }
-
-        int i1 = (int)z1;
-        int i2 = (int)z2;
-
         switch (pattern)
         {
             case TrainingPattern.Balanced:
-                SetAll(1f / 8f);
+                for (int i = 0; i < 8; i++) w[i] = 1f / 8f;
                 break;
 
-            case TrainingPattern.FocusWeakest:
-                // moderate focus
-                SetAll((1f - 0.33f) / 7f);
-                w[i1] = 0.33f;
-                break;
-
-            case TrainingPattern.FocusTop2:
-                SetAll((1f - 0.50f) / 6f);
-                w[i1] = 0.30f;
-                w[i2] = 0.20f;
+            case TrainingPattern.TargetedWeakness:
+                for (int i = 0; i < 8; i++) w[i] = (1f - 0.45f) / 7f;
+                w[(int)z1] = 0.45f;
                 break;
 
             case TrainingPattern.ConsistencyTrainer:
-                // near-uniform, slightly downweight the top weak zones
-                SetAll(1f / 8f);
-                w[i1] *= 0.70f;
-                w[i2] *= 0.85f;
+                for (int i = 0; i < 8; i++) w[i] = 1f / 8f;
+                w[(int)z1] *= 0.8f;
+                w[(int)z2] *= 0.85f;
+                break;
+
+            case TrainingPattern.SpeedTrainer:
+                for (int i = 0; i < 8; i++) w[i] = 1f / 8f;
                 break;
         }
 
-        // normalize
         float sum = w.Sum();
-        if (sum <= 0f) return Enumerable.Repeat(1f / 8f, 8).ToArray();
-        for (int i = 0; i < w.Length; i++) w[i] /= sum;
+        for (int i = 0; i < 8; i++) w[i] /= sum;
 
         return w;
     }
 
-    float[] BuildRecoveryWeights(FingerZone z1, FingerZone z2)
+    (float s, float m, float l) GetLengthMixForPattern(TrainingPattern p)
     {
-        float[] w = new float[8];
-
-        int i1 = (int)z1;
-        int i2 = (int)z2;
-
-        w[i1] = 0.05f;
-        w[i2] = 0.10f;
-
-        float remain = 1f - (w[i1] + w[i2]);
-        float each = remain / 6f;
-
-        for (int i = 0; i < w.Length; i++)
+        switch (p)
         {
-            if (i == i1 || i == i2) continue;
-            w[i] = each;
-        }
+            case TrainingPattern.Balanced:
+                return (0.4f, 0.4f, 0.2f);
 
-        return w;
+            case TrainingPattern.TargetedWeakness:
+                return (0.55f, 0.3f, 0.15f);
+
+            case TrainingPattern.ConsistencyTrainer:
+                return (0.25f, 0.45f, 0.3f);
+
+            case TrainingPattern.SpeedTrainer:
+                return (0.65f, 0.25f, 0.1f);
+
+            default:
+                return (0.4f, 0.4f, 0.2f);
+        }
     }
 
-    // Helpers
     TrainingPattern RandomPattern()
     {
-        TrainingPattern[] all = (TrainingPattern[])Enum.GetValues(typeof(TrainingPattern));
+        var all = (TrainingPattern[])Enum.GetValues(typeof(TrainingPattern));
         return all[UnityEngine.Random.Range(0, all.Length)];
     }
 
     (FingerZone, FingerZone) GetTop2Zones(Dictionary<FingerZone, int> mistakes)
     {
-        var ordered = mistakes.OrderByDescending(kv => kv.Value).ToList();
-        FingerZone z1 = ordered[0].Key;
-        FingerZone z2 = ordered.Count > 1 ? ordered[1].Key : ordered[0].Key;
-        return (z1, z2);
+        var ordered = mistakes.OrderByDescending(x => x.Value).ToList();
+        return (ordered[0].Key,
+                ordered.Count > 1 ? ordered[1].Key : ordered[0].Key);
+    }
+
+    public bool IsWarmupPhase(int wave) => wave < applyFromWave;
+
+    public bool ShouldApplyPolicy(int wave)
+    {
+        return wave >= applyFromWave;
     }
 
     public static bool IsStressHigh(
-        float accPrev, float accNow,
-        int mistakesPrev, int mistakesNow,
-        float wpmPrev, float wpmNow
-    )
+    float accPrev, float accNow,
+    int mistakesPrev, int mistakesNow,
+    float wpmPrev, float wpmNow)
     {
-        // 1) Normalize Accuracy Drop
         float accDrop = Mathf.Max(0f, accPrev - accNow);
-        float normAcc = Mathf.Clamp01(accDrop / 0.15f); 
+        float normAcc = Mathf.Clamp01(accDrop / 0.15f);
 
-        // 2) Normalize Mistake Spike
         int deltaMist = mistakesNow - mistakesPrev;
-        float normMist = 0f;
+        float normMist = deltaMist > 0
+            ? Mathf.Clamp01(deltaMist / 12f)
+            : 0f;
 
-        if (deltaMist > 0)
-            normMist = Mathf.Clamp01(deltaMist / 12f); 
-
-        // 3) Normalize WPM Drop (for Net WPM)
         float wpmDrop = Mathf.Max(0f, wpmPrev - wpmNow);
         float normWpm = Mathf.Clamp01(wpmDrop / 15f);
 
-        // Weighted Stress Score 
         float stressScore =
             0.6f * normAcc +
             0.3f * normMist +
@@ -494,17 +469,23 @@ public class BanditWordTrainer : MonoBehaviour
         return stressScore >= 0.7f;
     }
 
-    void ApplyRecoveryMode(FingerZone z1, FingerZone z2, int waveNumber)
+    float[] BuildRecoveryWeights(FingerZone z1, FingerZone z2)
     {
-        currentPattern = TrainingPattern.Balanced; 
+        float[] w = new float[8];
 
-        currentWeakestZone = z1;
-        currentSecondZone = z2;
+        w[(int)z1] = 0.1f;
+        w[(int)z2] = 0.15f;
 
-        lastDecisionForcedByStress = true;
-        hasLastDecision = false;
+        float remain = 1f - (w[(int)z1] + w[(int)z2]);
+        float each = remain / 6f;
 
-        Debug.Log("Stress detected, Applying AntiStreak behavior");
+        for (int i = 0; i < 8; i++)
+        {
+            if (i != (int)z1 && i != (int)z2)
+                w[i] = each;
+        }
+
+        return w;
     }
 
     void DebugPrintPolicyScores(string header = "")
@@ -516,10 +497,7 @@ public class BanditWordTrainer : MonoBehaviour
         foreach (var p in Enum.GetValues(typeof(TrainingPattern)))
         {
             var pattern = (TrainingPattern)p;
-            float avg = avgReward[pattern];
-            int n = trials[pattern];
-
-            msg += $"\n - {pattern,-18} | avg:{avg,6:F2} | trials:{n}";
+            msg += $"\n - {pattern,-20} | avg:{avgReward[pattern],6:F2} | trials:{trials[pattern]}";
         }
 
         Debug.Log(msg);
