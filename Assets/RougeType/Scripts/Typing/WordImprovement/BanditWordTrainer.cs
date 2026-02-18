@@ -260,12 +260,20 @@ public class BanditWordTrainer : MonoBehaviour
 
             case TrainingPattern.TargetedWeakness:
             {
-                int prev = Mathf.Max(4,
+                int totalPrevMistakes = mPrev.Values.Sum();
+
+                if (totalPrevMistakes == 0)
+                    return 0f;
+
+                int prev = Mathf.Max(1,
                     mPrev.ContainsKey(weakestZone) ? mPrev[weakestZone] : 0);
 
                 int now = mNow.ContainsKey(weakestZone)
                     ? mNow[weakestZone]
                     : 0;
+
+                if (prev == 0 && now == 0)
+                    return 0f;
 
                 float ratio = (float)now / prev;
 
