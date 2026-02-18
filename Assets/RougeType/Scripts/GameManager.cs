@@ -383,7 +383,6 @@ public class GameManager : MonoBehaviour
         return totalEnemySpawned;
     }
 
-<<<<<<< Updated upstream
     public DifficultySettings GetDifficulty()
     {
         return currentDifficulty;
@@ -398,6 +397,3 @@ public class GameManager : MonoBehaviour
         return nextWave % spawner.bossEveryXWaves == 0;
     }
 }
-=======
-}
->>>>>>> Stashed changes
