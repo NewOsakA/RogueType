@@ -29154,9 +29154,6 @@ MonoBehaviour:
   earlyEpsilon: 0.45
   earlyEpsilonWaves: 4
   forceTryAllPoliciesOnce: 1
-  shortRatio: 0.5
-  mediumRatio: 0.3
-  longRatio: 0.2
   useUCBExploit: 1
   baseC: 0.3
   autoC: 1
@@ -40510,7 +40507,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8209839379480807350, guid: d475931e05763284c9174b976e66ea0d, type: 3}
       propertyPath: maxHP
-      value: 5
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8209839379480807350, guid: d475931e05763284c9174b976e66ea0d, type: 3}
       propertyPath: hpText
@@ -40518,7 +40515,7 @@ PrefabInstance:
       objectReference: {fileID: 1648633613}
     - target: {fileID: 8209839379480807350, guid: d475931e05763284c9174b976e66ea0d, type: 3}
       propertyPath: currentHP
-      value: 5
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8209839379480807350, guid: d475931e05763284c9174b976e66ea0d, type: 3}
       propertyPath: healthBar
