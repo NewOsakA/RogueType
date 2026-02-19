@@ -89,8 +89,10 @@ public class Wall : MonoBehaviour
                 totalTime: stats != null ? stats.TotalPlayTime : 0f,
                 highestWave: stats != null ? stats.HighestWave : 0,
                 currency: stats != null ? stats.CurrentCurrency : 0,
-                essence: stats != null ? stats.CurrentEssence : 0,
-                highestWPM: stats != null ? stats.HighestWPM : 0f
+                highestWPM: stats != null ? stats.HighestWPM : 0f,
+                averageWPM: stats != null ? stats.AverageWPM : 0f,
+                averageAccuracy: stats != null ? stats.AverageAccuracy : 0f,
+                worstFingerArea: stats != null ? stats.WorstFingerArea : "N/A"
             );
         }
     }

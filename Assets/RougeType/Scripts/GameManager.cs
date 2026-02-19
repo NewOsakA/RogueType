@@ -187,6 +187,14 @@ public class GameManager : MonoBehaviour
             Debug.Log("Boss wave → skip difficulty prediction");
         }
 
+        if (typingManager != null && GameStats.Instance != null)
+        {
+            GameStats.Instance.RecordTypingSnapshot(
+                typingManager.GetWPM(),
+                typingManager.GetAccuracy(),
+                typingManager.GetZoneMistakesSnapshot()
+            );
+        }
 
         // word adaptation update
         if (typingManager != null && BanditWordTrainer.Instance != null)
@@ -305,6 +313,16 @@ public class GameManager : MonoBehaviour
         MetaGameManager.Instance.AddMetaCoins(reward);
 
         Debug.Log($"Earned {reward} coins from Wave {currentWave}");
+
+        if (typingManager != null && GameStats.Instance != null)
+        {
+            GameStats.Instance.RecordTypingSnapshot(
+                typingManager.GetWPM(),
+                typingManager.GetAccuracy(),
+                typingManager.GetZoneMistakesSnapshot()
+            );
+        }
+
         typingManager?.TriggerGameOver();
     }
 

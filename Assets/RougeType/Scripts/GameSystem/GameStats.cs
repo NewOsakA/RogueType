@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -13,10 +14,17 @@ public class GameStats : MonoBehaviour
     public int CurrentEssence;
     public float HighestWPM;
     public int Score;
+    public float AverageAccuracy;
+    public float AverageWPM;
+    public string WorstFingerArea = "N/A";
 
     private GameManager gameManager;
     private TypingManager typingManager;
     private PlayerStats playerStats;
+    private float accuracySum;
+    private float wpmSum;
+    private int typingSampleCount;
+    private readonly Dictionary<FingerZone, int> fingerMistakes = new Dictionary<FingerZone, int>();
 
     void Awake()
     {
@@ -69,6 +77,64 @@ public class GameStats : MonoBehaviour
         }
     }
 
+    public void RecordTypingSnapshot(float wpm, float accuracy, Dictionary<FingerZone, int> zoneMistakes)
+    {
+        typingSampleCount++;
+        wpmSum += Mathf.Max(0f, wpm);
+        accuracySum += Mathf.Clamp01(accuracy);
+
+        AverageWPM = typingSampleCount > 0 ? wpmSum / typingSampleCount : 0f;
+        AverageAccuracy = typingSampleCount > 0 ? accuracySum / typingSampleCount : 0f;
+
+        if (zoneMistakes == null) return;
+
+        foreach (var pair in zoneMistakes)
+        {
+            if (!fingerMistakes.ContainsKey(pair.Key))
+                fingerMistakes[pair.Key] = 0;
+
+            fingerMistakes[pair.Key] += Mathf.Max(0, pair.Value);
+        }
+
+        WorstFingerArea = GetWorstFingerArea();
+    }
+
+    private string GetWorstFingerArea()
+    {
+        FingerZone worstZone = FingerZone.LeftPinky;
+        int worstCount = -1;
+
+        foreach (var zone in System.Enum.GetValues(typeof(FingerZone)))
+        {
+            var z = (FingerZone)zone;
+            int count = fingerMistakes.TryGetValue(z, out int c) ? c : 0;
+            if (count > worstCount)
+            {
+                worstCount = count;
+                worstZone = z;
+            }
+        }
+
+        if (worstCount <= 0) return "N/A";
+        return ZoneToLabel(worstZone);
+    }
+
+    private string ZoneToLabel(FingerZone zone)
+    {
+        return zone switch
+        {
+            FingerZone.LeftPinky => "Left Pinky",
+            FingerZone.LeftRing => "Left Ring",
+            FingerZone.LeftMiddle => "Left Middle",
+            FingerZone.LeftIndex => "Left Index",
+            FingerZone.RightIndex => "Right Index",
+            FingerZone.RightMiddle => "Right Middle",
+            FingerZone.RightRing => "Right Ring",
+            FingerZone.RightPinky => "Right Pinky",
+            _ => zone.ToString()
+        };
+    }
+
     public void ResetRunStats()
     {
         TotalPlayTime = 0f;
@@ -77,5 +143,12 @@ public class GameStats : MonoBehaviour
         CurrentEssence = 0;
         HighestWPM = 0f;
         Score = 0;
+        AverageAccuracy = 0f;
+        AverageWPM = 0f;
+        WorstFingerArea = "N/A";
+        accuracySum = 0f;
+        wpmSum = 0f;
+        typingSampleCount = 0;
+        fingerMistakes.Clear();
     }
 }
