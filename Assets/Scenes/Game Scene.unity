@@ -1477,9 +1477,9 @@ RectTransform:
   - {fileID: 1320624329}
   m_Father: {fileID: 870789088}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -77.9541, y: 7.5735}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 272, y: 7.5735}
   m_SizeDelta: {x: 465.7271, y: 63.243}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &59894939
@@ -14059,8 +14059,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -610.3121, y: 480.84}
-  m_SizeDelta: {x: 699.3657, y: 118.34}
+  m_AnchoredPosition: {x: -588.4667, y: 480.84}
+  m_SizeDelta: {x: 743.0565, y: 118.34}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &870789089
 MonoBehaviour:
@@ -19641,7 +19641,7 @@ PrefabInstance:
       objectReference: {fileID: 1065107379}
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: currentWave
-      value: 13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: playerStats
@@ -30302,7 +30302,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 19, y: 0}
+  m_AnchoredPosition: {x: -21, y: 7.5735}
   m_SizeDelta: {x: 200, y: 78.39}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1648633613
@@ -30391,7 +30391,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 64.60913, w: 0}
+  m_margin: {x: 0, y: 0, z: 1.6957397, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

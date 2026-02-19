@@ -22,6 +22,7 @@ public class Wall : MonoBehaviour
 
     private Coroutine autoRepairCoroutine;
     private bool isDead = false;
+    private bool forceOneMaxHp = false;
 
     void Start()
     {
@@ -100,10 +101,26 @@ public class Wall : MonoBehaviour
 
     public void IncreaseMaxHP(int amount)
     {
-        maxHP += amount;
-        currentHP += amount;
+        if (forceOneMaxHp)
+        {
+            maxHP = 1;
+            currentHP = 1;
+            UpdateHPDisplay();
+            return;
+        }
+
+        maxHP = Mathf.Max(1, maxHP + amount);
+        currentHP = Mathf.Min(currentHP, maxHP);
         UpdateHPDisplay();
         Debug.Log($"Wall HP upgraded to {maxHP}");
+    }
+
+    public void ActivateFragileCannon()
+    {
+        forceOneMaxHp = true;
+        maxHP = 1;
+        currentHP = 1;
+        UpdateHPDisplay();
     }
 
     public void RechargeShield()
@@ -195,7 +212,7 @@ public class Wall : MonoBehaviour
     {
         if (hpText != null)
         {
-            hpText.text = $"{currentHP}";
+            hpText.text = $"{currentHP}/{maxHP}";
         }
         if (healthBar != null)
         {

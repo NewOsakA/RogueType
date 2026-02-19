@@ -325,10 +325,7 @@ public class TemporaryUpgradeManager : MonoBehaviour
 
             case UpgradeEffectType.GlassCannon:
                 playerStats.hasGlassCannon = true;
-
-                wall.maxHP = Mathf.RoundToInt(wall.maxHP * 0.3f);
-                wall.currentHP = Mathf.Min(wall.currentHP, wall.maxHP);
-                wall.UpdateHPDisplay();
+                wall.ActivateFragileCannon();
 
                 playerStats.IncreaseDamage(0);
                 break;
@@ -353,9 +350,7 @@ public class TemporaryUpgradeManager : MonoBehaviour
                 break;  
 
             case UpgradeEffectType.SetWallHPToOne:
-                wall.currentHP = 1;
-                wall.maxHP = 1;
-                wall.UpdateHPDisplay();
+                wall.ActivateFragileCannon();
                 break;  
 
             case UpgradeEffectType.AutoRepairUpgrade:
