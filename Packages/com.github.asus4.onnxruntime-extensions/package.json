@@ -1,0 +1,28 @@
+{
+  "name": "com.github.asus4.onnxruntime-extensions",
+  "version": "0.4.4",
+  "displayName": "ONNX Runtime Extensions",
+  "description": "ONNX Runtime Extensions for Unity",
+  "keywords": [
+    "unity",
+    "onnxruntime"
+  ],
+  "unity": "2022.3",
+  "unityRelease": "0f1",
+  "dependencies": {
+    "com.github.asus4.onnxruntime": "0.4.4"
+  },
+  "repository": {
+    "url": "git@github.com:asus4/onnxruntime-unity.git",
+    "type": "git",
+    "revision": "06527f54445acafc0310c685c92c0b10c0f5a120"
+  },
+  "documentationUrl": "https://github.com/asus4/onnxruntime-unity",
+  "changelogUrl": "https://github.com/asus4/onnxruntime-unity/releases",
+  "licensesUrl": "https://github.com/asus4/onnxruntime-unity/blob/main/com.github.asus4.onnxruntime-extensions/LICENSE",
+  "author": {
+    "name": "Koki Ibukuro",
+    "url": "https://github.com/asus4"
+  },
+  "_fingerprint": "a735fae16ff89048e745adbffedebd77715541c9"
+}

@@ -1,62 +1,67 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class BossEnemyAbility : EnemyAbility
 {
     [Header("Summoning")]
     public GameObject minionPrefab;
-    public float summonInterval = 5f;
+    public float summonCooldown = 10f;
     public int burstCount = 3;
     public int maxTotalMinions = 9;
 
-    private float summonTimer = 0f;
+    [Header("Spawn Offset")]
+    public float offsetXMin = 1f;
+    public float offsetXMax = 2.5f;
+    public float offsetYRange = 1.5f;
+
+    private float lastSummonTime;
     private int totalMinionsSummoned = 0;
 
     public override void OnUpdate()
     {
-        if (enemy == null || minionPrefab == null || totalMinionsSummoned >= maxTotalMinions)
+        if (enemy == null || minionPrefab == null)
             return;
 
-        summonTimer += Time.deltaTime;
+        if (totalMinionsSummoned >= maxTotalMinions)
+            return;
 
-        if (summonTimer >= summonInterval)
+        if (Time.time >= lastSummonTime + summonCooldown)
         {
-            SummonBurst();
-            summonTimer = 0f;
+            enemy.StartCoroutine(SummonBurst());
+            lastSummonTime = Time.time;
         }
     }
 
-    private void SummonBurst()
+    IEnumerator SummonBurst()
     {
         int remaining = maxTotalMinions - totalMinionsSummoned;
         int toSummon = Mathf.Min(burstCount, remaining);
 
-        EnemySpawner spawner = Object.FindAnyObjectByType<EnemySpawner>();
-
         for (int i = 0; i < toSummon; i++)
         {
-            float offsetX = Random.Range(1f, 2.5f) * (i % 2 == 0 ? 1 : -1); // alternate left/right
-            float offsetY = Random.Range(-1.5f, 1.5f);
-            Vector3 spawnPos = enemy.transform.position + new Vector3(offsetX, offsetY, 0f);
+            Vector3 spawnPos = CalculateSpawnPosition(i);
 
-            GameObject newMinion = GameObject.Instantiate(minionPrefab, spawnPos, Quaternion.identity);
-            Debug.Log($"[BossAbility] Spawned minion at {spawnPos}");
+            GameObject minionObj = Object.Instantiate(
+                minionPrefab,
+                spawnPos,
+                Quaternion.identity
+            );
 
-            Enemy minion = newMinion.GetComponent<Enemy>();
-            if (minion != null)
-            {
-                minion.Initialize(10, 2, 1.5f);
-
-                if (spawner != null)
-                    spawner.RegisterExternalEnemy(minion);
-            }
-            else
-            {
-                Debug.LogWarning("[BossAbility] Minion prefab is missing Enemy component!");
-            }
-
+            GameManager.Instance.RegisterEnemy();
             totalMinionsSummoned++;
-        }
 
-        Debug.Log($"[BossAbility] Summoned {toSummon} minion(s). Total: {totalMinionsSummoned}/{maxTotalMinions}");
+
+            yield return new WaitForSeconds(0.3f); // stagger spawn
+        }
+    }
+
+    private Vector3 CalculateSpawnPosition(int index)
+    {
+        float offsetX = Random.Range(offsetXMin, offsetXMax);
+        offsetX *= (index % 2 == 0) ? 1 : -1; // alternate left/right
+
+        float offsetY = Random.Range(-offsetYRange, offsetYRange);
+
+        return enemy.transform.position + new Vector3(offsetX, offsetY, 0f);
     }
 }

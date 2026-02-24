@@ -1,3 +1,5 @@
+// UpgradeData.cs
+
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -18,13 +20,8 @@ public class UpgradeData : ScriptableObject
     public PrerequisiteMode prerequisiteMode = PrerequisiteMode.All;
 
     [Header("Effect")]
-    public UpgradeEffectType effectType;
-
-    [Tooltip("Used for int-based effects (damage, wall hp, combo goal, etc.)")]
-    public int intValue;
-
-    [Tooltip("Used for float-based effects (crit chance, multiplier, etc.)")]
-    public float floatValue;
+    // public UpgradeEffectType effectType;
+    public List<UpgradeEffect> effects = new List<UpgradeEffect>();
 
     // EXCLUSIVE
     [Header("Exclusive Rule")]
@@ -41,18 +38,26 @@ public enum ExclusiveGroup
     None,
     Common,
     Rare,
-    Epic
+    Epic,
+    Ally_upg_1,
+    Ally_upg_2,
 }
 
 public enum UpgradeEffectType
 {
     // POWER
     IncreaseDamage,
+    IncreaseDamagePercentage,
+    DecreaseDamage,
+    DecreaseDamagePercentage,
     Burn,
     Execution,
 
     // DEFENSE
     IncreaseWallHP,
+    IncreaseWallHPPercentage,
+    DecreaseWallHP,
+    DecreaseWallHPPercentage,
     Shield,
     AutoRepair,
     Fortress,
@@ -76,9 +81,24 @@ public enum UpgradeEffectType
     // Rare
     PrecisionBurst,
     FocusedFire,
-    GlassCannon
+    GlassCannon,
 
-    // Todo: Add more effects as needed
+    // Upgrade
+    AOEBoost,
+    AOEDamage,
+    MultiShot, 
+    MultiShotPenalty,  
+    SetWallHPToOne,
+    AutoRepairUpgrade,
 
+
+}
+
+[System.Serializable]
+public class UpgradeEffect
+{
+    public UpgradeEffectType type;
+    public int intValue;
+    public float floatValue;
 }
 

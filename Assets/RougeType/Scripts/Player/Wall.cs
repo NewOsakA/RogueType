@@ -11,63 +11,116 @@ public class Wall : MonoBehaviour
     [Header("UI")]
     public TMP_Text hpText;
 
+    [Header("UI - Health Bar")]
+    public HealthBar healthBar;
+
     private int shieldHitsRemaining = 0;
 
     [Header("Auto Repair")]
-    public int autoRepairAmount = 1; 
+    public int autoRepairAmount = 5; 
     public float autoRepairInterval = 5f;
 
     private Coroutine autoRepairCoroutine;
-
+    private bool isDead = false;
+    private bool forceOneMaxHp = false;
 
     void Start()
     {
         currentHP = maxHP;
+
+        if (healthBar == null)
+            healthBar = Object.FindFirstObjectByType<HealthBar>(); // fallback
+
+        healthBar?.SetMaxHealth(maxHP);
+
         UpdateHPDisplay();
     }
 
 
-public void TakeDamage(int amount)
-{
-    var playerStats = GameManager.Instance?.playerStats;
-
-    // Shield block
-    if (playerStats != null && shieldHitsRemaining > 0)
+    public void TakeDamage(int amount)
     {
-        shieldHitsRemaining--;
-        Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
-        return;
+        if (isDead) return;
+
+        var playerStats = GameManager.Instance?.playerStats;
+
+        // Shield block
+        if (playerStats != null && shieldHitsRemaining > 0)
+        {
+            shieldHitsRemaining--;
+            // Debug.Log($"Shield Remaining: {shieldHitsRemaining}");
+            return;
+        }
+
+        // Fortress % reduction
+        float reduction = 0f;
+        if (playerStats != null)
+        {
+            reduction = playerStats.fortressDamageReduction;
+        }
+
+        int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
+        finalDamage = Mathf.Max(finalDamage, 0);
+
+        currentHP -= finalDamage;
+        currentHP = Mathf.Max(currentHP, 0);
+        UpdateHPDisplay();
+
+        // Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
+
+        if (currentHP <= 0)
+        {
+            isDead = true;
+            GameManager.Instance?.OnPlayerDefeated();
+            gameObject.SetActive(false);
+            Die();
+        }
     }
 
-    // Fortress % reduction
-    float reduction = 0f;
-    if (playerStats != null)
+    void Die()
     {
-        reduction = playerStats.fortressDamageReduction;
+        Time.timeScale = 0f; // Pause game
+
+        GameOverUI gameOverUI = Object.FindFirstObjectByType<GameOverUI>(FindObjectsInactive.Include);
+
+        if (gameOverUI != null)
+        {
+            GameStats stats = GameStats.Instance;
+            gameOverUI.Show(
+                score: stats != null ? stats.Score : 0,
+                totalTime: stats != null ? stats.TotalPlayTime : 0f,
+                highestWave: stats != null ? stats.HighestWave : 0,
+                currency: stats != null ? stats.CurrentCurrency : 0,
+                highestWPM: stats != null ? stats.HighestWPM : 0f,
+                averageWPM: stats != null ? stats.AverageWPM : 0f,
+                averageAccuracy: stats != null ? stats.AverageAccuracy : 0f,
+                worstFingerArea: stats != null ? stats.WorstFingerArea : "N/A"
+            );
+        }
     }
 
-    int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
-    finalDamage = Mathf.Max(finalDamage, 0);
-
-    currentHP -= finalDamage;
-    currentHP = Mathf.Max(currentHP, 0);
-    UpdateHPDisplay();
-
-    Debug.Log($"Wall took {finalDamage} damage (reduced from {amount})");
-
-    if (currentHP <= 0)
-    {
-        GameManager.Instance?.OnPlayerDefeated();
-        gameObject.SetActive(false);
-    }
-}
 
     public void IncreaseMaxHP(int amount)
     {
-        maxHP += amount;
-        currentHP = maxHP;
+        if (forceOneMaxHp)
+        {
+            maxHP = 1;
+            currentHP = 1;
+            UpdateHPDisplay();
+            return;
+        }
+
+        maxHP = Mathf.Max(1, maxHP + amount);
+        currentHP = Mathf.Min(currentHP, maxHP);
         UpdateHPDisplay();
         Debug.Log($"Wall HP upgraded to {maxHP}");
+    }
+
+    public void ActivateFragileCannon()
+    {
+        forceOneMaxHp = true;
+        maxHP = 1;
+        currentHP = 1;
+        UpdateHPDisplay();
     }
 
     public void RechargeShield()
@@ -79,7 +132,7 @@ public void TakeDamage(int amount)
 
         if (shieldHitsRemaining > 0)
         {
-            Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
+            // Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
         }
     }
 
@@ -131,7 +184,7 @@ public void TakeDamage(int amount)
         currentHP = Mathf.Min(maxHP, currentHP + amount);
         UpdateHPDisplay();
 
-        Debug.Log($"Wall healed + {amount} Now {currentHP}");
+        // Debug.Log($"Wall healed + {amount} Now {currentHP}");
     }
 
     public void ActivateDamageReduction(float percent, float duration)
@@ -159,7 +212,12 @@ public void TakeDamage(int amount)
     {
         if (hpText != null)
         {
-            hpText.text = $"Wall HP: {currentHP}";
+            hpText.text = $"{currentHP}/{maxHP}";
+        }
+        if (healthBar != null)
+        {
+            healthBar.slider.maxValue = maxHP;
+            healthBar.SetHealth(currentHP);
         }
     }
 

@@ -11,14 +11,10 @@ public class TypingManager : MonoBehaviour
     public TMP_Text wpmText;
     public TMP_Text wordCountText;
     public TMP_Text timerText;
-    public TMP_Text gameOverText;
     public TMP_Text comboStreakText;
 
     [Header("Word System")]
     public WordLoader wordLoader;
-
-    [Header("Word Difficulty (Default)")]
-    public WordLoader.Difficulty defaultWordDifficulty = WordLoader.Difficulty.Easy;
 
     [Header("Combat")]
     public Enemy activeEnemy;
@@ -31,25 +27,36 @@ public class TypingManager : MonoBehaviour
     [Header("Player Reference")]
     public PlayerStats playerStats;
 
-    [Header("Penalty")]
-    public PenaltyManager penaltyManager;
+    [Header("Warm-up Word Mix")]
+    [Range(0f, 1f)] public float warmupEasyWeight = 0.5f;
+    [Range(0f, 1f)] public float warmupMediumWeight = 0.3f;
+    [Range(0f, 1f)] public float warmupHardWeight = 0.2f;
 
     // Typing State
     private Queue<string> wordQueue = new Queue<string>();
     private int currentLetterIndex = 0;
+
+    [Header("Total Preview word")]
     [SerializeField] private int previewWordCount = 3;
 
     // Gameplay stats
     private int wordCount = 0;
+    private int mistakeCount = 0;
 
     // Typing stats (for WPM)
     private int totalTypedCharacters = 0;
     private float startTime;
     private float elapsedTime = 0f;
 
+    // Reaction time
+    private float lastKeyTime = 0f;
+    private float reactionTimeSum = 0f;
+    private int reactionSampleCount = 0;
+
+    // Finger-zone mistake tracking
+    private Dictionary<FingerZone, int> zoneMistakes = new Dictionary<FingerZone, int>();
     private bool isShaking = false;
     private bool isGameOver = false;
-    private bool isStunned = false;
 
     private int lastComboBonus = 0;
 
@@ -61,11 +68,9 @@ public class TypingManager : MonoBehaviour
 
     void Start()
     {
+        ResetZoneMistakes();
         ResetTypingStats();
         InitializeWordStream();
-
-        if (gameOverText != null)
-            gameOverText.gameObject.SetActive(false);
 
         if (comboStreakText != null)
             comboStreakText.text = "";
@@ -82,7 +87,7 @@ public class TypingManager : MonoBehaviour
         elapsedTime += Time.deltaTime;
         UpdateTimerText();
 
-        if (Input.anyKeyDown && !isShaking && !isStunned)
+        if (Input.anyKeyDown && !isShaking)
         {
             string input = Input.inputString;
             if (string.IsNullOrEmpty(input))
@@ -112,6 +117,14 @@ public class TypingManager : MonoBehaviour
 
         if (typedChar == char.ToLower(expectedChar))
         {
+            float now = Time.time;
+            if (lastKeyTime > 0f)
+            {
+                reactionTimeSum += (now - lastKeyTime);
+                reactionSampleCount++;
+            }
+            lastKeyTime = now;
+
             currentLetterIndex++;
             totalTypedCharacters++;
 
@@ -125,16 +138,19 @@ public class TypingManager : MonoBehaviour
         }
         else
         {
+            mistakeCount++;
+            // Track finger-zone mistake
+            if (FingerZoneMap.TryGetZone(typedChar, out var zone))
+            {
+                zoneMistakes[zone]++;
+            }
+
             LastWordPerfect = false;
             StartCoroutine(ShakeText());
 
             playerStats?.OnCorrectType(false);
             playerStats?.ResetFocusedFire();
-            penaltyManager?.RegisterMistake();
             UpdateComboUI();
-
-            if (penaltyManager != null && penaltyManager.ShouldStun())
-                StartCoroutine(StunInput(penaltyManager.stunDurationSeconds));
         }
     }
 
@@ -144,14 +160,35 @@ public class TypingManager : MonoBehaviour
         if (projectilePrefab == null || shootPoint == null)
             return;
 
+        int count = playerStats != null
+            ? Mathf.Max(1, playerStats.projectileCount)
+            : 1;
+
+        // Debug.Log("Projectile Count: " + count);
+
+        float damageMultiplier = playerStats != null
+            ? playerStats.multiShotDamageMultiplier
+            : 1f;    
+
         if (playerStats != null && playerStats.hasTypingFrenzy)
         {
             StartCoroutine(FireBurst());
         }
         else
         {
-            FireSingleProjectile(1f);
+            // Debug.Log("Firing " + count + " projectiles.");
+            StartCoroutine(FireMultipleProjectiles(count, damageMultiplier));
         }
+    }
+
+    IEnumerator FireMultipleProjectiles(int count, float damageMultiplier)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            FireSingleProjectile(damageMultiplier);
+            yield return new WaitForSeconds(0.04f);
+        }
+       
     }
 
     void FireSingleProjectile(float damageMultiplier)
@@ -171,14 +208,10 @@ public class TypingManager : MonoBehaviour
             finalDmg *= playerStats.GetFocusedFireMultiplier(target);
         }
 
-        // penalty
-        if (penaltyManager != null)
-        {
-            finalDmg *= penaltyManager.GetDamageMultiplier();
-        }
-
         // typing frenzy multiplier
         finalDmg *= damageMultiplier;
+
+        // Debug.Log("Damage: " + finalDmg);
 
         p.damage = Mathf.RoundToInt(finalDmg);
 
@@ -205,9 +238,19 @@ public class TypingManager : MonoBehaviour
     {
         wordQueue.Clear();
 
+        int wave = GameManager.Instance.currentWave;
+
+        bool useBandit =
+            BanditWordTrainer.Instance != null &&
+            BanditWordTrainer.Instance.ShouldApplyPolicy(wave);
+
+        bool isWarmup =
+            BanditWordTrainer.Instance != null &&
+            BanditWordTrainer.Instance.IsWarmupPhase(wave);
+
         for (int i = 0; i < previewWordCount; i++)
         {
-            wordQueue.Enqueue(wordLoader.GetRandomWord(GetMixedDifficulty()));
+            wordQueue.Enqueue(GetNextWord());
         }
 
         currentLetterIndex = 0;
@@ -219,50 +262,58 @@ public class TypingManager : MonoBehaviour
     void AdvanceWord()
     {
         wordQueue.Dequeue();
-        wordQueue.Enqueue(wordLoader.GetRandomWord(GetMixedDifficulty()));
+        wordQueue.Enqueue(GetNextWord());
 
         currentLetterIndex = 0;
         wordCount++;
         LastWordPerfect = true;
 
         playerStats?.OnCorrectType(true);
-        penaltyManager?.RegisterCorrectWord();
         UpdateComboUI();
         UpdateWordDisplay();
     }
 
-    public void ResetWordsForNewWave()
+    string GetNextWord()
     {
-        currentLetterIndex = 0;
-        LastWordPerfect = false;
-        isStunned = false;
+        int wave = GameManager.Instance.currentWave;
 
-        InitializeWordStream();
+        bool useBandit =
+            BanditWordTrainer.Instance != null &&
+            BanditWordTrainer.Instance.ShouldApplyPolicy(wave);
+
+        bool isWarmup =
+            BanditWordTrainer.Instance != null &&
+            BanditWordTrainer.Instance.IsWarmupPhase(wave);
+
+        if (useBandit)
+        {
+            var policy = BanditWordTrainer.Instance.GetCurrentPolicy();
+
+            WordLengthBucket len = RollLengthBucket(policy.lenMix);
+            FingerZone zone = RollZone(policy.zoneWeights);
+
+            return wordLoader.GetRandomWordByLengthAndZone(len, zone);
+        }
+        else if (isWarmup)
+        {
+            return wordLoader.GetRandomWordMixed(
+                warmupEasyWeight,
+                warmupMediumWeight,
+                warmupHardWeight
+            );
+        }
+        // fallback
+        return wordLoader.GetRandomWordMixed(0.5f, 0.3f, 0.2f);
     }
 
-    WordLoader.Difficulty GetMixedDifficulty()
+    public void ResetWordsForNewWave()
     {
-        // random value 0 to 1
-        float roll = Random.value; 
+        ResetTypingStats();
+        ResetZoneMistakes();
+        currentLetterIndex = 0;
+        LastWordPerfect = false;
 
-        switch (defaultWordDifficulty)
-        {
-            case WordLoader.Difficulty.Easy:
-                return roll < 0.7f
-                    ? WordLoader.Difficulty.Easy
-                    : WordLoader.Difficulty.Medium;
-
-            case WordLoader.Difficulty.Medium:
-                return roll < 0.7f
-                    ? WordLoader.Difficulty.Medium
-                    : WordLoader.Difficulty.Hard;
-
-            case WordLoader.Difficulty.Hard:
-                return WordLoader.Difficulty.Hard;
-
-            default:
-                return WordLoader.Difficulty.Easy;
-        }
+        InitializeWordStream();
     }
 
     void UpdateWordDisplay()
@@ -291,7 +342,7 @@ public class TypingManager : MonoBehaviour
                 display += $"<color=white>{word}</color>";
             }
 
-            display += "   ";
+            display += "  ";
             wordIndex++;
         }
 
@@ -371,13 +422,6 @@ public class TypingManager : MonoBehaviour
         isShaking = false;
     }
 
-    IEnumerator StunInput(float duration)
-    {
-        isStunned = true;
-        yield return new WaitForSeconds(duration);
-        isStunned = false;
-    }
-
     // Enemy Tracking
     public void RegisterEnemy(Enemy e)
     {
@@ -404,11 +448,11 @@ public class TypingManager : MonoBehaviour
         elapsedTime = 0f;
         totalTypedCharacters = 0;
         wordCount = 0;
-    }
+        mistakeCount = 0;
 
-    public void SetDefaultWordDifficulty(WordLoader.Difficulty difficulty)
-    {
-        defaultWordDifficulty = difficulty;
+        lastKeyTime = 0f;
+        reactionTimeSum = 0f;
+        reactionSampleCount = 0;
     }
 
 
@@ -422,7 +466,7 @@ public class TypingManager : MonoBehaviour
 
     public int GetMistakeCount()
     {
-        return penaltyManager != null ? penaltyManager.GetMistakeCount() : 0;
+        return mistakeCount;
     }
 
     public float GetAccuracy()
@@ -445,12 +489,6 @@ public class TypingManager : MonoBehaviour
         if (isGameOver) return;
         isGameOver = true;
 
-        if (gameOverText != null)
-        {
-            gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "GAME OVER";
-        }
-
         foreach (var enemy in activeEnemies)
         {
             if (enemy != null)
@@ -459,5 +497,45 @@ public class TypingManager : MonoBehaviour
                 enemy.enabled = false;
             }
         }
+    }
+    // Mistakes Zones
+    void ResetZoneMistakes()
+    {
+        zoneMistakes.Clear();
+        foreach (FingerZone z in System.Enum.GetValues(typeof(FingerZone)))
+            zoneMistakes[z] = 0;
+    }
+
+    public Dictionary<FingerZone, int> GetZoneMistakesSnapshot()
+    {
+        return zoneMistakes.ToDictionary(kv => kv.Key, kv => kv.Value);
+    }
+
+    WordLengthBucket RollLengthBucket((float s, float m, float l) mix)
+    {
+        float r = Random.value;
+        if (r < mix.s) return WordLengthBucket.Short;
+        if (r < mix.s + mix.m) return WordLengthBucket.Medium;
+        return WordLengthBucket.Long;
+    }
+
+    FingerZone RollZone(float[] weights)
+    {
+        float r = Random.value;
+        float acc = 0f;
+        for (int i = 0; i < weights.Length; i++)
+        {
+            acc += weights[i];
+            if (r <= acc)
+                return (FingerZone)i;
+        }
+        return FingerZone.LeftIndex; // fallback
+    }
+
+    public float GetReactionTimeAvg()
+    {
+        return reactionSampleCount > 0
+            ? reactionTimeSum / reactionSampleCount
+            : 0f;
     }
 }

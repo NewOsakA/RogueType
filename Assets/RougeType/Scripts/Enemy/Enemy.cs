@@ -36,12 +36,16 @@ public class Enemy : MonoBehaviour
     private Color originalColor;
 
     private Coroutine burnCoroutine;
+    private float spawnTime;
 
     public System.Action OnDeath;
+    private bool isDead = false;
 
     // Init
     void Start()
     {
+        spawnTime = Time.time;
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
@@ -53,6 +57,8 @@ public class Enemy : MonoBehaviour
         typingManager?.RegisterEnemy(this);
 
         specialAbility?.Initialize(this);
+
+        // GameManager.Instance?.RegisterEnemy();
     }
 
     // Update
@@ -102,6 +108,9 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         if (burnCoroutine != null)
         {
             StopCoroutine(burnCoroutine);
@@ -134,8 +143,15 @@ public class Enemy : MonoBehaviour
         {
             EssenceManager.Instance.AddEssence(essenceReward);
         }
+
         OnDeath?.Invoke();
         priorityTargets.Remove(this);
+
+        float aliveTime = Time.time - spawnTime;
+        GameManager.Instance?.RegisterEnemyLifetime(aliveTime);
+
+        GameManager.Instance?.UnregisterEnemy();
+
         Destroy(gameObject);
     }
 
@@ -221,12 +237,30 @@ public class Enemy : MonoBehaviour
         ResetColor();
         burnCoroutine = null;
     }
-
-
-
     private void ResetColor()
     {
         if (spriteRenderer != null)
             spriteRenderer.color = priorityTargets.Contains(this) ? Color.red : originalColor;
+    }
+
+    // Skill apply to enemy
+    public void PushBack(float distance)
+    {
+        transform.position += Vector3.right * distance;
+    }
+
+    public void ApplySlow(float slowPercent, float duration)
+    {
+        StartCoroutine(SlowRoutine(slowPercent, duration));
+    }
+
+    IEnumerator SlowRoutine(float slowPercent, float duration)
+    {
+        float originalSpeed = speed;
+        speed *= (1f - slowPercent);
+
+        yield return new WaitForSeconds(duration);
+
+        speed = originalSpeed;
     }
 }

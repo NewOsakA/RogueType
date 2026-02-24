@@ -23,7 +23,7 @@ public class PlayerStats : MonoBehaviour
     public float critChance = 0f;
     public float critMultiplier = 2f;
 
-    // CHAOS / CORE MODIFIERS
+    // CORE MODIFIERS
     [Header("Special Skills")]
     public bool hasChainShot = false;
     public bool hasExplosiveShot = false;
@@ -70,6 +70,19 @@ public class PlayerStats : MonoBehaviour
     public int totalCorrect = 0;
     public int totalMistakes = 0;
 
+    // EXPLOSION RADIUS
+    [Header("Explosive Shot")]
+    public float explosionRadiusMultiplier = 1f;
+    public float explosiveDamageMultiplier = 1f;
+
+    // MULTI SHOT
+    [Header("Multi Shot")]
+    public int projectileCount = 1;
+    [Range(0f, 1f)]
+    public float multiShotDamageMultiplier = 1f;
+
+
+
     // INIT
     void Start()
     {
@@ -98,6 +111,11 @@ public class PlayerStats : MonoBehaviour
         currentDamage = baseDamage;
         hasExecution = false;
         executionThreshold = 0f;
+
+        explosionRadiusMultiplier = 1f;
+
+        projectileCount = 1;
+        multiShotDamageMultiplier = 1f;
     }
 
     // DAMAGE MANIPULATION

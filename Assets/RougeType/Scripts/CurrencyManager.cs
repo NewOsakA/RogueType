@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using TMPro;
 
 public class CurrencyManager : MonoBehaviour
@@ -6,7 +7,9 @@ public class CurrencyManager : MonoBehaviour
     public static CurrencyManager Instance;
 
     public int currency = 0;
-    public TMP_Text currencyText; 
+    public TMP_Text currencyText;
+
+    public event Action<int> OnCurrencyChanged;
 
     void Awake()
     {
@@ -23,23 +26,20 @@ public class CurrencyManager : MonoBehaviour
     {
         currency += amount;
         UpdateCurrencyUI();
-        Debug.Log($"Gained {amount} currency! Total: {currency}");
+        OnCurrencyChanged?.Invoke(currency);
     }
 
     public bool SpendCurrency(int amount)
     {
-        if (currency >= amount)
-        {
-            currency -= amount;
-            UpdateCurrencyUI();
-            return true;
-        }
-        return false;
+        if (currency < amount) return false;
+
+        currency -= amount;
+        UpdateCurrencyUI();
+        OnCurrencyChanged?.Invoke(currency);
+        return true;
     }
-    public int GetCurrentCurrency()
-    {
-        return currency;
-    }
+
+    public int GetCurrentCurrency() => currency;
 
     void UpdateCurrencyUI()
     {

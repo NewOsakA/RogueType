@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Projectile.cs
+
+using UnityEngine;
 using System.Linq;
 
 [RequireComponent(typeof(Collider2D))]
@@ -16,6 +18,7 @@ public class Projectile : MonoBehaviour
     [Header("Explosive Shot")]
     public float explosionRadius = 2.5f;
     public float explosionDamageMultiplier = 0.3f;
+    public float explosiveRadiusMultiplier = 1f; // to 1.3f
 
     private Vector3 moveDirection;
     private Transform target;
@@ -162,7 +165,7 @@ public class Projectile : MonoBehaviour
     // Explosive Shot
     private void ApplyExplosion(Vector3 center, int baseDamage)
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(center, explosionRadius);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(center, GetExplosiveRadius());
 
         foreach (var hit in hits)
         {
@@ -175,6 +178,17 @@ public class Projectile : MonoBehaviour
             e.TakeDamage(aoeDamage);
         }
     }
+
+    public float GetExplosiveRadius()
+    {
+        float multiplier = 1f;
+
+        if (playerStats != null)
+            multiplier = playerStats.explosionRadiusMultiplier;
+
+        return explosionRadius * multiplier;
+    }
+
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
