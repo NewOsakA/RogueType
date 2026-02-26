@@ -34,20 +34,26 @@ public class Enemy : MonoBehaviour
     private TypingManager typingManager;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
+    private Animator animator;
+    private Coroutine damageFlashCoroutine;
 
     private Coroutine burnCoroutine;
     private float spawnTime;
 
     public System.Action OnDeath;
     private bool isDead = false;
+    private SpriteRenderer[] renderers;
 
     // Init
     void Start()
     {
         spawnTime = Time.time;
-
+        
+        renderers = GetComponentsInChildren<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         if (spriteRenderer != null)
+            spriteRenderer.flipX = true;
             originalColor = spriteRenderer.color;
 
         currentHP = maxHP;
@@ -66,14 +72,27 @@ public class Enemy : MonoBehaviour
     {
         if (currentWall == null)
         {
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
-        }
-        else if (Time.time >= lastAttackTime + attackCooldown)
-        {
-            currentWall.TakeDamage(damage);
-            lastAttackTime = Time.time;
+            if (speed > 0.01f)
+                transform.Translate(Vector3.left * speed * Time.deltaTime);
 
-            specialAbility?.OnHitWall(currentWall);
+            if (animator != null)
+                animator.SetBool("isRunning", speed > 0.01f);
+        }
+        else
+        {
+            if (animator != null)
+                animator.SetBool("isRunning", false);
+
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                if (animator != null)
+                    animator.SetTrigger("Attack");
+
+                currentWall.TakeDamage(damage);
+                lastAttackTime = Time.time;
+
+                specialAbility?.OnHitWall(currentWall);
+            }
         }
 
         specialAbility?.OnUpdate();
@@ -82,6 +101,8 @@ public class Enemy : MonoBehaviour
     // Damage
     public void TakeDamage(int amount)
     {
+        if (isDead) return;
+
         var stats = GameManager.Instance?.playerStats;
 
         // Execution (non-boss only)
@@ -101,6 +122,11 @@ public class Enemy : MonoBehaviour
         currentHP -= amount;
         currentHP = Mathf.Max(currentHP, 0);
         UpdateHPText();
+
+        if (damageFlashCoroutine != null)
+            StopCoroutine(damageFlashCoroutine);
+
+        damageFlashCoroutine = StartCoroutine(DamageFlash());
 
         if (currentHP <= 0)
             Die();
@@ -166,6 +192,17 @@ public class Enemy : MonoBehaviour
     {
         if (hpText != null)
             hpText.transform.rotation = Quaternion.identity;
+
+        if (renderers != null)
+        {
+            int order = 5000 - Mathf.RoundToInt(transform.position.y * 100);
+
+            foreach (var r in renderers)
+            {
+                r.sortingLayerName = "Enemy";
+                r.sortingOrder = order;
+            }
+        }
     }
 
     // Wall Collision
@@ -241,6 +278,33 @@ public class Enemy : MonoBehaviour
     {
         if (spriteRenderer != null)
             spriteRenderer.color = priorityTargets.Contains(this) ? Color.red : originalColor;
+    }
+
+    IEnumerator DamageFlash()
+    {
+        if (spriteRenderer == null)
+            yield break;
+
+        spriteRenderer.color = Color.red;
+
+        yield return new WaitForSeconds(0.1f);
+
+        if (burnCoroutine == null)
+            ResetColor();
+
+        damageFlashCoroutine = null;
+    }
+
+    public void SetRunningAnim(bool running)
+    {
+        if (animator != null)
+            animator.SetBool("isRunning", running);
+    }
+
+    public void PlayAttackAnim()
+    {
+        if (animator != null)
+            animator.SetTrigger("Attack");
     }
 
     // Skill apply to enemy
