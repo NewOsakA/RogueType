@@ -323,6 +323,8 @@ public class GameManager : MonoBehaviour
             );
         }
 
+        GameStats.Instance?.PersistToActiveSlot();
+
         typingManager?.TriggerGameOver();
     }
 
@@ -335,6 +337,8 @@ public class GameManager : MonoBehaviour
 
         if (playerStats != null)
             playerStats.ResetRunStats();
+
+        GameStats.Instance?.PersistToActiveSlot();
 
         foreach (var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
         {

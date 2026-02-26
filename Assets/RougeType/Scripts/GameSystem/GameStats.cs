@@ -97,6 +97,8 @@ public class GameStats : MonoBehaviour
         }
 
         WorstFingerArea = GetWorstFingerArea();
+
+        PersistToActiveSlot();
     }
 
     private string GetWorstFingerArea()
@@ -150,5 +152,30 @@ public class GameStats : MonoBehaviour
         wpmSum = 0f;
         typingSampleCount = 0;
         fingerMistakes.Clear();
+    }
+
+    public void PersistToActiveSlot()
+    {
+        if (!SaveSlotManager.TryGetActiveSlotIndex(out int slotIndex))
+            return;
+
+        SaveSlotData slot = SaveSlotManager.GetSlot(slotIndex);
+        if (!slot.hasData)
+            slot = SaveSlotData.CreateNew(slotIndex);
+
+        if (slot.lastRunStats == null)
+            slot.lastRunStats = new SaveRunStatsData();
+
+        slot.lastRunStats.score = Score;
+        slot.lastRunStats.totalTime = TotalPlayTime;
+        slot.lastRunStats.highestWave = HighestWave;
+        slot.lastRunStats.currency = CurrentCurrency;
+        slot.lastRunStats.highestWPM = HighestWPM;
+        slot.lastRunStats.averageWPM = AverageWPM;
+        slot.lastRunStats.averageAccuracy = AverageAccuracy;
+        slot.lastRunStats.worstFingerArea = WorstFingerArea;
+        slot.lastPlayedUtc = System.DateTime.UtcNow.ToString("o");
+
+        SaveSlotManager.SetSlot(slotIndex, slot);
     }
 }

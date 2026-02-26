@@ -5,7 +5,7 @@ public class MainMenuController : MonoBehaviour
 {
     public void OnPlayButton()
     {
-        SceneManager.LoadScene("Upgrade");
+        SceneManager.LoadScene("Save Selection Scene");
     }
 
     public void OnQuitButton()

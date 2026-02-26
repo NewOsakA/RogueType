@@ -12,6 +12,7 @@ public class RoguelikeUpgradeUI : MonoBehaviour
 
     private void OnEnable()
     {
+        meta.LoadFromActiveSlot();
         RefreshUI();
     }
 

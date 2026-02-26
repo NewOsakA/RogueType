@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameOverUI : MonoBehaviour
 {
+    private const string MainMenuSceneName = "Main manu";
+    private const string UpgradeSceneName = "Upgrade";
+
     [Header("Stat Texts (TMP)")]
     public TMP_Text scoreText;
     public TMP_Text timeText;
@@ -50,6 +53,15 @@ public class GameOverUI : MonoBehaviour
     public void BackToMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Upgrade");
+        SceneManager.LoadScene(MainMenuSceneName);
+    }
+
+    /// <summary>
+    /// Called by the Restart button.
+    /// </summary>
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(UpgradeSceneName);
     }
 }

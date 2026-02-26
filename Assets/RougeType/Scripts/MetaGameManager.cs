@@ -21,6 +21,7 @@ public class MetaGameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        LoadFromActiveSlot();
     }
 
     // เพิ่มกลับมา (แก้ ERROR)
@@ -28,6 +29,7 @@ public class MetaGameManager : MonoBehaviour
     {
         metaCoins += amount;
         if (metaCoins < 0) metaCoins = 0;
+        SaveToActiveSlot();
     }
 
     // โบนัสราคาตามสูตร Hybrid
@@ -45,6 +47,56 @@ public class MetaGameManager : MonoBehaviour
 
         metaCoins -= cost;
         level++;
+        SaveToActiveSlot();
         return true;
+    }
+
+    public void LoadFromActiveSlot()
+    {
+        if (!SaveSlotManager.TryGetActiveSlotIndex(out int slotIndex))
+        {
+            metaCoins = 0;
+            damageLevel = 0;
+            wallHpLevel = 0;
+            return;
+        }
+
+        LoadFromSlot(slotIndex);
+    }
+
+    public void LoadFromSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= SaveSlotManager.SlotCount)
+            return;
+
+        SaveSlotData slot = SaveSlotManager.GetSlot(slotIndex);
+        if (!slot.hasData)
+        {
+            slot = SaveSlotData.CreateNew(slotIndex);
+            SaveSlotManager.SetSlot(slotIndex, slot);
+        }
+
+        SaveSlotManager.SetActiveSlotIndex(slotIndex);
+
+        metaCoins = Mathf.Max(0, slot.metaCoins);
+        damageLevel = Mathf.Clamp(slot.damageLevel, 0, 20);
+        wallHpLevel = Mathf.Clamp(slot.wallHpLevel, 0, 20);
+    }
+
+    public void SaveToActiveSlot()
+    {
+        if (!SaveSlotManager.TryGetActiveSlotIndex(out int slotIndex))
+            return;
+
+        SaveSlotData slot = SaveSlotManager.GetSlot(slotIndex);
+        if (!slot.hasData)
+            slot = SaveSlotData.CreateNew(slotIndex);
+
+        slot.metaCoins = metaCoins;
+        slot.damageLevel = damageLevel;
+        slot.wallHpLevel = wallHpLevel;
+        slot.lastPlayedUtc = System.DateTime.UtcNow.ToString("o");
+
+        SaveSlotManager.SetSlot(slotIndex, slot);
     }
 }
