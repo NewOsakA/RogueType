@@ -48,13 +48,22 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         spawnTime = Time.time;
-        
-        renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        renderers = GetComponentsInChildren<SpriteRenderer>(true);
+
+        foreach (var r in renderers)
+            if (r != null) r.flipX = true;
+
         spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
         if (spriteRenderer != null)
-            spriteRenderer.flipX = true;
             originalColor = spriteRenderer.color;
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
 
         currentHP = maxHP;
         UpdateHPText();
@@ -63,8 +72,6 @@ public class Enemy : MonoBehaviour
         typingManager?.RegisterEnemy(this);
 
         specialAbility?.Initialize(this);
-
-        // GameManager.Instance?.RegisterEnemy();
     }
 
     // Update
@@ -190,17 +197,23 @@ public class Enemy : MonoBehaviour
 
     void LateUpdate()
     {
-        if (hpText != null)
-            hpText.transform.rotation = Quaternion.identity;
+        int order = 5000 - Mathf.RoundToInt(transform.position.y * 100);
 
-        if (renderers != null)
+        foreach (var r in renderers)
         {
-            int order = 5000 - Mathf.RoundToInt(transform.position.y * 100);
+            if (r == null) continue;
 
-            foreach (var r in renderers)
+            r.sortingLayerName = "Enemy";
+            r.sortingOrder = order;
+        }
+
+        if (hpText != null)
+        {
+            var textRenderer = hpText.GetComponent<MeshRenderer>();
+            if (textRenderer != null)
             {
-                r.sortingLayerName = "Enemy";
-                r.sortingOrder = order;
+                textRenderer.sortingLayerName = "EnemyText";
+                textRenderer.sortingOrder = order;
             }
         }
     }
