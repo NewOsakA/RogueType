@@ -474,6 +474,6 @@ MonoBehaviour:
   smallSlimePrefab: {fileID: 1835511350366655920, guid: 05cdd332afa7249c9b555a4686c2b6ce, type: 3}
   splitCount: 2
   spawnOffset: 1
-  smallSlimeHP: 3
-  smallSlimeDamage: 1
+  smallSlimeHP: 30
+  smallSlimeDamage: 3
   smallSlimeSpeed: 2.2
