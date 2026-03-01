@@ -724,11 +724,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 3ef67319-8bb5-408c-afc8-436e645a7a29
+  cloudProjectId: 1d3aa4ca-c386-4337-8ea8-4978af51c30f
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: RoughType_1
-  organizationId: kanisorn506
+  organizationId: newosaka
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

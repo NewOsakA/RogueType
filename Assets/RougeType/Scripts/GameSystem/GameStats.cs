@@ -24,6 +24,7 @@ public class GameStats : MonoBehaviour
     private float accuracySum;
     private float wpmSum;
     private int typingSampleCount;
+    private bool runFinalized;
     private readonly Dictionary<FingerZone, int> fingerMistakes = new Dictionary<FingerZone, int>();
 
     void Awake()
@@ -98,7 +99,6 @@ public class GameStats : MonoBehaviour
 
         WorstFingerArea = GetWorstFingerArea();
 
-        PersistToActiveSlot();
     }
 
     private string GetWorstFingerArea()
@@ -151,6 +151,7 @@ public class GameStats : MonoBehaviour
         accuracySum = 0f;
         wpmSum = 0f;
         typingSampleCount = 0;
+        runFinalized = false;
         fingerMistakes.Clear();
     }
 
@@ -163,19 +164,48 @@ public class GameStats : MonoBehaviour
         if (!slot.hasData)
             slot = SaveSlotData.CreateNew(slotIndex);
 
-        if (slot.lastRunStats == null)
-            slot.lastRunStats = new SaveRunStatsData();
-
-        slot.lastRunStats.score = Score;
-        slot.lastRunStats.totalTime = TotalPlayTime;
-        slot.lastRunStats.highestWave = HighestWave;
-        slot.lastRunStats.currency = CurrentCurrency;
-        slot.lastRunStats.highestWPM = HighestWPM;
-        slot.lastRunStats.averageWPM = AverageWPM;
-        slot.lastRunStats.averageAccuracy = AverageAccuracy;
-        slot.lastRunStats.worstFingerArea = WorstFingerArea;
+        slot.lastRunStats = BuildCurrentRunSnapshot();
         slot.lastPlayedUtc = System.DateTime.UtcNow.ToString("o");
 
         SaveSlotManager.SetSlot(slotIndex, slot);
+    }
+
+    public void FinalizeRunToActiveSlot()
+    {
+        if (runFinalized)
+            return;
+
+        if (!SaveSlotManager.TryGetActiveSlotIndex(out int slotIndex))
+            return;
+
+        SaveSlotData slot = SaveSlotManager.GetSlot(slotIndex);
+        if (!slot.hasData)
+            slot = SaveSlotData.CreateNew(slotIndex);
+
+        if (slot.runHistory == null)
+            slot.runHistory = new List<SaveRunStatsData>();
+
+        SaveRunStatsData snapshot = BuildCurrentRunSnapshot();
+        slot.lastRunStats = snapshot;
+        slot.runHistory.Add(snapshot);
+        slot.lastPlayedUtc = System.DateTime.UtcNow.ToString("o");
+
+        SaveSlotManager.SetSlot(slotIndex, slot);
+        runFinalized = true;
+    }
+
+    private SaveRunStatsData BuildCurrentRunSnapshot()
+    {
+        return new SaveRunStatsData
+        {
+            score = Score,
+            totalTime = TotalPlayTime,
+            highestWave = HighestWave,
+            currency = CurrentCurrency,
+            highestWPM = HighestWPM,
+            averageWPM = AverageWPM,
+            averageAccuracy = AverageAccuracy,
+            worstFingerArea = WorstFingerArea
+        };
     }
 }

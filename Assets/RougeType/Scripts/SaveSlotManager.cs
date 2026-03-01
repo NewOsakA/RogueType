@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -28,6 +29,7 @@ public class SaveSlotData
     public int wallHpLevel;
 
     public SaveRunStatsData lastRunStats = new SaveRunStatsData();
+    public List<SaveRunStatsData> runHistory = new List<SaveRunStatsData>();
 
     public static SaveSlotData CreateNew(int slotIndex)
     {
@@ -41,7 +43,8 @@ public class SaveSlotData
             metaCoins = 0,
             damageLevel = 0,
             wallHpLevel = 0,
-            lastRunStats = new SaveRunStatsData()
+            lastRunStats = new SaveRunStatsData(),
+            runHistory = new List<SaveRunStatsData>()
         };
     }
 
@@ -56,7 +59,8 @@ public class SaveSlotData
             metaCoins = 0,
             damageLevel = 0,
             wallHpLevel = 0,
-            lastRunStats = new SaveRunStatsData()
+            lastRunStats = new SaveRunStatsData(),
+            runHistory = new List<SaveRunStatsData>()
         };
     }
 }
@@ -112,6 +116,10 @@ public static class SaveSlotManager
             data.slotIndex = slotIndex;
             if (data.lastRunStats == null)
                 data.lastRunStats = new SaveRunStatsData();
+            if (data.runHistory == null)
+                data.runHistory = new List<SaveRunStatsData>();
+            if (data.runHistory.Count == 0 && data.hasData && IsRunSnapshotMeaningful(data.lastRunStats))
+                data.runHistory.Add(CloneRunStats(data.lastRunStats));
 
             return data;
         }
@@ -140,6 +148,8 @@ public static class SaveSlotManager
         data.slotIndex = slotIndex;
         if (data.lastRunStats == null)
             data.lastRunStats = new SaveRunStatsData();
+        if (data.runHistory == null)
+            data.runHistory = new List<SaveRunStatsData>();
 
         if (string.IsNullOrEmpty(data.createdAtUtc))
             data.createdAtUtc = DateTime.UtcNow.ToString("o");
@@ -300,6 +310,10 @@ public static class SaveSlotManager
             data.slotIndex = slotIndex;
             if (data.lastRunStats == null)
                 data.lastRunStats = new SaveRunStatsData();
+            if (data.runHistory == null)
+                data.runHistory = new List<SaveRunStatsData>();
+            if (data.runHistory.Count == 0 && data.hasData && IsRunSnapshotMeaningful(data.lastRunStats))
+                data.runHistory.Add(CloneRunStats(data.lastRunStats));
 
             SetSlot(slotIndex, data);
 
@@ -314,5 +328,38 @@ public static class SaveSlotManager
             Debug.LogError($"Failed to migrate legacy slot {slotIndex}: {ex.Message}");
             return false;
         }
+    }
+
+    private static bool IsRunSnapshotMeaningful(SaveRunStatsData data)
+    {
+        if (data == null)
+            return false;
+
+        return data.score > 0
+            || data.totalTime > 0f
+            || data.highestWave > 0
+            || data.currency > 0
+            || data.highestWPM > 0f
+            || data.averageWPM > 0f
+            || data.averageAccuracy > 0f
+            || (!string.IsNullOrEmpty(data.worstFingerArea) && data.worstFingerArea != "N/A");
+    }
+
+    private static SaveRunStatsData CloneRunStats(SaveRunStatsData source)
+    {
+        if (source == null)
+            return new SaveRunStatsData();
+
+        return new SaveRunStatsData
+        {
+            score = source.score,
+            totalTime = source.totalTime,
+            highestWave = source.highestWave,
+            currency = source.currency,
+            highestWPM = source.highestWPM,
+            averageWPM = source.averageWPM,
+            averageAccuracy = source.averageAccuracy,
+            worstFingerArea = source.worstFingerArea
+        };
     }
 }
