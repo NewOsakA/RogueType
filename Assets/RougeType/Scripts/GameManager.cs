@@ -323,7 +323,7 @@ public class GameManager : MonoBehaviour
             );
         }
 
-        GameStats.Instance?.PersistToActiveSlot();
+        GameStats.Instance?.FinalizeRunToActiveSlot();
 
         typingManager?.TriggerGameOver();
     }

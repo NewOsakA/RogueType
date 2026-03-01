@@ -16,10 +16,16 @@ public class SaveSelectionSceneController : MonoBehaviour
     [Header("Top-Level Buttons")]
     [SerializeField] private Button backToMenuButton;
 
-    [Header("Statistics Popup")]
-    [SerializeField] private GameObject statisticPanel;
-    [SerializeField] private TMP_Text statisticText;
-    [SerializeField] private Button closeStatisticButton;
+    [Header("Statistics Panel")]
+    [SerializeField] private SaveStatisticsPanelUI statisticsPanelUI;
+
+    [Header("Delete Confirmation Popup")]
+    [SerializeField] private GameObject deleteConfirmPanel;
+    [SerializeField] private TMP_Text deleteConfirmText;
+    [SerializeField] private Button confirmDeleteButton;
+    [SerializeField] private Button cancelDeleteButton;
+
+    private int pendingDeleteSlotIndex = -1;
 
     private void Awake()
     {
@@ -29,9 +35,8 @@ public class SaveSelectionSceneController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (statisticPanel != null)
-            statisticPanel.SetActive(false);
-
+        statisticsPanelUI?.Hide();
+        HideDeleteConfirmPanel();
         RefreshUI();
     }
 
@@ -63,7 +68,7 @@ public class SaveSelectionSceneController : MonoBehaviour
             if (row == null)
                 continue;
 
-            row.Initialize(i, OnPlay, OnDelete, OnShowStats);
+            row.Initialize(i, OnPlay, OnRequestDelete, OnShowStats);
         }
     }
 
@@ -75,10 +80,16 @@ public class SaveSelectionSceneController : MonoBehaviour
             backToMenuButton.onClick.AddListener(OnBackToMenu);
         }
 
-        if (closeStatisticButton != null)
+        if (confirmDeleteButton != null)
         {
-            closeStatisticButton.onClick.RemoveAllListeners();
-            closeStatisticButton.onClick.AddListener(HideStatisticPanel);
+            confirmDeleteButton.onClick.RemoveAllListeners();
+            confirmDeleteButton.onClick.AddListener(ConfirmDelete);
+        }
+
+        if (cancelDeleteButton != null)
+        {
+            cancelDeleteButton.onClick.RemoveAllListeners();
+            cancelDeleteButton.onClick.AddListener(CancelDelete);
         }
     }
 
@@ -99,68 +110,69 @@ public class SaveSelectionSceneController : MonoBehaviour
         SceneManager.LoadScene(upgradeSceneName);
     }
 
-    private void OnDelete(int slotIndex)
+    private void OnRequestDelete(int slotIndex)
+    {
+        if (deleteConfirmPanel == null)
+        {
+            DeleteSlotNow(slotIndex);
+            return;
+        }
+
+        pendingDeleteSlotIndex = slotIndex;
+
+        if (deleteConfirmText != null)
+            deleteConfirmText.text = $"Are you sure you want to delete save slot {slotIndex + 1}?";
+
+        deleteConfirmPanel.SetActive(true);
+    }
+
+    private void ConfirmDelete()
+    {
+        if (pendingDeleteSlotIndex < 0)
+        {
+            HideDeleteConfirmPanel();
+            return;
+        }
+
+        DeleteSlotNow(pendingDeleteSlotIndex);
+        HideDeleteConfirmPanel();
+    }
+
+    private void CancelDelete()
+    {
+        HideDeleteConfirmPanel();
+    }
+
+    private void DeleteSlotNow(int slotIndex)
     {
         SaveSlotManager.DeleteSlot(slotIndex);
 
         if (MetaGameManager.Instance != null && SaveSlotManager.GetActiveSlotIndex() < 0)
             MetaGameManager.Instance.LoadFromActiveSlot();
 
-        HideStatisticPanel();
+        statisticsPanelUI?.Hide();
         RefreshUI();
     }
 
     private void OnShowStats(int slotIndex)
     {
-        if (statisticPanel == null || statisticText == null)
+        if (statisticsPanelUI == null)
             return;
 
         SaveSlotData slot = SaveSlotManager.GetSlot(slotIndex);
-
-        if (!slot.hasData)
-        {
-            statisticText.text = $"Slot {slotIndex + 1} is empty.";
-            statisticPanel.SetActive(true);
-            return;
-        }
-
-        SaveRunStatsData stats = slot.lastRunStats ?? new SaveRunStatsData();
-        string worstFingerArea = string.IsNullOrEmpty(stats.worstFingerArea) ? "N/A" : stats.worstFingerArea;
-
-        statisticText.text =
-            $"Slot {slotIndex + 1}\n" +
-            $"Last Played: {FormatUtc(slot.lastPlayedUtc)}\n" +
-            $"Meta Coins: {slot.metaCoins}\n" +
-            $"Damage Lv: {slot.damageLevel}\n" +
-            $"Wall HP Lv: {slot.wallHpLevel}\n\n" +
-            $"Score: {stats.score}\n" +
-            $"Total Time: {stats.totalTime:F1}s\n" +
-            $"Highest Wave: {stats.highestWave}\n" +
-            $"Currency: {stats.currency}\n" +
-            $"Highest WPM: {stats.highestWPM:F1}\n" +
-            $"Average WPM: {stats.averageWPM:F1}\n" +
-            $"Average Accuracy: {stats.averageAccuracy * 100f:F1}%\n" +
-            $"Worst Finger Area: {worstFingerArea}";
-
-        statisticPanel.SetActive(true);
+        statisticsPanelUI.Show(slot);
     }
 
-    private void HideStatisticPanel()
+    private void HideDeleteConfirmPanel()
     {
-        if (statisticPanel != null)
-            statisticPanel.SetActive(false);
+        pendingDeleteSlotIndex = -1;
+
+        if (deleteConfirmPanel != null)
+            deleteConfirmPanel.SetActive(false);
     }
 
     private void OnBackToMenu()
     {
         SceneManager.LoadScene(mainMenuSceneName);
-    }
-
-    private static string FormatUtc(string isoUtc)
-    {
-        if (DateTime.TryParse(isoUtc, out DateTime dt))
-            return dt.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
-
-        return "N/A";
     }
 }
