@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a6306de4c7c374c89a9e95704db34492
+guid: 554fb3518c2d54c08b158fb062cfa4c8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1611135627137491982
-    second: Banner_Horizontal_0
+      213: -128128480842496838
+    second: SmallBlueSquareButton_Pressed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Banner_Horizontal_0
+      name: SmallBlueSquareButton_Pressed_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 21
-        width: 128
-        height: 125
+        x: 13
+        y: 14
+        width: 102
+        height: 87
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2fb5e7beea814a9e0800000000000000
-      internalID: -1611135627137491982
+      spriteID: ab4c5c553dbc83ef0800000000000000
+      internalID: -128128480842496838
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Banner_Horizontal_0: -1611135627137491982
+      SmallBlueSquareButton_Pressed_0: -128128480842496838
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

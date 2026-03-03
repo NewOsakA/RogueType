@@ -20,12 +20,6 @@ public class SaveSlotRowUI : MonoBehaviour
     [SerializeField] private Sprite pressedSprite;
     [SerializeField] private Image hoverBorderImage;
 
-    [Header("Main Slot Animation")]
-    [SerializeField] private RectTransform animatedRoot;
-    [SerializeField] private float hoverScale = 1.02f;
-    [SerializeField] private float pressedScale = 0.97f;
-    [SerializeField] private float scaleLerpSpeed = 16f;
-
     [Header("Hover Text Swap")]
     [SerializeField] private TMP_Text slotNumberText;
     [SerializeField] private TMP_Text saveSubDetailText;
@@ -39,7 +33,6 @@ public class SaveSlotRowUI : MonoBehaviour
     private bool isHovered;
     private bool isPressed;
     private bool isSelected;
-    private Vector3 baseScale = Vector3.one;
 
     private enum VisualState
     {
@@ -50,13 +43,7 @@ public class SaveSlotRowUI : MonoBehaviour
 
     private void Awake()
     {
-        if (animatedRoot == null && playButton != null)
-            animatedRoot = playButton.transform as RectTransform;
-
-        if (animatedRoot != null)
-            baseScale = animatedRoot.localScale;
-
-        ApplyVisualState(VisualState.Normal, true);
+        ApplyVisualState(VisualState.Normal);
     }
 
     private void OnDisable()
@@ -64,25 +51,7 @@ public class SaveSlotRowUI : MonoBehaviour
         isHovered = false;
         isPressed = false;
         isSelected = false;
-        ApplyVisualState(VisualState.Normal, true);
-    }
-
-    private void Update()
-    {
-        if (animatedRoot == null)
-            return;
-
-        float targetScaleFactor = 1f;
-        if (IsMainButtonInteractable())
-        {
-            if (isPressed && (isHovered || isSelected))
-                targetScaleFactor = pressedScale;
-            else if (isHovered || isSelected)
-                targetScaleFactor = hoverScale;
-        }
-
-        Vector3 targetScale = baseScale * targetScaleFactor;
-        animatedRoot.localScale = Vector3.Lerp(animatedRoot.localScale, targetScale, Time.unscaledDeltaTime * scaleLerpSpeed);
+        ApplyVisualState(VisualState.Normal);
     }
 
     public void Initialize(int slotIndex, Action<int> onPlay, Action<int> onDelete, Action<int> onShowStats)
@@ -123,7 +92,7 @@ public class SaveSlotRowUI : MonoBehaviour
                 subtitleText.text = "Click this slot to create a new save.";
 
             SetButtons(true, false, false);
-            ApplyVisualState(CurrentVisualState(), false);
+            ApplyVisualState(CurrentVisualState());
             return;
         }
 
@@ -139,11 +108,11 @@ public class SaveSlotRowUI : MonoBehaviour
         if (subtitleText != null)
         {
             subtitleText.text =
-                $"Last Played: {lastPlayed}  |  Wave: {runStats.highestWave}  |  Highest WPM: {runStats.highestWPM:F1}";
+                $"Last Played: {lastPlayed}\n" + $"Score: {runStats.score} | Wave: {runStats.highestWave} | Highest WPM: {runStats.highestWPM:F1}";
         }
 
         SetButtons(true, true, true);
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void SetButtons(bool playInteractable, bool deleteInteractable, bool statsInteractable)
@@ -189,14 +158,14 @@ public class SaveSlotRowUI : MonoBehaviour
     private void OnPointerEnterMain()
     {
         isHovered = true;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void OnPointerExitMain()
     {
         isHovered = false;
         isPressed = false;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void OnPointerDownMain()
@@ -205,26 +174,26 @@ public class SaveSlotRowUI : MonoBehaviour
             return;
 
         isPressed = true;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void OnPointerUpMain()
     {
         isPressed = false;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void OnSelectMain()
     {
         isSelected = true;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private void OnDeselectMain()
     {
         isSelected = false;
         isPressed = false;
-        ApplyVisualState(CurrentVisualState(), false);
+        ApplyVisualState(CurrentVisualState());
     }
 
     private bool IsMainButtonInteractable()
@@ -246,7 +215,7 @@ public class SaveSlotRowUI : MonoBehaviour
         return VisualState.Normal;
     }
 
-    private void ApplyVisualState(VisualState state, bool instantScale)
+    private void ApplyVisualState(VisualState state)
     {
         if (slotBackgroundImage != null)
         {
@@ -270,7 +239,5 @@ public class SaveSlotRowUI : MonoBehaviour
         if (saveSubDetailText != null)
             saveSubDetailText.gameObject.SetActive(showSubDetail);
 
-        if (instantScale && animatedRoot != null)
-            animatedRoot.localScale = baseScale;
     }
 }

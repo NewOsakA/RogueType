@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a6306de4c7c374c89a9e95704db34492
+guid: c905af63b7cf14f5aa81607e42cea7c4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1611135627137491982
-    second: Banner_Horizontal_0
+      213: -7215012101000823995
+    second: SmallRedRoundButton_Pressed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Banner_Horizontal_0
+      name: SmallRedRoundButton_Pressed_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 21
-        width: 128
-        height: 125
+        x: 11
+        y: 14
+        width: 106
+        height: 87
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2fb5e7beea814a9e0800000000000000
-      internalID: -1611135627137491982
+      spriteID: 54b73bd88b02fdb90800000000000000
+      internalID: -7215012101000823995
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Banner_Horizontal_0: -1611135627137491982
+      SmallRedRoundButton_Pressed_0: -7215012101000823995
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
