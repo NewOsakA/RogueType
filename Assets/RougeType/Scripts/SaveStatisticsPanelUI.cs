@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SaveStatisticsPanelUI : MonoBehaviour
 {
@@ -28,11 +29,15 @@ public class SaveStatisticsPanelUI : MonoBehaviour
     [SerializeField] private RectTransform graphContentRoot;
     [SerializeField] private Color lineColor = new Color(0.15f, 0.65f, 0.9f, 1f);
     [SerializeField] private Color pointColor = new Color(0.08f, 0.38f, 0.65f, 1f);
+    [SerializeField] private bool showAccuracyLine = true;
+    [SerializeField] private Color accuracyLineColor = new Color(0.95f, 0.45f, 0.2f, 1f);
+    [SerializeField] private Color accuracyPointColor = new Color(0.75f, 0.25f, 0.1f, 1f);
     [SerializeField] private float lineThickness = 3f;
     [SerializeField] private float pointSize = 8f;
     [SerializeField] private Color axisColor = Color.black;
     [SerializeField] private float axisThickness = 2f;
-    [SerializeField] private bool showAxisTitles = true;
+    [SerializeField] private bool showXAxisTitles = true;
+    [SerializeField] private bool showYAxisTitles = true;
     [SerializeField] private int axisTitleFontSize = 16;
     [SerializeField] private Color axisTitleColor = Color.black;
     [SerializeField] private Vector2 xAxisTitlePositionOffset = new Vector2(-4f, 2f);
@@ -40,11 +45,11 @@ public class SaveStatisticsPanelUI : MonoBehaviour
     [SerializeField] private Vector2 xAxisTitleSize = new Vector2(80f, 24f);
     [SerializeField] private Vector2 yAxisTitleSize = new Vector2(60f, 24f);
 
-    [Header("Point Labels")]
-    [SerializeField] private bool showPointLabels = true;
-    [SerializeField] private int pointLabelFontSize = 14;
-    [SerializeField] private Vector2 pointLabelOffset = new Vector2(0f, 16f);
-    [SerializeField] private Color pointLabelColor = Color.black;
+    [Header("Hover Interaction")]
+    [SerializeField] private float highlightedPointScale = 1.9f;
+    [SerializeField] private Color hoverBandColor = new Color(0f, 0f, 0f, 0.09f);
+    [SerializeField] private TMP_Text hoverInfoText;
+    [SerializeField] private string hoverInfoDefaultText = "Hover over graph to inspect run details";
 
     [Header("Range Buttons")]
     [SerializeField] private Button allTimeButton;
@@ -65,8 +70,10 @@ public class SaveStatisticsPanelUI : MonoBehaviour
 
     private SaveSlotData currentSlot;
     private RangeMode currentRangeMode = RangeMode.All;
+    private int hoveredIndex = -1;
 
     private readonly List<GameObject> graphItems = new List<GameObject>();
+    private readonly List<PointVisual> pointVisuals = new List<PointVisual>();
 
     private void Awake()
     {
@@ -137,6 +144,9 @@ public class SaveStatisticsPanelUI : MonoBehaviour
 
     private void Refresh()
     {
+        hoveredIndex = -1;
+        SetHoverInfoText(hoverInfoDefaultText);
+
         if (currentSlot == null || !currentSlot.hasData)
         {
             if (detailText != null)
@@ -154,7 +164,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         RangeSelection selection = GetRangeSelection(history, currentRangeMode);
         List<SaveRunStatsData> rangeData = selection.data;
 
-        DrawWpmGraph(rangeData, selection.startIndex);
+        DrawGraph(rangeData, selection.startIndex);
         UpdateSummary(history.Count, rangeData.Count);
         UpdateAxisLabels(rangeData, selection.startIndex, history.Count);
         UpdateDetail(currentSlot, history);
@@ -233,7 +243,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         };
     }
 
-    private void DrawWpmGraph(List<SaveRunStatsData> data, int rangeStartIndex)
+    private void DrawGraph(List<SaveRunStatsData> data, int rangeStartIndex)
     {
         ClearGraph();
 
@@ -251,47 +261,83 @@ public class SaveStatisticsPanelUI : MonoBehaviour
 
         DrawAxes(width, height);
 
-        float minWpm = float.MaxValue;
-        float maxWpm = float.MinValue;
+        float minValue = float.MaxValue;
+        float maxValue = float.MinValue;
 
         for (int i = 0; i < data.Count; i++)
         {
             float wpm = Mathf.Max(0f, data[i].highestWPM);
-            minWpm = Mathf.Min(minWpm, wpm);
-            maxWpm = Mathf.Max(maxWpm, wpm);
+            minValue = Mathf.Min(minValue, wpm);
+            maxValue = Mathf.Max(maxValue, wpm);
+
+            if (showAccuracyLine)
+            {
+                float accuracyPercent = Mathf.Clamp01(data[i].averageAccuracy) * 100f;
+                minValue = Mathf.Min(minValue, accuracyPercent);
+                maxValue = Mathf.Max(maxValue, accuracyPercent);
+            }
         }
 
-        if (Mathf.Approximately(minWpm, maxWpm))
+        if (Mathf.Approximately(minValue, maxValue))
         {
-            minWpm = Mathf.Max(0f, minWpm - 1f);
-            maxWpm = maxWpm + 1f;
+            minValue = Mathf.Max(0f, minValue - 1f);
+            maxValue = maxValue + 1f;
         }
 
-        var points = new List<Vector2>(data.Count);
+        var wpmPoints = new List<Vector2>(data.Count);
+        var accuracyPoints = new List<Vector2>(data.Count);
         for (int i = 0; i < data.Count; i++)
         {
             float tX = data.Count == 1 ? 0.5f : i / (float)(data.Count - 1);
             float x = tX * width;
 
             float wpm = Mathf.Max(0f, data[i].highestWPM);
-            float tY = Mathf.InverseLerp(minWpm, maxWpm, wpm);
-            float y = tY * height;
+            float wpmY = Mathf.InverseLerp(minValue, maxValue, wpm) * height;
+            wpmPoints.Add(new Vector2(x, wpmY));
 
-            points.Add(new Vector2(x, y));
+            if (showAccuracyLine)
+            {
+                float accuracyPercent = Mathf.Clamp01(data[i].averageAccuracy) * 100f;
+                float accY = Mathf.InverseLerp(minValue, maxValue, accuracyPercent) * height;
+                accuracyPoints.Add(new Vector2(x, accY));
+            }
         }
 
-        for (int i = 0; i < points.Count - 1; i++)
-            CreateLine(points[i], points[i + 1]);
+        for (int i = 0; i < wpmPoints.Count - 1; i++)
+            CreateLine(wpmPoints[i], wpmPoints[i + 1], lineColor);
 
-        for (int i = 0; i < points.Count; i++)
+        if (showAccuracyLine)
+        {
+            for (int i = 0; i < accuracyPoints.Count - 1; i++)
+                CreateLine(accuracyPoints[i], accuracyPoints[i + 1], accuracyLineColor);
+        }
+
+        for (int i = 0; i < wpmPoints.Count; i++)
         {
             int playNumber = rangeStartIndex + i + 1;
             float wpm = Mathf.Max(0f, data[i].highestWPM);
-            CreatePoint(points[i], playNumber, wpm);
+            float accuracyPercent = Mathf.Clamp01(data[i].averageAccuracy) * 100f;
+            RectTransform wpmPointRect = CreatePoint(wpmPoints[i], pointColor);
+            RectTransform accuracyPointRect = null;
+
+            if (showAccuracyLine)
+                accuracyPointRect = CreatePoint(accuracyPoints[i], accuracyPointColor);
+
+            pointVisuals.Add(new PointVisual
+            {
+                playNumber = playNumber,
+                wpm = wpm,
+                accuracyPercent = accuracyPercent,
+                wpmPointRect = wpmPointRect,
+                accuracyPointRect = accuracyPointRect,
+                hoverBandImage = null
+            });
         }
+
+        CreateHoverZones(width, height);
     }
 
-    private void CreatePoint(Vector2 anchoredPos, int playNumber, float wpm)
+    private RectTransform CreatePoint(Vector2 anchoredPos, Color color)
     {
         var go = new GameObject("GraphPoint", typeof(RectTransform), typeof(Image));
         go.transform.SetParent(graphContentRoot, false);
@@ -304,15 +350,13 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         rect.sizeDelta = new Vector2(pointSize, pointSize);
 
         var image = go.GetComponent<Image>();
-        image.color = pointColor;
+        image.color = color;
 
         graphItems.Add(go);
-
-        if (showPointLabels)
-            CreatePointLabel(anchoredPos, playNumber, wpm);
+        return rect;
     }
 
-    private void CreateLine(Vector2 from, Vector2 to)
+    private void CreateLine(Vector2 from, Vector2 to, Color color)
     {
         Vector2 dir = (to - from);
         float length = dir.magnitude;
@@ -333,7 +377,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         rect.localEulerAngles = new Vector3(0f, 0f, angle);
 
         var image = go.GetComponent<Image>();
-        image.color = lineColor;
+        image.color = color;
 
         graphItems.Add(go);
     }
@@ -347,6 +391,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         }
 
         graphItems.Clear();
+        pointVisuals.Clear();
     }
 
     private void DrawAxes(float width, float height)
@@ -354,8 +399,11 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         CreateHorizontalAxis(width);
         CreateVerticalAxis(height);
 
-        if (showAxisTitles)
-            CreateAxisTitles(width, height);
+        if (showXAxisTitles)
+            CreateXAxisTitles(width);
+
+        if (showYAxisTitles)           
+            CreateYAxisTitles(height);
     }
 
     private void CreateHorizontalAxis(float width)
@@ -394,10 +442,9 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         graphItems.Add(go);
     }
 
-    private void CreateAxisTitles(float width, float height)
+    private void CreateXAxisTitles(float width)
     {
         Vector2 xBase = new Vector2(width, 0f);
-        Vector2 yBase = new Vector2(0f, height);
 
         CreateAxisTitle(
             "XAxisTitle",
@@ -405,6 +452,11 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             xBase + xAxisTitlePositionOffset,
             new Vector2(1f, 0f),
             xAxisTitleSize);
+    }
+
+    private void CreateYAxisTitles(float height)
+    {
+        Vector2 yBase = new Vector2(0f, height);
 
         CreateAxisTitle(
             "YAxisTitle",
@@ -436,24 +488,75 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         graphItems.Add(go);
     }
 
-    private void CreatePointLabel(Vector2 anchoredPos, int playNumber, float wpm)
+    private void CreateHoverZones(float width, float height)
     {
-        var go = new GameObject("GraphPointLabel", typeof(RectTransform), typeof(TextMeshProUGUI));
+        if (pointVisuals.Count == 0)
+            return;
+
+        for (int i = 0; i < pointVisuals.Count; i++)
+        {
+            float xCenter = pointVisuals[i].wpmPointRect != null
+                ? pointVisuals[i].wpmPointRect.anchoredPosition.x
+                : (i / (float)Mathf.Max(1, pointVisuals.Count - 1)) * width;
+
+            float leftBoundary = i == 0
+                ? 0f
+                : 0.5f * (xCenter + pointVisuals[i - 1].wpmPointRect.anchoredPosition.x);
+            float rightBoundary = i == pointVisuals.Count - 1
+                ? width
+                : 0.5f * (xCenter + pointVisuals[i + 1].wpmPointRect.anchoredPosition.x);
+
+            float zoneWidth = Mathf.Max(2f, rightBoundary - leftBoundary);
+            float zoneCenterX = leftBoundary + zoneWidth * 0.5f;
+
+            Image hoverBand = CreateHoverBand(zoneCenterX, zoneWidth, height);
+            var visual = pointVisuals[i];
+            visual.hoverBandImage = hoverBand;
+            pointVisuals[i] = visual;
+
+            CreateHoverZone(i, zoneCenterX, zoneWidth, height);
+        }
+    }
+
+    private Image CreateHoverBand(float centerX, float width, float height)
+    {
+        var go = new GameObject("HoverBand", typeof(RectTransform), typeof(Image));
         go.transform.SetParent(graphContentRoot, false);
 
         var rect = go.GetComponent<RectTransform>();
         rect.anchorMin = Vector2.zero;
         rect.anchorMax = Vector2.zero;
         rect.pivot = new Vector2(0.5f, 0f);
-        rect.anchoredPosition = anchoredPos + pointLabelOffset;
-        rect.sizeDelta = new Vector2(120f, 32f);
+        rect.anchoredPosition = new Vector2(centerX, 0f);
+        rect.sizeDelta = new Vector2(width, height);
 
-        var label = go.GetComponent<TextMeshProUGUI>();
-        label.fontSize = pointLabelFontSize;
-        label.color = pointLabelColor;
-        label.alignment = TextAlignmentOptions.Center;
-        label.text = $"P{playNumber} | {wpm:F1}";
-        label.raycastTarget = false;
+        var image = go.GetComponent<Image>();
+        image.color = new Color(hoverBandColor.r, hoverBandColor.g, hoverBandColor.b, 0f);
+        image.raycastTarget = false;
+        rect.SetAsFirstSibling();
+
+        graphItems.Add(go);
+        return image;
+    }
+
+    private void CreateHoverZone(int index, float centerX, float width, float height)
+    {
+        var go = new GameObject("HoverZone", typeof(RectTransform), typeof(Image), typeof(HoverZoneHandler));
+        go.transform.SetParent(graphContentRoot, false);
+
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.zero;
+        rect.pivot = new Vector2(0.5f, 0f);
+        rect.anchoredPosition = new Vector2(centerX, 0f);
+        rect.sizeDelta = new Vector2(width, height);
+
+        var image = go.GetComponent<Image>();
+        image.color = new Color(0f, 0f, 0f, 0.001f);
+        image.raycastTarget = true;
+
+        var handler = go.GetComponent<HoverZoneHandler>();
+        handler.Initialize(index, this);
 
         graphItems.Add(go);
     }
@@ -466,25 +569,32 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             return;
         }
 
-        float minWpm = float.MaxValue;
-        float maxWpm = float.MinValue;
+        float minValue = float.MaxValue;
+        float maxValue = float.MinValue;
         for (int i = 0; i < rangeData.Count; i++)
         {
             float wpm = Mathf.Max(0f, rangeData[i].highestWPM);
-            minWpm = Mathf.Min(minWpm, wpm);
-            maxWpm = Mathf.Max(maxWpm, wpm);
+            minValue = Mathf.Min(minValue, wpm);
+            maxValue = Mathf.Max(maxValue, wpm);
+
+            if (showAccuracyLine)
+            {
+                float accuracyPercent = Mathf.Clamp01(rangeData[i].averageAccuracy) * 100f;
+                minValue = Mathf.Min(minValue, accuracyPercent);
+                maxValue = Mathf.Max(maxValue, accuracyPercent);
+            }
         }
 
-        if (Mathf.Approximately(minWpm, maxWpm))
+        if (Mathf.Approximately(minValue, maxValue))
         {
-            minWpm = Mathf.Max(0f, minWpm - 1f);
-            maxWpm = maxWpm + 1f;
+            minValue = Mathf.Max(0f, minValue - 1f);
+            maxValue = maxValue + 1f;
         }
 
-        float midWpm = (minWpm + maxWpm) * 0.5f;
-        SetLabel(yMinLabel, $"{minWpm:F1}");
-        SetLabel(yMidLabel, $"{midWpm:F1}");
-        SetLabel(yMaxLabel, $"{maxWpm:F1}");
+        float midValue = (minValue + maxValue) * 0.5f;
+        SetLabel(yMinLabel, $"{minValue:F1}");
+        SetLabel(yMidLabel, $"{midValue:F1}");
+        SetLabel(yMaxLabel, $"{maxValue:F1}");
 
         int startPlay = rangeStartIndex + 1;
         int endPlay = rangeStartIndex + rangeData.Count;
@@ -512,5 +622,87 @@ public class SaveStatisticsPanelUI : MonoBehaviour
     {
         if (label != null)
             label.text = value;
+    }
+
+    private void OnHoverZoneEnter(int index)
+    {
+        if (index < 0 || index >= pointVisuals.Count)
+            return;
+
+        hoveredIndex = index;
+        ApplyHoverVisualState();
+
+        PointVisual visual = pointVisuals[index];
+        SetHoverInfoText($"Play {visual.playNumber} | WPM: {visual.wpm:F1} | Accuracy: {visual.accuracyPercent:F1}%");
+    }
+
+    private void OnHoverZoneExit(int index)
+    {
+        if (hoveredIndex != index)
+            return;
+
+        hoveredIndex = -1;
+        ApplyHoverVisualState();
+        SetHoverInfoText(hoverInfoDefaultText);
+    }
+
+    private void ApplyHoverVisualState()
+    {
+        for (int i = 0; i < pointVisuals.Count; i++)
+        {
+            bool isHovered = i == hoveredIndex;
+            PointVisual visual = pointVisuals[i];
+
+            if (visual.wpmPointRect != null)
+                visual.wpmPointRect.sizeDelta = Vector2.one * (isHovered ? pointSize * highlightedPointScale : pointSize);
+
+            if (visual.accuracyPointRect != null)
+                visual.accuracyPointRect.sizeDelta = Vector2.one * (isHovered ? pointSize * highlightedPointScale : pointSize);
+
+            if (visual.hoverBandImage != null)
+            {
+                Color c = hoverBandColor;
+                c.a = isHovered ? hoverBandColor.a : 0f;
+                visual.hoverBandImage.color = c;
+            }
+        }
+    }
+
+    private void SetHoverInfoText(string message)
+    {
+        if (hoverInfoText != null)
+            hoverInfoText.text = message;
+    }
+
+    private struct PointVisual
+    {
+        public int playNumber;
+        public float wpm;
+        public float accuracyPercent;
+        public RectTransform wpmPointRect;
+        public RectTransform accuracyPointRect;
+        public Image hoverBandImage;
+    }
+
+    private sealed class HoverZoneHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        private int zoneIndex;
+        private SaveStatisticsPanelUI owner;
+
+        public void Initialize(int zoneIndex, SaveStatisticsPanelUI owner)
+        {
+            this.zoneIndex = zoneIndex;
+            this.owner = owner;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            owner?.OnHoverZoneEnter(zoneIndex);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            owner?.OnHoverZoneExit(zoneIndex);
+        }
     }
 }

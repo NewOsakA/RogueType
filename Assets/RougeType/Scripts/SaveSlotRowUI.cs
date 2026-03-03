@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SaveSlotRowUI : MonoBehaviour
 {
@@ -12,10 +13,77 @@ public class SaveSlotRowUI : MonoBehaviour
     [SerializeField] private Button deleteButton;
     [SerializeField] private Button statisticButton;
 
+    [Header("Main Slot Visuals")]
+    [SerializeField] private Image slotBackgroundImage;
+    [SerializeField] private Sprite normalSprite;
+    [SerializeField] private Sprite hoverSprite;
+    [SerializeField] private Sprite pressedSprite;
+    [SerializeField] private Image hoverBorderImage;
+
+    [Header("Main Slot Animation")]
+    [SerializeField] private RectTransform animatedRoot;
+    [SerializeField] private float hoverScale = 1.02f;
+    [SerializeField] private float pressedScale = 0.97f;
+    [SerializeField] private float scaleLerpSpeed = 16f;
+
+    [Header("Hover Text Swap")]
+    [SerializeField] private TMP_Text slotNumberText;
+    [SerializeField] private TMP_Text saveSubDetailText;
+    [SerializeField] private bool showSubDetailOnlyOnHover = true;
+
     private int slotIndex;
     private Action<int> onPlay;
     private Action<int> onDelete;
     private Action<int> onShowStats;
+    private EventTrigger playEventTrigger;
+    private bool isHovered;
+    private bool isPressed;
+    private bool isSelected;
+    private Vector3 baseScale = Vector3.one;
+
+    private enum VisualState
+    {
+        Normal,
+        Hover,
+        Pressed
+    }
+
+    private void Awake()
+    {
+        if (animatedRoot == null && playButton != null)
+            animatedRoot = playButton.transform as RectTransform;
+
+        if (animatedRoot != null)
+            baseScale = animatedRoot.localScale;
+
+        ApplyVisualState(VisualState.Normal, true);
+    }
+
+    private void OnDisable()
+    {
+        isHovered = false;
+        isPressed = false;
+        isSelected = false;
+        ApplyVisualState(VisualState.Normal, true);
+    }
+
+    private void Update()
+    {
+        if (animatedRoot == null)
+            return;
+
+        float targetScaleFactor = 1f;
+        if (IsMainButtonInteractable())
+        {
+            if (isPressed && (isHovered || isSelected))
+                targetScaleFactor = pressedScale;
+            else if (isHovered || isSelected)
+                targetScaleFactor = hoverScale;
+        }
+
+        Vector3 targetScale = baseScale * targetScaleFactor;
+        animatedRoot.localScale = Vector3.Lerp(animatedRoot.localScale, targetScale, Time.unscaledDeltaTime * scaleLerpSpeed);
+    }
 
     public void Initialize(int slotIndex, Action<int> onPlay, Action<int> onDelete, Action<int> onShowStats)
     {
@@ -28,6 +96,7 @@ public class SaveSlotRowUI : MonoBehaviour
         {
             playButton.onClick.RemoveAllListeners();
             playButton.onClick.AddListener(() => this.onPlay?.Invoke(this.slotIndex));
+            EnsurePlayPointerEvents();
         }
 
         if (deleteButton != null)
@@ -54,6 +123,7 @@ public class SaveSlotRowUI : MonoBehaviour
                 subtitleText.text = "Click this slot to create a new save.";
 
             SetButtons(true, false, false);
+            ApplyVisualState(CurrentVisualState(), false);
             return;
         }
 
@@ -73,6 +143,7 @@ public class SaveSlotRowUI : MonoBehaviour
         }
 
         SetButtons(true, true, true);
+        ApplyVisualState(CurrentVisualState(), false);
     }
 
     private void SetButtons(bool playInteractable, bool deleteInteractable, bool statsInteractable)
@@ -85,5 +156,121 @@ public class SaveSlotRowUI : MonoBehaviour
 
         if (statisticButton != null)
             statisticButton.interactable = statsInteractable;
+    }
+
+    private void EnsurePlayPointerEvents()
+    {
+        if (playButton == null)
+            return;
+
+        playEventTrigger = playButton.GetComponent<EventTrigger>();
+        if (playEventTrigger == null)
+            playEventTrigger = playButton.gameObject.AddComponent<EventTrigger>();
+
+        playEventTrigger.triggers.Clear();
+        AddTrigger(EventTriggerType.PointerEnter, _ => OnPointerEnterMain());
+        AddTrigger(EventTriggerType.PointerExit, _ => OnPointerExitMain());
+        AddTrigger(EventTriggerType.PointerDown, _ => OnPointerDownMain());
+        AddTrigger(EventTriggerType.PointerUp, _ => OnPointerUpMain());
+        AddTrigger(EventTriggerType.Select, _ => OnSelectMain());
+        AddTrigger(EventTriggerType.Deselect, _ => OnDeselectMain());
+    }
+
+    private void AddTrigger(EventTriggerType eventType, Action<BaseEventData> callback)
+    {
+        if (playEventTrigger == null || callback == null)
+            return;
+
+        var entry = new EventTrigger.Entry { eventID = eventType };
+        entry.callback.AddListener(data => callback(data));
+        playEventTrigger.triggers.Add(entry);
+    }
+
+    private void OnPointerEnterMain()
+    {
+        isHovered = true;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private void OnPointerExitMain()
+    {
+        isHovered = false;
+        isPressed = false;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private void OnPointerDownMain()
+    {
+        if (!IsMainButtonInteractable())
+            return;
+
+        isPressed = true;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private void OnPointerUpMain()
+    {
+        isPressed = false;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private void OnSelectMain()
+    {
+        isSelected = true;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private void OnDeselectMain()
+    {
+        isSelected = false;
+        isPressed = false;
+        ApplyVisualState(CurrentVisualState(), false);
+    }
+
+    private bool IsMainButtonInteractable()
+    {
+        return playButton != null && playButton.interactable;
+    }
+
+    private VisualState CurrentVisualState()
+    {
+        if (!IsMainButtonInteractable())
+            return VisualState.Normal;
+
+        if (isPressed && (isHovered || isSelected))
+            return VisualState.Pressed;
+
+        if (isHovered || isSelected)
+            return VisualState.Hover;
+
+        return VisualState.Normal;
+    }
+
+    private void ApplyVisualState(VisualState state, bool instantScale)
+    {
+        if (slotBackgroundImage != null)
+        {
+            Sprite targetSprite = normalSprite;
+            if (state == VisualState.Pressed && pressedSprite != null)
+                targetSprite = pressedSprite;
+            else if (state == VisualState.Hover && hoverSprite != null)
+                targetSprite = hoverSprite;
+            else if (normalSprite == null)
+                targetSprite = slotBackgroundImage.sprite;
+
+            slotBackgroundImage.sprite = targetSprite;
+        }
+
+        if (hoverBorderImage != null)
+            hoverBorderImage.enabled = state != VisualState.Normal;
+
+        bool showSubDetail = !showSubDetailOnlyOnHover || state != VisualState.Normal;
+        if (slotNumberText != null)
+            slotNumberText.gameObject.SetActive(!showSubDetail);
+        if (saveSubDetailText != null)
+            saveSubDetailText.gameObject.SetActive(showSubDetail);
+
+        if (instantScale && animatedRoot != null)
+            animatedRoot.localScale = baseScale;
     }
 }
