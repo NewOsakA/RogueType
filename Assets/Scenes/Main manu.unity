@@ -1294,6 +1294,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1329905490}
   m_CullTransparentMesh: 1
+--- !u!1 &1587788605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1587788607}
+  - component: {fileID: 1587788606}
+  m_Layer: 0
+  m_Name: CursorSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1587788606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587788605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be35679a7a5ed42b688493f38a7a0382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorController
+  defaultStyle:
+    texture: {fileID: 2800000, guid: 567fd2f6e5695496ba8bb66f4203fc2b, type: 3}
+    hotspot: {x: 20, y: 20}
+    mode: 0
+  hoverStyle:
+    texture: {fileID: 2800000, guid: 4da6d6aadd39c49528943bb3cfe8e6a8, type: 3}
+    hotspot: {x: 20, y: 20}
+    mode: 0
+  blockedStyle:
+    texture: {fileID: 2800000, guid: 8e278210345964f1183fda488b7406a5, type: 3}
+    hotspot: {x: 20, y: 20}
+    mode: 0
+  persistAcrossScenes: 1
+  onlyWhenCursorVisible: 1
+--- !u!4 &1587788607
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587788605}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 730.3614, y: 725.99146, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1603574477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1769,4 +1827,5 @@ SceneRoots:
   - {fileID: 1068763950}
   - {fileID: 449257007}
   - {fileID: 894552562}
+  - {fileID: 1587788607}
   - {fileID: 4243368933261074770}
