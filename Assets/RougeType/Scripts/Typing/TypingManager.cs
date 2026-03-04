@@ -9,8 +9,8 @@ public class TypingManager : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text wordDisplayText;
     public TMP_Text wpmText;
-    public TMP_Text wordCountText;
-    public TMP_Text timerText;
+    // public TMP_Text wordCountText;
+    // public TMP_Text timerText;
     public TMP_Text comboStreakText;
 
     [Header("Word System")]
@@ -23,6 +23,8 @@ public class TypingManager : MonoBehaviour
     [Header("Projectile")]
     public GameObject projectilePrefab;
     public Transform shootPoint;
+    [Header("Animation")]
+    public Animator playerAnimator;
 
     [Header("Player Reference")]
     public PlayerStats playerStats;
@@ -85,7 +87,7 @@ public class TypingManager : MonoBehaviour
             return;
 
         elapsedTime += Time.deltaTime;
-        UpdateTimerText();
+        // UpdateTimerText();
 
         if (Input.anyKeyDown && !isShaking)
         {
@@ -159,6 +161,9 @@ public class TypingManager : MonoBehaviour
     {
         if (projectilePrefab == null || shootPoint == null)
             return;
+
+        if (playerAnimator != null)
+            playerAnimator.CrossFade("Mage_Attack", 0.05f, 0);
 
         int count = playerStats != null
             ? Mathf.Max(1, playerStats.projectileCount)
@@ -353,15 +358,15 @@ public class TypingManager : MonoBehaviour
     void UpdateWordStats()
     {
         wpmText.text = $"WPM: {Mathf.FloorToInt(GetWPM())}";
-        wordCountText.text = $"Words: {wordCount}";
+        // wordCountText.text = $"Words: {wordCount}";
     }
 
-    void UpdateTimerText()
-    {
-        int minutes = Mathf.FloorToInt(elapsedTime / 60f);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60f);
-        timerText.text = $"{minutes:00}:{seconds:00}";
-    }
+    // void UpdateTimerText()
+    // {
+    //     int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+    //     int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+    //     timerText.text = $"{minutes:00}:{seconds:00}";
+    // }
 
     void UpdateComboUI()
     {
