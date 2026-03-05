@@ -82,11 +82,11 @@ void UpdateCooldowns()
 
         if (!EssenceManager.Instance.HasEnoughEssence(skill.essenceCost))
         {
-            slots[i].SetNoEssence();
+            slots[i].SetNoEssence(skill.essenceCost);
         }
         else
         {
-            slots[i].SetReady();
+            slots[i].SetReady(skill.essenceCost);
         }
     }
 }

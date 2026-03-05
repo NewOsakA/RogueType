@@ -8,7 +8,9 @@ public class EssenceManager : MonoBehaviour
 
     [Header("Essence")]
     public int essence = 0;
+    public int maxEssence = 100;
     public TMP_Text essenceText;
+    public UnityEngine.UI.Slider essenceBar;
 
     public event Action<int> OnEssenceChanged;
 
@@ -24,6 +26,12 @@ public class EssenceManager : MonoBehaviour
 
     private void Start()
     {
+        if (essenceBar != null)
+        {
+            essenceBar.maxValue = maxEssence;
+            essenceBar.value = essence;
+        }
+
         UpdateEssenceText();
         OnEssenceChanged?.Invoke(essence);
     }
@@ -31,7 +39,7 @@ public class EssenceManager : MonoBehaviour
     public void AddEssence(int amount)
     {
         essence += amount;
-        essence = Mathf.Max(0, essence);
+        essence = Mathf.Clamp(essence, 0, maxEssence);
 
         UpdateEssenceText();
         OnEssenceChanged?.Invoke(essence);
@@ -61,7 +69,9 @@ public class EssenceManager : MonoBehaviour
     private void UpdateEssenceText()
     {
         if (essenceText != null)
-            essenceText.text = $"E: {essence}";
-            // essenceText.text = Essence.ToString();
+            essenceText.text = $"E: {essence}/{maxEssence}";
+
+        if (essenceBar != null)
+            essenceBar.value = essence;
     }
 }

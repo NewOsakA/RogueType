@@ -71,7 +71,7 @@ public class Wall : MonoBehaviour
         {
             isDead = true;
             GameManager.Instance?.OnPlayerDefeated();
-            gameObject.SetActive(false);
+            // gameObject.SetActive(false);
             Die();
         }
     }
