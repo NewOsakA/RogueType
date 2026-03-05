@@ -56,6 +56,12 @@ public class SaveStatisticsPanelUI : MonoBehaviour
     [SerializeField] private Button last100Button;
     [SerializeField] private Button last10Button;
 
+    [Header("Range Button Animators")]
+    [SerializeField] private Animator allTimeButtonAnimator;
+    [SerializeField] private Animator last100ButtonAnimator;
+    [SerializeField] private Animator last10ButtonAnimator;
+    [SerializeField] private string selectedBoolParameter = "Selected";
+
     [Header("Detail")]
     [SerializeField] private TMP_Text detailText;
     [SerializeField] private TMP_Text graphSummaryText;
@@ -78,6 +84,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
     private void Awake()
     {
         WireButtons();
+        UpdateRangeButtonSelectionVisuals();
     }
 
     public void Show(SaveSlotData slot)
@@ -89,6 +96,8 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             rootPanel.SetActive(true);
         else
             gameObject.SetActive(true);
+
+        UpdateRangeButtonSelectionVisuals();
 
         Refresh();
     }
@@ -138,8 +147,32 @@ public class SaveStatisticsPanelUI : MonoBehaviour
 
     private void SetRange(RangeMode mode)
     {
+        if (currentRangeMode == mode)
+            return;
+
         currentRangeMode = mode;
+        UpdateRangeButtonSelectionVisuals();
         Refresh();
+    }
+
+    private void UpdateRangeButtonSelectionVisuals()
+    {
+        SetSelectedAnimatorState(allTimeButton, allTimeButtonAnimator, currentRangeMode == RangeMode.All);
+        SetSelectedAnimatorState(last100Button, last100ButtonAnimator, currentRangeMode == RangeMode.Last100);
+        SetSelectedAnimatorState(last10Button, last10ButtonAnimator, currentRangeMode == RangeMode.Last10);
+    }
+
+    private void SetSelectedAnimatorState(Button button, Animator animator, bool selected)
+    {
+        if (string.IsNullOrEmpty(selectedBoolParameter))
+            return;
+
+        Animator targetAnimator = animator;
+        if (targetAnimator == null && button != null)
+            targetAnimator = button.GetComponent<Animator>();
+
+        if (targetAnimator != null)
+            targetAnimator.SetBool(selectedBoolParameter, selected);
     }
 
     private void Refresh()
