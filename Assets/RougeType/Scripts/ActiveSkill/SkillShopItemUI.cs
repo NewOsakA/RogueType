@@ -11,6 +11,8 @@ public class SkillShopItemUI : MonoBehaviour
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI costText;
     public TextMeshProUGUI buttonText;
+    public TextMeshProUGUI essenceText;
+    public TextMeshProUGUI levelText;
 
     ActiveSkillData Skill => SkillManager.Instance.GetSkill(skillIndex);
 
@@ -38,6 +40,9 @@ public class SkillShopItemUI : MonoBehaviour
 
         nameText.text = skill.skillName;
         descriptionText.text = skill.GetDescription();
+
+        essenceText.text = "Essence : " + skill.essenceCost;
+        levelText.text = $"Lv.{skill.currentLevel} / {skill.maxLevel}";
 
         if (skill.currentLevel >= skill.maxLevel)
         {

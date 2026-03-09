@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveSkillData
   skillType: 3
   skillName: Time Break
-  currentLevel: 1
+  currentLevel: 0
   maxLevel: 5
   cooldown: 50
   durations:
@@ -27,7 +27,7 @@ MonoBehaviour:
   damages: 
   buyCost: 800
   upgradeCosts: e803000014050000a406000034080000
-  essenceCost: 30
-  buyDescription: Freeze all enemies briefly.
-  upgradeDescription: Increase freeze duration.
-  maxDescription: Freeze duration is at maximum.
+  essenceCost: 70
+  buyDescription: Freeze all enemies for 2 seconds, stopping their movement completely.
+  upgradeDescription: Increases how long enemies remain frozen by 1 seconds.
+  maxDescription: Time Break reaches its maximum freeze duration.

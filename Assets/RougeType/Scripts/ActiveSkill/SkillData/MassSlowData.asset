@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveSkillData
   skillType: 1
   skillName: Mass Slow
-  currentLevel: 1
+  currentLevel: 0
   maxLevel: 5
   cooldown: 30
   durations:
@@ -27,7 +27,8 @@ MonoBehaviour:
   damages: 
   buyCost: 200
   upgradeCosts: 2c010000f40100002003000014050000
-  essenceCost: 0
-  buyDescription: Slows all enemies for a short duration.
-  upgradeDescription: Increases slow duration.
-  maxDescription: Slow duration is at maximum.
+  essenceCost: 35
+  buyDescription: Temporarily slows all enemies for 2 seconds, giving you more time
+    to eliminate them.
+  upgradeDescription: Increases the duration of the slow effect by 1 seconds.
+  maxDescription: Mass Slow reaches its maximum duration.

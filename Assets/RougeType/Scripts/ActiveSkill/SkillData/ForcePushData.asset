@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveSkillData
   skillType: 0
   skillName: Force Push
-  currentLevel: 1
+  currentLevel: 0
   maxLevel: 5
   cooldown: 25
   durations: []
@@ -27,7 +27,9 @@ MonoBehaviour:
   damages: 
   buyCost: 150
   upgradeCosts: fa000000900100008a020000e8030000
-  essenceCost: 0
-  buyDescription: Push all enemies away from the wall.
-  upgradeDescription: Increase push distance.
-  maxDescription: Force Push is fully upgraded.
+  essenceCost: 25
+  buyDescription: Push all enemies back, creating space between them and the wall.
+    Enemies that collide with others become stunned.
+  upgradeDescription: Increases the distance enemies are pushed away.
+  maxDescription: Force Push is fully upgraded. Enemies are pushed back at maximum
+    distance.
