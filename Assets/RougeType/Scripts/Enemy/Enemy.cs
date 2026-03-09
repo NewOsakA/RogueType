@@ -154,6 +154,11 @@ public class Enemy : MonoBehaviour
         typingManager?.UnregisterEnemy(this);
 
         int reward = currencyReward;
+        float difficultyRewardMultiplier = GameManager.Instance != null
+            ? GameManager.Instance.GetSelectedModeProfile().currencyRewardMultiplier
+            : 1f;
+        reward = Mathf.Max(0, Mathf.RoundToInt(reward * difficultyRewardMultiplier));
+
         var stats = GameManager.Instance?.playerStats;
         if (stats != null)
         {

@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     public DifficultySettings balancedSettings;
     public DifficultySettings hardSettings;
     private DifficultySettings currentDifficulty;
+    private DifficultyModeProfile selectedModeProfile;
 
     [Header("Word Adaptation (Bandit)")]
     private float prevWPM = 0f;
@@ -74,6 +75,24 @@ public class GameManager : MonoBehaviour
             hardSettings = new DifficultySettings();
 
         currentDifficulty = balancedSettings;
+        selectedModeProfile = MetaGameManager.Instance != null
+            ? MetaGameManager.Instance.GetSelectedDifficultyProfile()
+            : DifficultyModeProfile.CreateDefault(GameDifficultyMode.Normal);
+        GameDifficultyMode selectedMode = MetaGameManager.Instance != null
+            ? MetaGameManager.Instance.GetSelectedGameMode()
+            : GameDifficultyMode.Normal;
+
+        Debug.Log(
+            $"[Difficulty] Applied mode: {selectedMode} | " +
+            $"EnemySpeed x{selectedModeProfile.enemySpeedMultiplier:F2}, " +
+            $"EnemyDamage x{selectedModeProfile.enemyDamageMultiplier:F2}, " +
+            $"EnemyHealth x{selectedModeProfile.enemyHealthMultiplier:F2}, " +
+            $"SpawnFlat {selectedModeProfile.enemySpawnFlatBonus}, " +
+            $"SpawnPerWave {selectedModeProfile.enemySpawnBonusPerWave}, " +
+            $"WallStartHP {selectedModeProfile.wallStartHp}, " +
+            $"Currency x{selectedModeProfile.currencyRewardMultiplier:F2}, " +
+            $"LockWallHPToOne {selectedModeProfile.lockWallHpToOne}"
+        );
 
         if (cam == null && Camera.main != null)
             cam = Camera.main.GetComponent<CameraController>();
@@ -408,6 +427,14 @@ public class GameManager : MonoBehaviour
     public DifficultySettings GetDifficulty()
     {
         return currentDifficulty;
+    }
+
+    public DifficultyModeProfile GetSelectedModeProfile()
+    {
+        if (selectedModeProfile == null)
+            selectedModeProfile = DifficultyModeProfile.CreateDefault(GameDifficultyMode.Normal);
+
+        return selectedModeProfile;
     }
 
     bool IsNextWaveBoss()

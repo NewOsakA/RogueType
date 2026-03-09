@@ -27,6 +27,7 @@ public class SaveSlotData
     public int metaCoins;
     public int damageLevel;
     public int wallHpLevel;
+    public int selectedDifficultyMode;
 
     public SaveRunStatsData lastRunStats = new SaveRunStatsData();
     public List<SaveRunStatsData> runHistory = new List<SaveRunStatsData>();
@@ -43,6 +44,7 @@ public class SaveSlotData
             metaCoins = 0,
             damageLevel = 0,
             wallHpLevel = 0,
+            selectedDifficultyMode = (int)GameDifficultyMode.Normal,
             lastRunStats = new SaveRunStatsData(),
             runHistory = new List<SaveRunStatsData>()
         };
@@ -59,6 +61,7 @@ public class SaveSlotData
             metaCoins = 0,
             damageLevel = 0,
             wallHpLevel = 0,
+            selectedDifficultyMode = (int)GameDifficultyMode.Normal,
             lastRunStats = new SaveRunStatsData(),
             runHistory = new List<SaveRunStatsData>()
         };

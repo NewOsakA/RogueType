@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class GameOverUI : MonoBehaviour
 {
     private const string MainMenuSceneName = "Main manu";
-    private const string UpgradeSceneName = "Upgrade";
+    private const string DifficultySelectionSceneName = "Difficulty Selection";
 
     [Header("Stat Texts (TMP)")]
     public TMP_Text scoreText;
@@ -62,6 +62,6 @@ public class GameOverUI : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(UpgradeSceneName);
+        SceneManager.LoadScene(DifficultySelectionSceneName);
     }
 }

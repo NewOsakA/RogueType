@@ -68,12 +68,14 @@ public class EnemySpawner : MonoBehaviour
         isBossWave = (wave % bossEveryXWaves == 0);
 
         var diff = GameManager.Instance.GetDifficulty();
+        var modeProfile = GameManager.Instance.GetSelectedModeProfile();
 
         int baseline = baseEnemyCount + waveIndex * enemyCountIncrease;
+        int modeSpawnBonus = modeProfile.enemySpawnFlatBonus + (waveIndex * modeProfile.enemySpawnBonusPerWave);
 
         enemiesToSpawn = isBossWave
             ? 1
-            : Mathf.Max(0, baseline + diff.additionalEnemyCount);
+            : Mathf.Max(0, baseline + diff.additionalEnemyCount + modeSpawnBonus);
 
         timer = 0f;
 
@@ -192,6 +194,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemy == null) return;
 
         var diff = GameManager.Instance.GetDifficulty();
+        var modeProfile = GameManager.Instance.GetSelectedModeProfile();
 
         float finalMultiplier = 1f;
 
@@ -214,6 +217,8 @@ public class EnemySpawner : MonoBehaviour
                 finalMultiplier *= diff.hpMultiplier;
             }
 
+            finalMultiplier *= modeProfile.enemyHealthMultiplier;
+
             Debug.Log($"Boss scaling x{finalMultiplier:F2}");
         }
         else
@@ -224,16 +229,18 @@ public class EnemySpawner : MonoBehaviour
 
             float progressionMul = 1f + step * hpIncreasePercent;
 
-            finalMultiplier = progressionMul * diff.hpMultiplier;
+            finalMultiplier = progressionMul * diff.hpMultiplier * modeProfile.enemyHealthMultiplier;
         }
 
         int scaledHp = Mathf.RoundToInt(enemy.maxHP * finalMultiplier);
         scaledHp = Mathf.Max(1, scaledHp);
+        int scaledDamage = Mathf.Max(1, Mathf.RoundToInt(enemy.damage * modeProfile.enemyDamageMultiplier));
+        float scaledSpeed = Mathf.Max(0.05f, enemy.speed * modeProfile.enemySpeedMultiplier);
 
         enemy.Initialize(
             scaledHp,
-            enemy.damage,
-            enemy.speed,
+            scaledDamage,
+            scaledSpeed,
             enemy.isBoss
         );
     }

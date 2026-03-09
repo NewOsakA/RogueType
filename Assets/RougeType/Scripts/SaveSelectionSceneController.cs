@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -8,7 +9,8 @@ public class SaveSelectionSceneController : MonoBehaviour
 {
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "Main manu";
-    [SerializeField] private string upgradeSceneName = "Upgrade";
+    [FormerlySerializedAs("upgradeSceneName")]
+    [SerializeField] private string difficultySelectionSceneName = "Difficulty Selection";
 
     [Header("Slot Rows (Size should match SaveSlotManager.SlotCount)")]
     [SerializeField] private SaveSlotRowUI[] slotRows;
@@ -107,7 +109,7 @@ public class SaveSelectionSceneController : MonoBehaviour
         if (MetaGameManager.Instance != null)
             MetaGameManager.Instance.LoadFromActiveSlot();
 
-        SceneManager.LoadScene(upgradeSceneName);
+        SceneManager.LoadScene(difficultySelectionSceneName);
     }
 
     private void OnRequestDelete(int slotIndex)

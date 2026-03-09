@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    private const string DifficultySelectionSceneName = "Difficulty Selection";
+
     [Header("UI")]
     public GameObject pauseMenuPanel;
 
@@ -41,8 +43,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoToUpgrade()
     {
-        // Change this when change scene name
-        EndRunAndLoadScene("Upgrade");
+        EndRunAndLoadScene(DifficultySelectionSceneName);
     }
 
     public void GoToMainMenu()

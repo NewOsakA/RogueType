@@ -226,6 +226,32 @@ public class Wall : MonoBehaviour
         var meta = MetaGameManager.Instance;
         if (meta == null) return;
 
+        var modeProfile = meta.GetSelectedDifficultyProfile();
+        if (modeProfile != null)
+        {
+            if (modeProfile.lockWallHpToOne)
+            {
+                forceOneMaxHp = true;
+                maxHP = 1;
+                currentHP = 1;
+                UpdateHPDisplay();
+                return;
+            }
+
+            forceOneMaxHp = false;
+            maxHP = Mathf.Max(1, modeProfile.wallStartHp);
+
+            if (modeProfile.allowMetaWallUpgrades)
+            {
+                int hpPerLevelFromMeta = 20;
+                maxHP += meta.wallHpLevel * hpPerLevelFromMeta;
+            }
+
+            currentHP = maxHP;
+            UpdateHPDisplay();
+            return;
+        }
+
         int hpPerLevel = 20;
         maxHP += meta.wallHpLevel * hpPerLevel;
         currentHP = maxHP;
