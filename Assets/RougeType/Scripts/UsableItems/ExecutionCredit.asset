@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ExecutionCredit
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Execution Credit
-  description: For a short time, enemies killed grant bonus currency.
+  description: Activates a bounty effect for a short duration, causing enemies killed
+    to grant +50% extra currency for 10 seconds, making it most effective during
+    large enemy waves.
   itemType: 2
   cost: 160
   maxCarry: 2

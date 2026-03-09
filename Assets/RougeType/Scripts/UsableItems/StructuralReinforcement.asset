@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: StructuralReinforcement
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Structural Reinforcement
-  description: 'Temporarily reinforce the wall, reducing incoming damage for a short
-    duration.
-
-    Damage Reduction: 50%'
+  description: Temporarily reinforces the wall with protective armor, reducing incoming
+    damage by 50% for 6 seconds, making it useful when large enemy waves reach the
+    wall.
   itemType: 1
   cost: 150
   maxCarry: 2

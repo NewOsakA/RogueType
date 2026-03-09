@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: EssenceGain
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Essence Gain
-  description: Gain a burst of essence immediately when used.
+  description: Instantly grants a burst of magical energy, providing 50 Essence immediately
+    when used, which can be helpful when you need essence quickly to activate skills.
   itemType: 3
   cost: 180
   maxCarry: 1

@@ -134,6 +134,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: minimalist_game_gui_1
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 56
+        width: 102
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 1, y: 1, z: 1, w: 1}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 811d60ed7732d4f2d854ce116cf83ae9
+      internalID: -442515344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -149,6 +171,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       minimalist_game_gui_0: -4705325894454860206
+      minimalist_game_gui_1: -442515344
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

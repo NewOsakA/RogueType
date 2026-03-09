@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: EmergencyRepair
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Emergency Repair
-  description: 'Instantly repair the wall during combat. Use in emergencies to survive
-    critical moments.
-
-
-    healAmount: 25'
+  description: Instantly repairs the wall during combat, restoring 25 wall HP when
+    used. This item is best saved for emergency situations to prevent the wall from
+    collapsing.
   itemType: 0
   cost: 100
   maxCarry: 3
