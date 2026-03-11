@@ -41,7 +41,7 @@ public class ArcherBossAbility : EnemyAbility
         // Triple shot
         if (Time.time >= lastShootTime + shootCooldown)
         {
-            TripleShot();
+            enemy.StartCoroutine(TripleShot());
             lastShootTime = Time.time;
         }
 
@@ -53,8 +53,12 @@ public class ArcherBossAbility : EnemyAbility
         }
     }
 
-    void TripleShot()
+    IEnumerator TripleShot()
     {
+        enemy.PlayAttackAnim();
+
+        yield return new WaitForSeconds(0.28f);
+        
         FireArrow(0f);
         FireArrow(spreadAngle);
         FireArrow(-spreadAngle);
@@ -90,7 +94,7 @@ public class ArcherBossAbility : EnemyAbility
 
             GameManager.Instance.RegisterEnemy();
 
-            yield return new WaitForSeconds(0.3f); // stagger spawn
+            yield return new WaitForSeconds(0.3f);
         }
     }
 }
