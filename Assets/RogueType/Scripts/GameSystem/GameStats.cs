@@ -103,13 +103,21 @@ public class GameStats : MonoBehaviour
 
     private string GetWorstFingerArea()
     {
+        return GetWorstFingerArea(fingerMistakes);
+    }
+
+    public static string GetWorstFingerArea(Dictionary<FingerZone, int> zoneMistakes)
+    {
+        if (zoneMistakes == null)
+            return "N/A";
+
         FingerZone worstZone = FingerZone.LeftPinky;
         int worstCount = -1;
 
         foreach (var zone in System.Enum.GetValues(typeof(FingerZone)))
         {
             var z = (FingerZone)zone;
-            int count = fingerMistakes.TryGetValue(z, out int c) ? c : 0;
+            int count = zoneMistakes.TryGetValue(z, out int c) ? c : 0;
             if (count > worstCount)
             {
                 worstCount = count;
@@ -117,11 +125,13 @@ public class GameStats : MonoBehaviour
             }
         }
 
-        if (worstCount <= 0) return "N/A";
+        if (worstCount <= 0)
+            return "N/A";
+
         return ZoneToLabel(worstZone);
     }
 
-    private string ZoneToLabel(FingerZone zone)
+    public static string ZoneToLabel(FingerZone zone)
     {
         return zone switch
         {
@@ -196,6 +206,11 @@ public class GameStats : MonoBehaviour
 
     private SaveRunStatsData BuildCurrentRunSnapshot()
     {
+        int GetZoneCount(FingerZone zone)
+        {
+            return fingerMistakes.TryGetValue(zone, out int count) ? Mathf.Max(0, count) : 0;
+        }
+
         return new SaveRunStatsData
         {
             score = Score,
@@ -205,7 +220,15 @@ public class GameStats : MonoBehaviour
             highestWPM = HighestWPM,
             averageWPM = AverageWPM,
             averageAccuracy = AverageAccuracy,
-            worstFingerArea = WorstFingerArea
+            worstFingerArea = WorstFingerArea,
+            leftPinkyMistakes = GetZoneCount(FingerZone.LeftPinky),
+            leftRingMistakes = GetZoneCount(FingerZone.LeftRing),
+            leftMiddleMistakes = GetZoneCount(FingerZone.LeftMiddle),
+            leftIndexMistakes = GetZoneCount(FingerZone.LeftIndex),
+            rightIndexMistakes = GetZoneCount(FingerZone.RightIndex),
+            rightMiddleMistakes = GetZoneCount(FingerZone.RightMiddle),
+            rightRingMistakes = GetZoneCount(FingerZone.RightRing),
+            rightPinkyMistakes = GetZoneCount(FingerZone.RightPinky)
         };
     }
 }

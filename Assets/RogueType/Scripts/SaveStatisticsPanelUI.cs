@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -223,22 +224,20 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         if (detailText == null)
             return;
 
-        SaveRunStatsData latest = history.Count > 0
-            ? history[history.Count - 1]
-            : (slot.lastRunStats ?? new SaveRunStatsData());
-
-        string worstFinger = string.IsNullOrEmpty(latest.worstFingerArea) ? "N/A" : latest.worstFingerArea;
+        SaveAggregateStats aggregate = BuildAggregateStats(history);
+        string worstFinger = string.IsNullOrEmpty(aggregate.worstFingerArea) ? "N/A" : aggregate.worstFingerArea;
         detailText.text =
-            $"Latest Run\n" +
-            $"Score: {latest.score}\n" +
-            $"Total Time: {latest.totalTime:F1}s\n" +
-            $"Highest Wave: {latest.highestWave}\n" +
-            $"Currency: {latest.currency}\n" +
-            $"Highest WPM: {latest.highestWPM:F1}\n" +
-            $"Average WPM: {latest.averageWPM:F1}\n" +
-            $"Average Accuracy: {latest.averageAccuracy * 100f:F1}%\n" +
-            $"Worst Finger Area: {worstFinger}\n\n" +
-            $"Total Plays in Save: {history.Count}";
+            $"All Runs Summary\n" +
+            $"Average Scores: {aggregate.averageScore:F1}\n" +
+            $"Total Time: {aggregate.totalTime:F1}s\n" +
+            $"Highest Wave: {aggregate.highestWave}\n" +
+            $"Average WPM: {aggregate.averageWPM:F1}\n" +
+            $"Highest WPM: {aggregate.highestWPM:F1}\n" +
+            $"Average Accuracy: {aggregate.averageAccuracyPercent:F1}%\n" +
+            $"Highest Accuracy: {aggregate.highestAccuracyPercent:F1}%\n" +
+            $"Worst Finger: {worstFinger}\n" +
+            "\n" +
+            $"Total Plays in Save: {aggregate.totalPlays}";
     }
 
     private static RangeSelection GetRangeSelection(List<SaveRunStatsData> history, RangeMode mode)
@@ -359,6 +358,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             pointVisuals.Add(new PointVisual
             {
                 playNumber = playNumber,
+                runData = data[i],
                 wpm = wpm,
                 accuracyPercent = accuracyPercent,
                 wpmPointRect = wpmPointRect,
@@ -666,7 +666,7 @@ public class SaveStatisticsPanelUI : MonoBehaviour
         ApplyHoverVisualState();
 
         PointVisual visual = pointVisuals[index];
-        SetHoverInfoText($"Play {visual.playNumber} | WPM: {visual.wpm:F1} | Accuracy: {visual.accuracyPercent:F1}%");
+        SetHoverInfoText(BuildHoverInfoText(visual.playNumber, visual.runData));
     }
 
     private void OnHoverZoneExit(int index)
@@ -707,14 +707,152 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             hoverInfoText.text = message;
     }
 
+    private static string BuildHoverInfoText(int playNumber, SaveRunStatsData runData)
+    {
+        runData ??= new SaveRunStatsData();
+        string worstFingerZone = string.IsNullOrWhiteSpace(runData.worstFingerArea) ? "N/A" : runData.worstFingerArea;
+
+        return
+            $"Play {playNumber}\n" +
+            $"Score: {runData.score}\n" +
+            $"WPM: {Mathf.Max(0f, runData.highestWPM):F1}\n" +
+            $"Accuracy: {Mathf.Clamp01(runData.averageAccuracy) * 100f:F1}%\n" +
+            $"Currency: {runData.currency}\n" +
+            $"Total Time: {Mathf.Max(0f, runData.totalTime):F1}s\n" +
+            $"Worst Finger: {worstFingerZone}";
+    }
+
+    private static SaveAggregateStats BuildAggregateStats(List<SaveRunStatsData> history)
+    {
+        if (history == null || history.Count == 0)
+        {
+            return new SaveAggregateStats
+            {
+                worstFingerArea = "N/A",
+                totalPlays = 0
+            };
+        }
+
+        float totalScore = 0f;
+        float totalTime = 0f;
+        int highestWave = 0;
+        float totalAverageWpm = 0f;
+        float highestWpm = 0f;
+        float totalAverageAccuracy = 0f;
+        float highestAccuracy = 0f;
+        Dictionary<FingerZone, int> combinedFingerMistakes = CreateEmptyFingerZoneMap();
+
+        for (int i = 0; i < history.Count; i++)
+        {
+            SaveRunStatsData run = history[i] ?? new SaveRunStatsData();
+            totalScore += Mathf.Max(0, run.score);
+            totalTime += Mathf.Max(0f, run.totalTime);
+            highestWave = Mathf.Max(highestWave, run.highestWave);
+            totalAverageWpm += Mathf.Max(0f, run.averageWPM);
+            highestWpm = Mathf.Max(highestWpm, run.highestWPM);
+
+            float accuracy = Mathf.Clamp01(run.averageAccuracy);
+            totalAverageAccuracy += accuracy;
+            highestAccuracy = Mathf.Max(highestAccuracy, accuracy);
+
+            AddFingerMistakes(combinedFingerMistakes, run);
+        }
+
+        return new SaveAggregateStats
+        {
+            averageScore = totalScore / history.Count,
+            totalTime = totalTime,
+            highestWave = highestWave,
+            averageWPM = totalAverageWpm / history.Count,
+            highestWPM = highestWpm,
+            averageAccuracyPercent = (totalAverageAccuracy / history.Count) * 100f,
+            highestAccuracyPercent = highestAccuracy * 100f,
+            worstFingerArea = ResolveWorstFingerArea(history, combinedFingerMistakes),
+            totalPlays = history.Count
+        };
+    }
+
+    private static Dictionary<FingerZone, int> CreateEmptyFingerZoneMap()
+    {
+        var map = new Dictionary<FingerZone, int>();
+        foreach (FingerZone zone in Enum.GetValues(typeof(FingerZone)))
+            map[zone] = 0;
+
+        return map;
+    }
+
+    private static void AddFingerMistakes(Dictionary<FingerZone, int> totals, SaveRunStatsData run)
+    {
+        if (totals == null || run == null)
+            return;
+
+        totals[FingerZone.LeftPinky] += Mathf.Max(0, run.leftPinkyMistakes);
+        totals[FingerZone.LeftRing] += Mathf.Max(0, run.leftRingMistakes);
+        totals[FingerZone.LeftMiddle] += Mathf.Max(0, run.leftMiddleMistakes);
+        totals[FingerZone.LeftIndex] += Mathf.Max(0, run.leftIndexMistakes);
+        totals[FingerZone.RightIndex] += Mathf.Max(0, run.rightIndexMistakes);
+        totals[FingerZone.RightMiddle] += Mathf.Max(0, run.rightMiddleMistakes);
+        totals[FingerZone.RightRing] += Mathf.Max(0, run.rightRingMistakes);
+        totals[FingerZone.RightPinky] += Mathf.Max(0, run.rightPinkyMistakes);
+    }
+
+    private static string ResolveWorstFingerArea(List<SaveRunStatsData> history, Dictionary<FingerZone, int> combinedFingerMistakes)
+    {
+        if (combinedFingerMistakes != null && combinedFingerMistakes.Values.Any(value => value > 0))
+            return GameStats.GetWorstFingerArea(combinedFingerMistakes);
+
+        Dictionary<string, int> fallbackCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < history.Count; i++)
+        {
+            string label = history[i]?.worstFingerArea;
+            if (string.IsNullOrWhiteSpace(label) || label == "N/A")
+                continue;
+
+            if (!fallbackCounts.ContainsKey(label))
+                fallbackCounts[label] = 0;
+
+            fallbackCounts[label]++;
+        }
+
+        if (fallbackCounts.Count == 0)
+            return "N/A";
+
+        string bestLabel = "N/A";
+        int bestCount = -1;
+        foreach (var pair in fallbackCounts)
+        {
+            if (pair.Value > bestCount)
+            {
+                bestLabel = pair.Key;
+                bestCount = pair.Value;
+            }
+        }
+
+        return bestLabel;
+    }
+
     private struct PointVisual
     {
         public int playNumber;
+        public SaveRunStatsData runData;
         public float wpm;
         public float accuracyPercent;
         public RectTransform wpmPointRect;
         public RectTransform accuracyPointRect;
         public Image hoverBandImage;
+    }
+
+    private struct SaveAggregateStats
+    {
+        public float averageScore;
+        public float totalTime;
+        public int highestWave;
+        public float averageWPM;
+        public float highestWPM;
+        public float averageAccuracyPercent;
+        public float highestAccuracyPercent;
+        public string worstFingerArea;
+        public int totalPlays;
     }
 
     private sealed class HoverZoneHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler

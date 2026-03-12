@@ -14,6 +14,14 @@ public class SaveRunStatsData
     public float averageWPM;
     public float averageAccuracy;
     public string worstFingerArea = "N/A";
+    public int leftPinkyMistakes;
+    public int leftRingMistakes;
+    public int leftMiddleMistakes;
+    public int leftIndexMistakes;
+    public int rightIndexMistakes;
+    public int rightMiddleMistakes;
+    public int rightRingMistakes;
+    public int rightPinkyMistakes;
 }
 
 [Serializable]
@@ -345,6 +353,14 @@ public static class SaveSlotManager
             || data.highestWPM > 0f
             || data.averageWPM > 0f
             || data.averageAccuracy > 0f
+            || data.leftPinkyMistakes > 0
+            || data.leftRingMistakes > 0
+            || data.leftMiddleMistakes > 0
+            || data.leftIndexMistakes > 0
+            || data.rightIndexMistakes > 0
+            || data.rightMiddleMistakes > 0
+            || data.rightRingMistakes > 0
+            || data.rightPinkyMistakes > 0
             || (!string.IsNullOrEmpty(data.worstFingerArea) && data.worstFingerArea != "N/A");
     }
 
@@ -362,7 +378,15 @@ public static class SaveSlotManager
             highestWPM = source.highestWPM,
             averageWPM = source.averageWPM,
             averageAccuracy = source.averageAccuracy,
-            worstFingerArea = source.worstFingerArea
+            worstFingerArea = source.worstFingerArea,
+            leftPinkyMistakes = source.leftPinkyMistakes,
+            leftRingMistakes = source.leftRingMistakes,
+            leftMiddleMistakes = source.leftMiddleMistakes,
+            leftIndexMistakes = source.leftIndexMistakes,
+            rightIndexMistakes = source.rightIndexMistakes,
+            rightMiddleMistakes = source.rightMiddleMistakes,
+            rightRingMistakes = source.rightRingMistakes,
+            rightPinkyMistakes = source.rightPinkyMistakes
         };
     }
 }
