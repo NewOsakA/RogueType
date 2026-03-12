@@ -44996,7 +44996,7 @@ GameObject:
   - component: {fileID: 1461594771}
   - component: {fileID: 1461594770}
   m_Layer: 0
-  m_Name: TemporaryUpgrade
+  m_Name: SkillTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68529,7 +68529,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 163223865727879780, guid: 948b4a5d03addee4cbc18eb006e4bc86, type: 3}
       propertyPath: m_Name
-      value: TemporaryUpgradeBackground
+      value: Background
       objectReference: {fileID: 0}
     - target: {fileID: 163223865727879780, guid: 948b4a5d03addee4cbc18eb006e4bc86, type: 3}
       propertyPath: m_IsActive
@@ -68909,7 +68909,7 @@ PrefabInstance:
       objectReference: {fileID: 1461594770}
     - target: {fileID: 8101846111869123050, guid: 948b4a5d03addee4cbc18eb006e4bc86, type: 3}
       propertyPath: m_Name
-      value: TemporaryUpgradeCanvas
+      value: SkillTreeCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 8101846111869123050, guid: 948b4a5d03addee4cbc18eb006e4bc86, type: 3}
       propertyPath: m_IsActive
