@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TemporaryUpgradeUIController : MonoBehaviour
+public class SkillTreeUpgradeUIController : MonoBehaviour
 {
     public GameObject shopPanel;
 
@@ -9,7 +9,7 @@ public class TemporaryUpgradeUIController : MonoBehaviour
         if (shopPanel != null)
         {
             shopPanel.SetActive(true);
-            TemporaryUpgradeManager.Instance?.RefreshUI();
+            SkillTreeUpgradeManager.Instance?.RefreshUI();
         }
     }
 

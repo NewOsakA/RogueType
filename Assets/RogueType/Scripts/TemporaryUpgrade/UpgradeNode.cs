@@ -1,76 +1,128 @@
-// UpgradeNode.cs
+// // UpgradeNode.cs
 
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
+// using UnityEngine;
+// using UnityEngine.UI;
+// using UnityEngine.EventSystems;
 
-public class UpgradeNode : MonoBehaviour, IPointerEnterHandler
-{
-    public UpgradeData data;
-    public Button button;
+// public class UpgradeNode : MonoBehaviour, IPointerEnterHandler
+// {
+//     private enum VisualState
+//     {
+//         Available,
+//         Unavailable,
+//         Bought,
+//         RequirementNotMet
+//     }
 
-    void Awake()
-    {
-        button = GetComponent<Button>();
-    }
+//     public UpgradeData data;
+//     public Button button;
+//     [SerializeField] private Animator nodeAnimator;
+//     [SerializeField] private string availableStateName = "Available";
+//     [SerializeField] private string unavailableStateName = "Unavailable";
+//     [SerializeField] private string boughtStateName = "Bought";
+//     [SerializeField] private string requirementNotMetStateName = "RequirementNotMet";
 
-    public void Refresh()
-    {
-        TemporaryUpgradeManager manager = TemporaryUpgradeManager.Instance;
+//     void Awake()
+//     {
+//         button = GetComponent<Button>();
+//         if (nodeAnimator == null)
+//             nodeAnimator = GetComponent<Animator>();
 
-        if (manager == null)
-            return;
+//         if (button != null)
+//             button.transition = Selectable.Transition.None;
+//     }
 
-        if (button == null)
-        {
-            Debug.LogWarning($"UpgradeNode Missing Button on {gameObject.name}");
-            return;
-        }
+//     public void Refresh()
+//     {
+//         SkillTreeUpgradeManager manager = SkillTreeUpgradeManager.Instance;
 
-        if (data == null)
-        {
-            button.interactable = false;
-            return;
-        }
+//         if (manager == null)
+//             return;
 
-        bool shouldBeInteractable = true;
+//         if (button == null)
+//         {
+//             Debug.LogWarning($"UpgradeNode Missing Button on {gameObject.name}");
+//             return;
+//         }
 
-        if (manager.IsUnlocked(data))
-        {
-            shouldBeInteractable = false;
-        }
-        else if (!manager.IsPrerequisiteMet(data))
-        {
-            shouldBeInteractable = false;
-        }
-        else if (
-            data.exclusiveGroup != ExclusiveGroup.None &&
-            manager.IsExclusiveGroupTaken(data.exclusiveGroup)
-        )
-        {
-            shouldBeInteractable = false;
-        }
+//         if (data == null)
+//         {
+//             button.interactable = false;
+//             ApplyVisualState(VisualState.Unavailable);
+//             return;
+//         }
 
-        button.interactable = shouldBeInteractable;
-    }
+//         VisualState visualState;
+//         bool shouldBeInteractable;
 
+//         if (manager.IsUnlocked(data))
+//         {
+//             visualState = VisualState.Bought;
+//             shouldBeInteractable = false;
+//         }
+//         else if (!manager.IsPrerequisiteMet(data) || manager.IsGroupLockedFor(data))
+//         {
+//             visualState = VisualState.Unavailable;
+//             shouldBeInteractable = false;
+//         }
+//         else if (!manager.CanAfford(data))
+//         {
+//             visualState = VisualState.RequirementNotMet;
+//             shouldBeInteractable = false;
+//         }
+//         else
+//         {
+//             visualState = VisualState.Available;
+//             shouldBeInteractable = true;
+//         }
 
+//         button.interactable = shouldBeInteractable;
+//         ApplyVisualState(visualState);
+//     }
 
-    public void Buy()
-    {
-        TemporaryUpgradeManager manager = TemporaryUpgradeManager.Instance;
-        if (manager != null)
-        {
-            manager.TryBuy(this);
-        }
-    }
+//     private void ApplyVisualState(VisualState visualState)
+//     {
+//         if (nodeAnimator == null)
+//             return;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        TemporaryUpgradeManager manager = TemporaryUpgradeManager.Instance;
-        if (manager != null)
-        {
-            manager.ShowInfo(data);
-        }
-    }
-}
+//         string[] candidateStateNames = visualState switch
+//         {
+//             VisualState.Available => new[] { availableStateName, "NormalState" },
+//             VisualState.Bought => new[] { boughtStateName, "BoughtState" },
+//             VisualState.RequirementNotMet => new[] { requirementNotMetStateName },
+//             _ => new[] { unavailableStateName }
+//         };
+
+//         foreach (string stateName in candidateStateNames)
+//         {
+//             if (string.IsNullOrWhiteSpace(stateName))
+//                 continue;
+
+//             int stateHash = Animator.StringToHash(stateName);
+//             if (!nodeAnimator.HasState(0, stateHash))
+//                 continue;
+
+//             nodeAnimator.Play(stateHash, 0, 0f);
+//             nodeAnimator.Update(0f);
+//             return;
+//         }
+//     }
+
+//     public void Buy()
+//     {
+//         SkillTreeUpgradeManager manager = SkillTreeUpgradeManager.Instance;
+//         if (manager != null)
+//         {
+//             manager.TryBuy(this);
+//         }
+//     }
+
+//     public void OnPointerEnter(PointerEventData eventData)
+//     {
+//         SkillTreeUpgradeManager manager = SkillTreeUpgradeManager.Instance;
+//         if (manager != null)
+//         {
+//             manager.ShowInfo(data);
+//         }
+//     }
+// }

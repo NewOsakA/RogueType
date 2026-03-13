@@ -10,17 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
-  m_Name: Chain Shot
+  m_Name: Double_Blast
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Chain Shot
-  description: Bounch shot to nearby enemy
-  cost: 3000
+  upgradeName: Double Blast
+  description: 'Fire additional arcane blast
+
+    -40% damage per blast'
+  cost: 1000
   prerequisites:
-  - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
+  - {fileID: 11400000, guid: ae02f880dc42b40788ab5d5b6c0b34d1, type: 2}
   prerequisiteMode: 1
   effects:
-  - type: 20
-    intValue: 3
+  - type: 28
+    intValue: 2
     floatValue: 0
-  exclusive: 1
-  exclusiveGroup: 3
+  - type: 29
+    intValue: 0
+    floatValue: 0.6
+  exclusive: 0
+  exclusiveGroup: 0

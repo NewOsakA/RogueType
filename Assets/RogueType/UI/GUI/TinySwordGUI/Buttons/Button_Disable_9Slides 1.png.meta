@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d3a2862320cf64a1bb8f4c4eaa41ba01
+guid: edddc1677f9954c05bf41851c78d1aa6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6741408277770592616
-    second: SmallRedSquareButton_Pressed_0
+      213: -5071898027277727972
+    second: Button_Disable_9Slides_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SmallRedSquareButton_Pressed_0
+      name: Button_Disable_9Slides_0
       rect:
         serializedVersion: 2
-        x: 13
-        y: 14
-        width: 102
-        height: 87
+        x: 6
+        y: 7
+        width: 180
+        height: 182
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 31, y: 25, z: 27, w: 28}
+      border: {x: 77, y: 77, z: 77, w: 77}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 861e4627c1b4e8d50800000000000000
-      internalID: 6741408277770592616
+      spriteID: c174b13cd9ffc99b0800000000000000
+      internalID: -5071898027277727972
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 7735b771c9100484191aafdd154769f6
+    spriteID: a005903b9e53f42d98b0f0d1b7569642
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SmallRedSquareButton_Pressed_0: 6741408277770592616
+      Button_Disable_9Slides_0: -5071898027277727972
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

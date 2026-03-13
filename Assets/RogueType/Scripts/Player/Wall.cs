@@ -17,10 +17,8 @@ public class Wall : MonoBehaviour
     private int shieldHitsRemaining = 0;
 
     [Header("Auto Repair")]
-    public int autoRepairAmount = 5; 
+    public int autoRepairAmount = 5;
     public float autoRepairInterval = 5f;
-
-    private Coroutine autoRepairCoroutine;
     private bool isDead = false;
     private bool forceOneMaxHp = false;
 
@@ -109,8 +107,14 @@ public class Wall : MonoBehaviour
             return;
         }
 
+        int previousMaxHp = maxHP;
         maxHP = Mathf.Max(1, maxHP + amount);
-        currentHP = Mathf.Min(currentHP, maxHP);
+
+        int gainedMaxHp = maxHP - previousMaxHp;
+        if (gainedMaxHp > 0)
+            currentHP += gainedMaxHp;
+
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         UpdateHPDisplay();
         Debug.Log($"Wall HP upgraded to {maxHP}");
     }
@@ -135,47 +139,18 @@ public class Wall : MonoBehaviour
             // Debug.Log($"Shield recharged: {shieldHitsRemaining} hits");
         }
     }
-
-
-    public void StartAutoRepair()
+    public void RepairAfterWaveEnd()
     {
-        if (autoRepairCoroutine != null)
-            StopCoroutine(autoRepairCoroutine);
+        var playerStats = GameManager.Instance?.playerStats;
+        if (playerStats == null || !playerStats.hasAutoRepair)
+            return;
 
-        autoRepairCoroutine = StartCoroutine(AutoRepairDuringWave());
-    }
+        if (currentHP <= 0 || currentHP >= maxHP || autoRepairAmount <= 0)
+            return;
 
-    public void StopAutoRepair()
-    {
-        if (autoRepairCoroutine != null)
-        {
-            StopCoroutine(autoRepairCoroutine);
-            autoRepairCoroutine = null;
-        }
-    }
-
-    IEnumerator AutoRepairDuringWave()
-    {
-        while (GameManager.Instance != null &&
-            GameManager.Instance.IsWavePhase() &&
-            currentHP > 0)
-        {
-            var playerStats = GameManager.Instance.playerStats;
-
-            if (playerStats != null && playerStats.hasAutoRepair)
-            {
-                if (currentHP < maxHP)
-                {
-                    currentHP += autoRepairAmount;
-                    currentHP = Mathf.Min(currentHP, maxHP);
-                    UpdateHPDisplay();
-
-                    Debug.Log($"[AutoRepair] Wall +{autoRepairAmount} HP → {currentHP}");
-                }
-            }
-
-            yield return new WaitForSeconds(autoRepairInterval);
-        }
+        int healAmount = Mathf.Min(autoRepairAmount, maxHP - currentHP);
+        Heal(healAmount);
+        Debug.Log($"[AutoRepair] Wave end repair +{healAmount} HP → {currentHP}");
     }
 
     // Items

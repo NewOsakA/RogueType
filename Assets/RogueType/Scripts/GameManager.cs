@@ -154,7 +154,6 @@ public class GameManager : MonoBehaviour
         if (wall != null)
         {
             wall.RechargeShield();
-            wall.StartAutoRepair();
         }
     }
 
@@ -271,6 +270,9 @@ public class GameManager : MonoBehaviour
             );
         }
 
+        Wall wall = Object.FindFirstObjectByType<Wall>();
+        wall?.RepairAfterWaveEnd();
+
         EnterBaseManagement();
     }
 
@@ -285,11 +287,6 @@ public class GameManager : MonoBehaviour
         if (defensePanel != null) defensePanel.SetActive(false);
 
         cam?.MoveToBase();
-        Wall wall = Object.FindFirstObjectByType<Wall>();
-        if (wall != null)
-        {
-            wall.StopAutoRepair();
-        }
     }
 
     void UpdateWaveText()
