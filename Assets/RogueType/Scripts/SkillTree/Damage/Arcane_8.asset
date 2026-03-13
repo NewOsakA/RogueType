@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: Arcane_8
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Arcane 8
+  upgradeName: Arcane Boost
   description: Increase damage by 1
-  cost: 100
+  cost: 300
   prerequisites:
   - {fileID: 11400000, guid: 996b28a74f90b4960a6d8db2b8ec9224, type: 2}
   prerequisiteMode: 1

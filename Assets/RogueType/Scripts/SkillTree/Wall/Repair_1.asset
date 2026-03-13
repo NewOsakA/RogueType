@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: Repair_1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Auto Repair
+  upgradeName: Auto Repair I
   description: Repair 5 wall hp after wave end
   cost: 500
   prerequisites:

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: AoeBoost
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Aoe Boost
-  description: 'Explosive Shot AOE now dealt 50% damage instead of 30% '
+  upgradeName: AOE Boost
+  description: 'Explosive Blast AOE now dealt 50% damage instead of 30% '
   cost: 1000
   prerequisites:
   - {fileID: 11400000, guid: 048c61cd435714f02ba18342fdaf6dd5, type: 2}

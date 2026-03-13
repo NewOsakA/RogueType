@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: Great_Arcane_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Greater Arcane 2
+  upgradeName: Arcane Sacrifice II
   description: Increase damage by 2, but wall hp is deducted by 10%
-  cost: 250
+  cost: 450
   prerequisites:
   - {fileID: 11400000, guid: 4ae4e6998c8994ca48bc6f4b630cdc2e, type: 2}
   prerequisiteMode: 1

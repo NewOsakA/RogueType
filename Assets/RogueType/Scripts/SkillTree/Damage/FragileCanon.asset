@@ -16,7 +16,7 @@ MonoBehaviour:
   description: 'YOLO
 
     You only have 1 live with powerful blast '
-  cost: 1000
+  cost: 2500
   prerequisites:
   - {fileID: 11400000, guid: 7e8134d4c65f74e19b4360db74026701, type: 2}
   prerequisiteMode: 1

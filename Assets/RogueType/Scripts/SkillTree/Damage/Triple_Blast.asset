@@ -16,7 +16,7 @@ MonoBehaviour:
   description: 'Fire additional arcane blast
 
     -40% damage per blast'
-  cost: 1000
+  cost: 1500
   prerequisites:
   - {fileID: 11400000, guid: 6ba950461d4cb458f9a9b19167596e33, type: 2}
   prerequisiteMode: 1

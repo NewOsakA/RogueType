@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: WallHp_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Wall Hp
+  upgradeName: Wall II
   description: Increase wall hp by 10
   cost: 150
   prerequisites:
