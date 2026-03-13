@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="com.github.asus4.onnxruntime.csproj" />
+  <Project Path="com.github.asus4.onnxruntime.unity.csproj" />
+  <Project Path="com.github.asus4.onnxruntime.unity.tests.csproj" />
+  <Project Path="com.github.asus4.onnxruntime.unity.Editor.csproj" />
+  <Project Path="com.github.asus4.onnxruntime-extensions.Editor.csproj" />
+  <Project Path="com.github.asus4.onnxruntime.Editor.csproj" />
+</Solution>

@@ -34957,6 +34957,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 938322508}
     - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
+      propertyPath: defensePanel
+      value: 
+      objectReference: {fileID: 1276664904}
+    - target: {fileID: 1569184801838819818, guid: 232fbf782687f334c997e210db0c0c38, type: 3}
       propertyPath: defenseCanvas
       value: 
       objectReference: {fileID: 385661522}
@@ -37469,7 +37473,7 @@ GameObject:
   - component: {fileID: 1276664906}
   - component: {fileID: 1276664908}
   m_Layer: 0
-  m_Name: Panel
+  m_Name: DisplayTextPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

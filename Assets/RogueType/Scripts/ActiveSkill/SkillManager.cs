@@ -55,6 +55,9 @@ public class SkillManager : MonoBehaviour
 
     void HandleInput()
     {
+        if (GameManager.Instance == null || !GameManager.Instance.IsWavePhase())
+            return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) TryUse(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) TryUse(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) TryUse(2);
@@ -106,6 +109,9 @@ void UpdateCooldowns()
 
     void TryUse(int index)
     {
+        if (!GameManager.Instance.IsWavePhase())
+            return;
+            
         if (!IsValidIndex(index))
             return;
 

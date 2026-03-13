@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Elements")]
     public GameObject nextWaveButton;
     public Canvas baseCanvas;
-    public Canvas defenseCanvas;
+    public GameObject defensePanel;
     public TMP_Text waveText;
 
     [Header("References")]
@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         if (nextWaveButton != null) nextWaveButton.SetActive(false);
 
         if (baseCanvas != null) baseCanvas.enabled = false;
-        if (defenseCanvas != null) defenseCanvas.enabled = true;
+        if (defensePanel != null) defensePanel.SetActive(true);
 
         cam?.MoveToWave();
         // Reset word every turn
@@ -282,7 +282,7 @@ public class GameManager : MonoBehaviour
         if (nextWaveButton != null) nextWaveButton.SetActive(true);
 
         if (baseCanvas != null) baseCanvas.enabled = true;
-        if (defenseCanvas != null) defenseCanvas.enabled = false;
+        if (defensePanel != null) defensePanel.SetActive(false);
 
         cam?.MoveToBase();
         Wall wall = Object.FindFirstObjectByType<Wall>();
