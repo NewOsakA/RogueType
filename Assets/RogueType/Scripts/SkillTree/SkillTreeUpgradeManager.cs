@@ -28,6 +28,7 @@ public class SkillTreeUpgradeManager : MonoBehaviour
     [Header("Targets")]
     public PlayerStats playerStats;
     public Wall wall;
+    public AllyManager allyManager;
 
 
     [Header("Currency")]
@@ -292,7 +293,7 @@ public class SkillTreeUpgradeManager : MonoBehaviour
 
     public void ApplyUpgrade(UpgradeData data)
     {
-        foreach (var effect in data.effects)
+        foreach (var effect in data.GetEffects())
         {
             ApplyEffect(effect);
         }
@@ -447,6 +448,64 @@ public class SkillTreeUpgradeManager : MonoBehaviour
             case UpgradeEffectType.AutoRepairUpgrade:
                 wall.autoRepairAmount += effect.intValue;
                 break;
+
+            case UpgradeEffectType.UnlockAlly1:
+                GetAllyManager()?.UnlockAlly(1);
+                break;
+
+            case UpgradeEffectType.UnlockAlly2:
+                GetAllyManager()?.UnlockAlly(2);
+                break;
+
+            case UpgradeEffectType.IncreaseAlly1Damage:
+                GetAllyManager()?.AddDamage(1, effect.intValue);
+                break;
+
+            case UpgradeEffectType.IncreaseAlly2Damage:
+                GetAllyManager()?.AddDamage(2, effect.intValue);
+                break;
+
+            case UpgradeEffectType.ReduceAlly1Interval:
+                GetAllyManager()?.ReduceInterval(1, effect.floatValue);
+                break;
+
+            case UpgradeEffectType.ReduceAlly2Interval:
+                GetAllyManager()?.ReduceInterval(2, effect.floatValue);
+                break;
+
+            case UpgradeEffectType.EnableAlly1Burn:
+                GetAllyManager()?.SetElement(1, AllyElement.Flame);
+                break;
+
+            case UpgradeEffectType.EnableAlly2Burn:
+                GetAllyManager()?.SetElement(2, AllyElement.Flame);
+                break;
+
+            case UpgradeEffectType.EnableAlly1Frost:
+                GetAllyManager()?.SetElement(1, AllyElement.Frost);
+                break;
+
+            case UpgradeEffectType.EnableAlly2Frost:
+                GetAllyManager()?.SetElement(2, AllyElement.Frost);
+                break;
         }
+    }
+
+    private AllyManager GetAllyManager()
+    {
+        if (allyManager == null)
+        {
+            allyManager = AllyManager.Instance != null
+                ? AllyManager.Instance
+                : Object.FindFirstObjectByType<AllyManager>();
+
+            if (allyManager == null)
+            {
+                GameObject allyManagerObject = new GameObject("AllyManager");
+                allyManager = allyManagerObject.AddComponent<AllyManager>();
+            }
+        }
+
+        return allyManager;
     }
 }

@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
   m_Name: Fierce_Arrow_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Fierce Arrow 1
+  upgradeName: Fierce Arrow 2
   description: Ally 2 increase damage by 50%
   cost: 500
   prerequisites:
   - {fileID: 11400000, guid: 1ca18f5ed0a024176901c47fa4e5163a, type: 2}
   prerequisiteMode: 1
-  effectType: 0
-  intValue: 0
-  floatValue: 0
-  exclusive: 1
-  exclusiveGroup: 5
+  effects:
+  - type: 35
+    intValue: 1
+    floatValue: 0
+  exclusive: 0
+  exclusiveGroup: 0

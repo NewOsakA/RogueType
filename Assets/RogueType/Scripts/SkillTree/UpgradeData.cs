@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(menuName = "RougeType/Upgrade")]
 public class UpgradeData : ScriptableObject
@@ -20,13 +21,37 @@ public class UpgradeData : ScriptableObject
     public PrerequisiteMode prerequisiteMode = PrerequisiteMode.All;
 
     [Header("Effect")]
-    // public UpgradeEffectType effectType;
     public List<UpgradeEffect> effects = new List<UpgradeEffect>();
+    [FormerlySerializedAs("effectType")]
+    [SerializeField] private int legacyEffectType = -1;
+    [FormerlySerializedAs("intValue")]
+    [SerializeField] private int legacyIntValue = 0;
+    [FormerlySerializedAs("floatValue")]
+    [SerializeField] private float legacyFloatValue = 0f;
 
     // EXCLUSIVE
     [Header("Exclusive Rule")]
     public bool exclusive;
     public ExclusiveGroup exclusiveGroup;
+
+    public IEnumerable<UpgradeEffect> GetEffects()
+    {
+        if (effects != null && effects.Count > 0)
+            return effects;
+
+        if (legacyEffectType < 0)
+            return System.Array.Empty<UpgradeEffect>();
+
+        return new[]
+        {
+            new UpgradeEffect
+            {
+                type = (UpgradeEffectType)legacyEffectType,
+                intValue = legacyIntValue,
+                floatValue = legacyFloatValue
+            }
+        };
+    }
 }
 public enum PrerequisiteMode
 {
@@ -90,8 +115,16 @@ public enum UpgradeEffectType
     MultiShotPenalty,  
     SetWallHPToOne,
     AutoRepairUpgrade,
-
-
+    UnlockAlly1,
+    UnlockAlly2,
+    IncreaseAlly1Damage,
+    IncreaseAlly2Damage,
+    ReduceAlly1Interval,
+    ReduceAlly2Interval,
+    EnableAlly1Burn,
+    EnableAlly2Burn,
+    EnableAlly1Frost,
+    EnableAlly2Frost,
 }
 
 [System.Serializable]
@@ -101,4 +134,3 @@ public class UpgradeEffect
     public int intValue;
     public float floatValue;
 }
-

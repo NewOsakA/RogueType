@@ -18,6 +18,9 @@ MonoBehaviour:
   prerequisites:
   - {fileID: 11400000, guid: ded755334d9684dd7b640666376b6c68, type: 2}
   prerequisiteMode: 1
-  effects: []
-  exclusive: 1
-  exclusiveGroup: 4
+  effects:
+  - type: 34
+    intValue: 1
+    floatValue: 0
+  exclusive: 0
+  exclusiveGroup: 0

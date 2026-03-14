@@ -354,6 +354,8 @@ public class GameManager : MonoBehaviour
         if (playerStats != null)
             playerStats.ResetRunStats();
 
+        Object.FindFirstObjectByType<AllyManager>()?.ResetRunStats();
+
         GameStats.Instance?.PersistToActiveSlot();
 
         foreach (var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None))

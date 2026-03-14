@@ -20,8 +20,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bed28cfa9c66c4cc49e90acc5209765a, type: 2}
   - {fileID: 11400000, guid: c9abd203b8c354240b2d89b2219246e2, type: 2}
   prerequisiteMode: 0
-  effectType: 0
-  intValue: 0
-  floatValue: 0
+  effects:
+  - type: 37
+    intValue: 0
+    floatValue: 0.2
   exclusive: 0
   exclusiveGroup: 0
