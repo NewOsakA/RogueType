@@ -25187,6 +25187,37 @@ RectTransform:
   m_AnchoredPosition: {x: 48.872, y: -131}
   m_SizeDelta: {x: 97.745, y: 65.58}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &898683161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 898683162}
+  m_Layer: 0
+  m_Name: AllyTopAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &898683162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898683161}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.2, y: 4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1618272125}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &898961892
 GameObject:
   m_ObjectHideFlags: 0
@@ -49621,6 +49652,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437001673}
   m_CullTransparentMesh: 1
+--- !u!1 &1437349620
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1437349621}
+  m_Layer: 0
+  m_Name: AllyBottomAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1437349621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437349620}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.2, y: -0.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1618272125}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1441890729
 GameObject:
   m_ObjectHideFlags: 0
@@ -49969,7 +50031,7 @@ MonoBehaviour:
   costText: {fileID: 364494810}
   playerStats: {fileID: 938322508}
   wall: {fileID: 1996709166}
-  allyManager: {fileID: 0}
+  allyManager: {fileID: 1618272126}
   currencyManager: {fileID: 1447054171}
   currencyText: {fileID: 1097034885}
 --- !u!4 &1461594771
@@ -49987,6 +50049,7 @@ Transform:
   m_Children:
   - {fileID: 4651163883794094689}
   - {fileID: 1724229026}
+  - {fileID: 1618272125}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1464146189
@@ -55914,6 +55977,110 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1611369802}
   m_CullTransparentMesh: 1
+--- !u!1 &1618272124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1618272125}
+  - component: {fileID: 1618272126}
+  m_Layer: 0
+  m_Name: AllyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1618272125
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618272124}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 898683162}
+  - {fileID: 1437349621}
+  m_Father: {fileID: 1461594771}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1618272126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618272124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2914b93e8e5d4e83beb32ce40a168101, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AllyManager
+  ally1:
+    allyName: Ally 1
+    anchor: {fileID: 898683162}
+    wallOffset: {x: 0.15, y: 0.9, z: 0}
+    visualScale: {x: 2, y: 2, z: 2}
+    idleFrames:
+    - {fileID: 7257567913506708742, guid: f0a4980b98f1845a5bb7f66800402be5, type: 3}
+    idleFrameRate: 8
+    shootFrames:
+    - {fileID: -3522987849309635434, guid: b3a8bf9e20c6a4dbba84a558e94cd7d9, type: 3}
+    shootFrameRate: 14
+    arrowSprite: {fileID: -4346244404228752641, guid: abdf08e063cef4ff6a533170c4121d9d, type: 3}
+    projectileSpawnOffset: {x: 0.35, y: 0.15, z: 0}
+    arrowVisualSpeed: 500
+    sortingLayerName: Enemy
+    sortingOrderOffset: 25
+    flipVisualX: 0
+    baseDamage: 2
+    baseAttackInterval: 1.5
+    burnDamagePerSecond: 1
+    slowPercent: 0.3
+    slowDuration: 1.5
+    unlocked: 0
+    bonusDamage: 0
+    intervalMultiplier: 1
+    element: 0
+    nextAttackTime: 0
+    spawnedVisual: {fileID: 0}
+    visual: {fileID: 0}
+  ally2:
+    allyName: Ally 2
+    anchor: {fileID: 1437349621}
+    wallOffset: {x: 0.15, y: -0.9, z: 0}
+    visualScale: {x: 2, y: 2, z: 2}
+    idleFrames:
+    - {fileID: 7257567913506708742, guid: f0a4980b98f1845a5bb7f66800402be5, type: 3}
+    idleFrameRate: 8
+    shootFrames:
+    - {fileID: -3522987849309635434, guid: b3a8bf9e20c6a4dbba84a558e94cd7d9, type: 3}
+    shootFrameRate: 14
+    arrowSprite: {fileID: -4346244404228752641, guid: abdf08e063cef4ff6a533170c4121d9d, type: 3}
+    projectileSpawnOffset: {x: 0.35, y: 0.15, z: 0}
+    arrowVisualSpeed: 500
+    sortingLayerName: Enemy
+    sortingOrderOffset: 25
+    flipVisualX: 0
+    baseDamage: 2
+    baseAttackInterval: 1.5
+    burnDamagePerSecond: 1
+    slowPercent: 0.3
+    slowDuration: 1.5
+    unlocked: 0
+    bonusDamage: 0
+    intervalMultiplier: 1
+    element: 0
+    nextAttackTime: 0
+    spawnedVisual: {fileID: 0}
+    visual: {fileID: 0}
 --- !u!1 &1621586205
 GameObject:
   m_ObjectHideFlags: 0
