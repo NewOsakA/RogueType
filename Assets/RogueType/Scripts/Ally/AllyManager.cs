@@ -205,6 +205,21 @@ public class AllyManager : MonoBehaviour
 
     private void FireAt(AllySlot slot, Enemy target)
     {
+        if (slot.spawnedVisual == null || target == null)
+            return;
+
+        float dist = Vector3.Distance(
+            slot.spawnedVisual.transform.position,
+            target.transform.position
+        );
+
+        if (dist < 0.6f)
+        {
+            ApplyHit(slot, target);
+            slot.visual?.PlayShoot();
+            return;
+        }
+
         if (!PlayShootVisual(slot, target))
             ApplyHit(slot, target);
     }
