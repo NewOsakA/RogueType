@@ -16,13 +16,14 @@ MonoBehaviour:
   description: Ally 1 attack speed increase by 20%
   cost: 300
   prerequisites:
-  - {fileID: 11400000, guid: 6251ac55dff7a4044a15a9a0ddb4c9fd, type: 2}
   - {fileID: 11400000, guid: f5caa70508c2947f8b03cf91b3a59797, type: 2}
-  - {fileID: 11400000, guid: e092cad12352249b9a9dd6fe1d30c04d, type: 2}
-  prerequisiteMode: 0
+  prerequisiteMode: 1
   effects:
   - type: 36
     intValue: 0
     floatValue: 0.2
+  legacyEffectType: -1
+  legacyIntValue: 0
+  legacyFloatValue: 0
   exclusive: 0
   exclusiveGroup: 0
