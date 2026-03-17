@@ -37,6 +37,16 @@ public class BanditWordTrainer : MonoBehaviour
     [Range(0.05f, 4f)] public float autoCMax = 1.5f;
     [Range(0.01f, 0.5f)] public float rewardStatAlpha = 0.15f;
 
+    [Header("Reward Fairness Thresholds")]
+    [Tooltip("Minimum mistakes in weakest zone before TargetedWeakness can be rewarded/penalized.")]
+    public int minTargetZoneMistakes = 3;
+
+    [Tooltip("Minimum total mistakes before ConsistencyTrainer can be rewarded/penalized.")]
+    public int minConsistencyTotalMistakes = 6;
+
+    [Tooltip("Minimum total mistakes before Balanced compares mistake ratio more confidently.")]
+    public int minBalancedTotalMistakes = 5;
+
     private readonly Dictionary<TrainingPattern, float> avgReward = new();
     private readonly Dictionary<TrainingPattern, int> trials = new();
 
@@ -182,7 +192,7 @@ public class BanditWordTrainer : MonoBehaviour
         lastDecisionForcedByStress = true;
         hasLastDecision = false;
 
-        Debug.Log("[Bandit] Stress detected → Recovery Mode");
+        Debug.Log("[Bandit] Recovery Mode");
     }
 
     TrainingPattern SelectBestByUCB()
@@ -193,6 +203,8 @@ public class BanditWordTrainer : MonoBehaviour
         TrainingPattern best = TrainingPattern.Balanced;
         float bestScore = float.NegativeInfinity;
 
+        string scoreLine = "";
+
         foreach (TrainingPattern p in Enum.GetValues(typeof(TrainingPattern)))
         {
             int n = trials[p];
@@ -201,7 +213,7 @@ public class BanditWordTrainer : MonoBehaviour
             float bonus = C * Mathf.Sqrt(Mathf.Log(total + 1) / (n + 1));
             float score = avg + bonus;
 
-            Debug.Log($"[Bandit-UCB] {p} | avg={avg:F2} bonus={bonus:F2} score={score:F2}");
+            scoreLine += $"{p}:{score:F2} | ";
 
             if (score > bestScore)
             {
@@ -210,7 +222,12 @@ public class BanditWordTrainer : MonoBehaviour
             }
         }
 
-        Debug.Log($"[Bandit-UCB] total={total} | best={best}");
+        Debug.Log(
+            $"[Bandit-UCB] total={total} | C={C:F2}\n" +
+            $"{scoreLine}\n" +
+            $"Best: {best}"
+        );
+
         return best;
     }
 
@@ -239,14 +256,26 @@ public class BanditWordTrainer : MonoBehaviour
         float accDelta = accNow - accPrev;
         float wpmDelta = wpmNow - wpmPrev;
 
-        int totalPrev = Mathf.Max(5, mPrev.Values.Sum());
-        int totalNow  = mNow.Values.Sum();
+        int totalPrev = Mathf.Max(1, mPrev.Values.Sum());
+        int totalNow = mNow.Values.Sum();
 
         switch (pattern)
         {
             case TrainingPattern.Balanced:
             {
-                float totalRatio = (float)totalNow / totalPrev;
+                if (totalPrev < minBalancedTotalMistakes && totalNow < minBalancedTotalMistakes)
+                {
+                    if (accDelta > 0.02f)
+                        reward = +1f;
+                    else if (accDelta < -0.03f)
+                        reward = -1f;
+                    else
+                        reward = 0f;
+
+                    break;
+                }
+
+                float totalRatio = (float)totalNow / Mathf.Max(totalPrev, minBalancedTotalMistakes);
 
                 if (accDelta > 0.015f && totalRatio < 0.95f)
                     reward = +1f;
@@ -260,24 +289,15 @@ public class BanditWordTrainer : MonoBehaviour
 
             case TrainingPattern.TargetedWeakness:
             {
-                int totalPrevMistakes = mPrev.Values.Sum();
+                int prev = mPrev.ContainsKey(weakestZone) ? mPrev[weakestZone] : 0;
+                int now = mNow.ContainsKey(weakestZone) ? mNow[weakestZone] : 0;
 
-                if (totalPrevMistakes == 0)
+                if (prev < minTargetZoneMistakes)
                     return 0f;
 
-                int prev = Mathf.Max(1,
-                    mPrev.ContainsKey(weakestZone) ? mPrev[weakestZone] : 0);
+                float ratio = (float)now / Mathf.Max(1, prev);
 
-                int now = mNow.ContainsKey(weakestZone)
-                    ? mNow[weakestZone]
-                    : 0;
-
-                if (prev == 0 && now == 0)
-                    return 0f;
-
-                float ratio = (float)now / prev;
-
-                if (ratio < 0.8f)
+                if (ratio < 0.9f && accDelta >= -0.01f)
                     reward = +1f;
                 else if (ratio > 1.25f)
                     reward = -1f;
@@ -289,14 +309,17 @@ public class BanditWordTrainer : MonoBehaviour
 
             case TrainingPattern.ConsistencyTrainer:
             {
-                float stdPrev = ZoneStd(mPrev);
-                float stdNow  = ZoneStd(mNow);
+                if (totalPrev < minConsistencyTotalMistakes && totalNow < minConsistencyTotalMistakes)
+                    return 0f;
 
-                float stdRatio = stdPrev > 0
+                float stdPrev = ZoneStd(mPrev);
+                float stdNow = ZoneStd(mNow);
+
+                float stdRatio = stdPrev > 0.0001f
                     ? stdNow / stdPrev
                     : 1f;
 
-                if (stdRatio < 0.85f)
+                if (stdRatio < 0.75f && accDelta >= -0.01f)
                     reward = +1f;
                 else if (stdRatio > 1.25f)
                     reward = -1f;
@@ -308,9 +331,9 @@ public class BanditWordTrainer : MonoBehaviour
 
             case TrainingPattern.SpeedTrainer:
             {
-                if (wpmDelta > 3f && accDelta > -0.02f)
+                if (wpmDelta > 2.5f && accDelta > -0.02f)
                     reward = +1f;
-                else if (wpmDelta < -3f || accDelta < -0.05f)
+                else if (wpmDelta < -2.5f || accDelta < -0.05f)
                     reward = -1f;
                 else
                     reward = 0f;
@@ -323,6 +346,9 @@ public class BanditWordTrainer : MonoBehaviour
 
     float ZoneStd(Dictionary<FingerZone, int> m)
     {
+        if (m == null || m.Count == 0)
+            return 0f;
+
         float mean = (float)m.Values.Average();
         float var = 0f;
 
@@ -337,8 +363,14 @@ public class BanditWordTrainer : MonoBehaviour
 
     void UpdateBandit(TrainingPattern p, float r)
     {
+        if (trials[p] == 0 && r < 0f)
+            r = 0f;
+
         trials[p]++;
         avgReward[p] += (r - avgReward[p]) / trials[p];
+
+        // Prevent policy to get to much negative score 
+        avgReward[p] = Mathf.Max(avgReward[p], -0.3f);
     }
 
     void UpdateRewardStats(float r)
@@ -454,9 +486,9 @@ public class BanditWordTrainer : MonoBehaviour
     }
 
     public static bool IsStressHigh(
-    float accPrev, float accNow,
-    int mistakesPrev, int mistakesNow,
-    float wpmPrev, float wpmNow)
+        float accPrev, float accNow,
+        int mistakesPrev, int mistakesNow,
+        float wpmPrev, float wpmNow)
     {
         float accDrop = Mathf.Max(0f, accPrev - accNow);
         float normAcc = Mathf.Clamp01(accDrop / 0.15f);
