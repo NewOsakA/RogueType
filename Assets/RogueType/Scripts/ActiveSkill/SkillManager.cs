@@ -66,6 +66,8 @@ public class SkillManager : MonoBehaviour
 
 void UpdateCooldowns()
 {
+    bool isWave = GameManager.Instance != null && GameManager.Instance.IsWavePhase();
+    
     for (int i = 0; i < skills.Count; i++)
     {
         var skill = skills[i];
@@ -78,7 +80,11 @@ void UpdateCooldowns()
 
         if (cooldownRemaining[i] > 0)
         {
-            cooldownRemaining[i] -= Time.deltaTime;
+            if (isWave)
+            {
+                cooldownRemaining[i] -= Time.deltaTime;
+            }
+
             slots[i].SetCooldown(cooldownRemaining[i]);
             continue;
         }
