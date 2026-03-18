@@ -199,6 +199,8 @@ public class TypingManager : MonoBehaviour
     void FireSingleProjectile(float damageMultiplier)
     {
         GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
+        AudioManager.Instance?.PlayPlayerProjectile();
+
         Projectile p = proj.GetComponent<Projectile>();
         if (p == null) return;
 

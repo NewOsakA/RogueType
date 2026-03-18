@@ -59,6 +59,9 @@ public class Wall : MonoBehaviour
         int finalDamage = Mathf.RoundToInt(amount * (1f - reduction));
         finalDamage = Mathf.Max(finalDamage, 0);
 
+        if (finalDamage > 0)
+            AudioManager.Instance?.PlayWallDamaged();
+
         currentHP -= finalDamage;
         currentHP = Mathf.Max(currentHP, 0);
         UpdateHPDisplay();

@@ -208,6 +208,8 @@ public class AllyManager : MonoBehaviour
         if (slot.spawnedVisual == null || target == null)
             return;
 
+        AudioManager.Instance?.PlayAllyArrowFire();
+
         float dist = Vector3.Distance(
             slot.spawnedVisual.transform.position,
             target.transform.position
