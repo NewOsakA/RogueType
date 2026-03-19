@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections;
 
 public class SkillShopItemUI : MonoBehaviour
 {
@@ -96,6 +98,7 @@ public class SkillShopItemUI : MonoBehaviour
             Upgrade(skill);
 
         Refresh();
+        StartCoroutine(ClearSelectionAtEndOfFrame());
     }
 
     void Buy(ActiveSkillData skill)
@@ -109,5 +112,15 @@ public class SkillShopItemUI : MonoBehaviour
         int cost = skill.upgradeCosts[skill.currentLevel - 1];
         if (!CurrencyManager.Instance.SpendCurrency(cost)) return;
         skill.currentLevel++;
+    }
+
+    private IEnumerator ClearSelectionAtEndOfFrame()
+    {
+        yield return null;
+
+        if (actionButton != null &&
+            EventSystem.current != null &&
+            EventSystem.current.currentSelectedGameObject == actionButton.gameObject)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 }

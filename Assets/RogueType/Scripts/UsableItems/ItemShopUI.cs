@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 public class ItemShopUI : MonoBehaviour
 {
@@ -66,5 +68,16 @@ public class ItemShopUI : MonoBehaviour
 
         ItemInventory.Instance.Add(itemData);
         Refresh();
+        StartCoroutine(ClearSelectionAtEndOfFrame());
+    }
+
+    private IEnumerator ClearSelectionAtEndOfFrame()
+    {
+        yield return null;
+
+        if (buyButton != null &&
+            EventSystem.current != null &&
+            EventSystem.current.currentSelectedGameObject == buyButton.gameObject)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 }
