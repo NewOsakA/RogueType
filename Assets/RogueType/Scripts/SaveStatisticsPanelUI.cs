@@ -707,19 +707,26 @@ public class SaveStatisticsPanelUI : MonoBehaviour
             hoverInfoText.text = message;
     }
 
-    private static string BuildHoverInfoText(int playNumber, SaveRunStatsData runData)
+    private string BuildHoverInfoText(int playNumber, SaveRunStatsData runData)
     {
         runData ??= new SaveRunStatsData();
         string worstFingerZone = string.IsNullOrWhiteSpace(runData.worstFingerArea) ? "N/A" : runData.worstFingerArea;
+        string wpmLine = ColorizeLine($"WPM: {Mathf.Max(0f, runData.highestWPM):F1}", lineColor);
+        string accuracyLine = ColorizeLine($"Accuracy: {Mathf.Clamp01(runData.averageAccuracy) * 100f:F1}%", accuracyLineColor);
 
         return
             $"Play {playNumber}\n" +
             $"Score: {runData.score}\n" +
-            $"WPM: {Mathf.Max(0f, runData.highestWPM):F1}\n" +
-            $"Accuracy: {Mathf.Clamp01(runData.averageAccuracy) * 100f:F1}%\n" +
+            $"{wpmLine}\n" +
+            $"{accuracyLine}\n" +
             $"Currency: {runData.currency}\n" +
             $"Total Time: {Mathf.Max(0f, runData.totalTime):F1}s\n" +
             $"Worst Finger: {worstFingerZone}";
+    }
+
+    private static string ColorizeLine(string text, Color color)
+    {
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{text}</color>";
     }
 
     private static SaveAggregateStats BuildAggregateStats(List<SaveRunStatsData> history)
