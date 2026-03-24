@@ -9,8 +9,8 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private Color originalColor;
     private Vector3 originalScale;
 
-    [SerializeField] private float darkenMultiplier = 0.8f;   // ทำให้เข้มขึ้น
-    [SerializeField] private float scaleMultiplier = 1.05f;  // ขยายเล็กน้อย
+    [SerializeField] private float darkenMultiplier = 0.8f;
+    [SerializeField] private float scaleMultiplier = 1.05f;
 
     void Awake()
     {
