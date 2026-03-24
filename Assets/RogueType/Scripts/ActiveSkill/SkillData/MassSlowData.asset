@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad38d4724346429b8737d46b1e3229e, type: 3}
+  m_Name: MassSlowData
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveSkillData
+  skillType: 1
+  skillName: Mass Slow
+  currentLevel: 0
+  maxLevel: 5
+  cooldown: 30
+  durations:
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  pushDistances: []
+  damages: 
+  buyCost: 200
+  upgradeCosts: 2c010000f40100002003000014050000
+  essenceCost: 35
+  buyDescription: Temporarily slows all enemies for 2 seconds, giving you more time
+    to eliminate them.
+  upgradeDescription: Increases the duration of the slow effect by 1 seconds.
+  maxDescription: Mass Slow reaches its maximum duration.

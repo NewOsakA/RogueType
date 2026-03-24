@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8405bf84a6aa450d874c14e80e2815ff
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - backgroundMusic: {instanceID: 0}
+  - buttonClick: {instanceID: 0}
+  - playerProjectile: {instanceID: 0}
+  - wallDamaged: {instanceID: 0}
+  - allyArrowFire: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

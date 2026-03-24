@@ -20,7 +20,7 @@ df = pd.read_csv(data_path)
 def generate_label(row):
 
     # Hard
-    if row["avg_time_per_enemy"] > 10:
+    if row["avg_time_per_enemy"] > 9:
         return 2
 
     elif row["avg_time_per_enemy"] > 8 and row["accuracy"] < 0.65:

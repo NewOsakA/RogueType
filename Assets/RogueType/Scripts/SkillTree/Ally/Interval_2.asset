@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92f694d31197840dea172d9e37f78417, type: 3}
+  m_Name: Interval_2
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
+  upgradeName: Interval 2
+  description: Ally 2 attack speed increase by 20%
+  cost: 300
+  prerequisites:
+  - {fileID: 11400000, guid: bed28cfa9c66c4cc49e90acc5209765a, type: 2}
+  prerequisiteMode: 0
+  effects:
+  - type: 37
+    intValue: 0
+    floatValue: 0.2
+  legacyEffectType: -1
+  legacyIntValue: 0
+  legacyFloatValue: 0
+  exclusive: 0
+  exclusiveGroup: 0

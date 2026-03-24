@@ -9,11 +9,15 @@ EditorBuildSettings:
     path: Assets/Scenes/Main manu.unity
     guid: bffc4ced60f5de34baf0adba34e74c47
   - enabled: 1
-    path: Assets/Scenes/Upgrade.unity
+    path: Assets/Scenes/Save Selection Scene.unity
+    guid: 133985493717499f9fdc5aa00ade14bc
+  - enabled: 1
+    path: Assets/Scenes/Difficulty Selection.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/Game Scene.unity
     guid: 3bf40eb629275834aaf33ab6b2afe64a
   m_configObjects:
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -9,6 +9,10 @@
     }
   ],
   "dependencies": {
+    "com.github.asus4.onnxruntime": "0.4.4",
+    "com.github.asus4.onnxruntime-extensions": "0.4.4",
+    "com.github.asus4.onnxruntime.unity": "0.4.4",
+    "com.unity.2d.enhancers": "1.0.0",
     "com.unity.collab-proxy": "2.10.2",
     "com.unity.feature.2d": "2.0.2",
     "com.unity.ide.rider": "3.0.38",
@@ -52,10 +56,6 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0",
-
-    "com.github.asus4.onnxruntime": "0.4.4",
-    "com.github.asus4.onnxruntime.unity": "0.4.4",
-    "com.github.asus4.onnxruntime-extensions": "0.4.4"
+    "com.unity.modules.xr": "1.0.0"
   }
 }

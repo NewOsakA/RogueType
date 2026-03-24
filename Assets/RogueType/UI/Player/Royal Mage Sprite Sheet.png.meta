@@ -1,0 +1,1638 @@
+fileFormatVersion: 2
+guid: 7c79f610a692a4e74be5d8c4d45b6848
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7397335442232941639
+    second: Royal Mage Sprite Sheet_0
+  - first:
+      213: -5966838629202710898
+    second: Royal Mage Sprite Sheet_1
+  - first:
+      213: 2103953747546092823
+    second: Royal Mage Sprite Sheet_2
+  - first:
+      213: -6789867674245616812
+    second: Royal Mage Sprite Sheet_3
+  - first:
+      213: 3976854232750013696
+    second: Royal Mage Sprite Sheet_4
+  - first:
+      213: 753661092343486580
+    second: Royal Mage Sprite Sheet_5
+  - first:
+      213: 4285274938028288253
+    second: Royal Mage Sprite Sheet_6
+  - first:
+      213: 6046963243001932917
+    second: Royal Mage Sprite Sheet_7
+  - first:
+      213: 2723704602537353244
+    second: Royal Mage Sprite Sheet_8
+  - first:
+      213: 5375467654677022738
+    second: Royal Mage Sprite Sheet_9
+  - first:
+      213: 945083199589342917
+    second: Royal Mage Sprite Sheet_10
+  - first:
+      213: -2251115415563035905
+    second: Royal Mage Sprite Sheet_11
+  - first:
+      213: -1606900559013242750
+    second: Royal Mage Sprite Sheet_12
+  - first:
+      213: 7707707546189000078
+    second: Royal Mage Sprite Sheet_13
+  - first:
+      213: -437370406371883640
+    second: Royal Mage Sprite Sheet_14
+  - first:
+      213: 2683377605547273510
+    second: Royal Mage Sprite Sheet_15
+  - first:
+      213: 5990050456232974819
+    second: Royal Mage Sprite Sheet_16
+  - first:
+      213: 6101193745479489360
+    second: Royal Mage Sprite Sheet_17
+  - first:
+      213: 7854503072017918600
+    second: Royal Mage Sprite Sheet_18
+  - first:
+      213: 8020919934173999255
+    second: Royal Mage Sprite Sheet_19
+  - first:
+      213: 6258704926738088702
+    second: Royal Mage Sprite Sheet_20
+  - first:
+      213: -728759459995242710
+    second: Royal Mage Sprite Sheet_21
+  - first:
+      213: -8496304978521254362
+    second: Royal Mage Sprite Sheet_22
+  - first:
+      213: 2961777729112568071
+    second: Royal Mage Sprite Sheet_23
+  - first:
+      213: 6970043475037916802
+    second: Royal Mage Sprite Sheet_24
+  - first:
+      213: 1996490168183333261
+    second: Royal Mage Sprite Sheet_25
+  - first:
+      213: 4785197376825074252
+    second: Royal Mage Sprite Sheet_26
+  - first:
+      213: -1975379799393962879
+    second: Royal Mage Sprite Sheet_27
+  - first:
+      213: -2576978280787359074
+    second: Royal Mage Sprite Sheet_28
+  - first:
+      213: -8109559242187730579
+    second: Royal Mage Sprite Sheet_29
+  - first:
+      213: -1449433141100795265
+    second: Royal Mage Sprite Sheet_30
+  - first:
+      213: -7415279250337584638
+    second: Royal Mage Sprite Sheet_31
+  - first:
+      213: -7973294867588262262
+    second: Royal Mage Sprite Sheet_32
+  - first:
+      213: 347989951447136110
+    second: Royal Mage Sprite Sheet_33
+  - first:
+      213: -503562719675112122
+    second: Royal Mage Sprite Sheet_34
+  - first:
+      213: -201662259532848448
+    second: Royal Mage Sprite Sheet_35
+  - first:
+      213: 8065806025029533169
+    second: Royal Mage Sprite Sheet_36
+  - first:
+      213: -1282392417739288697
+    second: Royal Mage Sprite Sheet_37
+  - first:
+      213: 8717995281114166265
+    second: Royal Mage Sprite Sheet_38
+  - first:
+      213: -5898254294562714855
+    second: Royal Mage Sprite Sheet_39
+  - first:
+      213: 5888063820177118594
+    second: Royal Mage Sprite Sheet_40
+  - first:
+      213: 7120830441257102188
+    second: Royal Mage Sprite Sheet_41
+  - first:
+      213: 6515388654974118249
+    second: Royal Mage Sprite Sheet_42
+  - first:
+      213: 2691170557636553844
+    second: Royal Mage Sprite Sheet_43
+  - first:
+      213: 4776444801435528039
+    second: Royal Mage Sprite Sheet_44
+  - first:
+      213: 5665111598440923636
+    second: Royal Mage Sprite Sheet_45
+  - first:
+      213: 1249624645026679243
+    second: Royal Mage Sprite Sheet_46
+  - first:
+      213: -6861541352254592006
+    second: Royal Mage Sprite Sheet_47
+  - first:
+      213: 945433433779176259
+    second: Royal Mage Sprite Sheet_48
+  - first:
+      213: -5359840152773966074
+    second: Royal Mage Sprite Sheet_49
+  - first:
+      213: -8546439593360109946
+    second: Royal Mage Sprite Sheet_50
+  - first:
+      213: -4881901346987840068
+    second: Royal Mage Sprite Sheet_51
+  - first:
+      213: -895322791333182263
+    second: Royal Mage Sprite Sheet_52
+  - first:
+      213: -5417073442802769042
+    second: Royal Mage Sprite Sheet_53
+  - first:
+      213: 1746623058681272274
+    second: Royal Mage Sprite Sheet_54
+  - first:
+      213: -7407962399679414197
+    second: Royal Mage Sprite Sheet_55
+  - first:
+      213: 695452275048510635
+    second: Royal Mage Sprite Sheet_56
+  - first:
+      213: -5698170134873393805
+    second: Royal Mage Sprite Sheet_57
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 223
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74c93b6546d98a660800000000000000
+      internalID: 7397335442232941639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 223
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8e2b4261e7813da0800000000000000
+      internalID: -5966838629202710898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 223
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 715365249ceb23d10800000000000000
+      internalID: 2103953747546092823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 223
+        width: 23
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45baea4135b85c1a0800000000000000
+      internalID: -6789867674245616812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 223
+        width: 23
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00db29abadf903730800000000000000
+      internalID: 3976854232750013696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 223
+        width: 23
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4789a2a35ca857a00800000000000000
+      internalID: 753661092343486580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 223
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df86f0e0ada587b30800000000000000
+      internalID: 4285274938028288253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 223
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57c69f408012be350800000000000000
+      internalID: 6046963243001932917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 191
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c10e55bb7ea8cc520800000000000000
+      internalID: 2723704602537353244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 192
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21840aaf95f799a40800000000000000
+      internalID: 5375467654677022738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 193
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ce56baa92c9d1d00800000000000000
+      internalID: 945083199589342917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 193
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffa95fad47e62c0e0800000000000000
+      internalID: -2251115415563035905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 191
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28893ae847423b9e0800000000000000
+      internalID: -1606900559013242750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 193
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8d61331d2747fa60800000000000000
+      internalID: 7707707546189000078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 195
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8858fe4cee52ee9f0800000000000000
+      internalID: -437370406371883640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 193
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62d22e017b54d3520800000000000000
+      internalID: 2683377605547273510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 159
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e9de6e372fe02350800000000000000
+      internalID: 5990050456232974819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 159
+        width: 21
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 057d321d26bcba450800000000000000
+      internalID: 6101193745479489360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 159
+        width: 20
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88aa7d6ddecc00d60800000000000000
+      internalID: 7854503072017918600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 159
+        width: 20
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7907a48fe28005f60800000000000000
+      internalID: 8020919934173999255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 159
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef2063888f26bd650800000000000000
+      internalID: 6258704926738088702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 159
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f274cd12de2e5f0800000000000000
+      internalID: -728759459995242710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_22
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 159
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6269bdb23af071a80800000000000000
+      internalID: -8496304978521254362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_23
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 159
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 701fa6707295a1920800000000000000
+      internalID: 2961777729112568071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_24
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 127
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28e0aa69c919ab060800000000000000
+      internalID: 6970043475037916802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_25
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 127
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d81a028ea35f4bb10800000000000000
+      internalID: 1996490168183333261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_26
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 127
+        width: 25
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c422ac149af686240800000000000000
+      internalID: 4785197376825074252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_27
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 127
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 184f3a8d98a0694e0800000000000000
+      internalID: -1975379799393962879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_28
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 127
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9ac5c338ebbc3cd0800000000000000
+      internalID: -2576978280787359074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_29
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 95
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d611a64e5de057f80800000000000000
+      internalID: -8109559242187730579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_30
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 95
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7a2203dc3492ebe0800000000000000
+      internalID: -1449433141100795265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_31
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 95
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20aad454fc2a71990800000000000000
+      internalID: -7415279250337584638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_32
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 95
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a86d4ffef8a295190800000000000000
+      internalID: -7973294867588262262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_33
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 95
+        width: 29
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e677961640f44d400800000000000000
+      internalID: 347989951447136110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_34
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 95
+        width: 30
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 645a2abdf5cf209f0800000000000000
+      internalID: -503562719675112122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_35
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 95
+        width: 30
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c221ff4e3d833df0800000000000000
+      internalID: -201662259532848448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_36
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 95
+        width: 29
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fd371568df7fef60800000000000000
+      internalID: 8065806025029533169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_37
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 75
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78fcef5f3e6043ee0800000000000000
+      internalID: -1282392417739288697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_38
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 71
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f3775ca48a8cf870800000000000000
+      internalID: 8717995281114166265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_39
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 71
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91bcaa928f0352ea0800000000000000
+      internalID: -5898254294562714855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_40
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 70
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2859c7029da96b150800000000000000
+      internalID: 5888063820177118594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_41
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 70
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6beaecfe8542d260800000000000000
+      internalID: 7120830441257102188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_42
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 70
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 969a751367f4b6a50800000000000000
+      internalID: 6515388654974118249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_43
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 70
+        width: 24
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47caaed1d55f85520800000000000000
+      internalID: 2691170557636553844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_44
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 38
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76b63de7d37594240800000000000000
+      internalID: 4776444801435528039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_45
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 38
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f14406dbf48e9e40800000000000000
+      internalID: 5665111598440923636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_46
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 38
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc9836d6efe875110800000000000000
+      internalID: 1249624645026679243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_47
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 5
+        width: 24
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afb263f7e78e6c0a0800000000000000
+      internalID: -6861541352254592006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_48
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 38
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3438f2be2bade1d00800000000000000
+      internalID: 945433433779176259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_49
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 38
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 607480957c50e95b0800000000000000
+      internalID: -5359840152773966074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_50
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 38
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68ecf678872f46980800000000000000
+      internalID: -8546439593360109946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_51
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 38
+        width: 24
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbde9402790004cb0800000000000000
+      internalID: -4881901346987840068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_52
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 6
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c446473aac2393f0800000000000000
+      internalID: -895322791333182263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_53
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 17
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e63e9879760b2d4b0800000000000000
+      internalID: -5417073442802769042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_54
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 20
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d71439fa604d3810800000000000000
+      internalID: 1746623058681272274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_55
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 10
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4088a15271a13990800000000000000
+      internalID: -7407962399679414197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_56
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 5
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba4f084d82eb6a900800000000000000
+      internalID: 695452275048510635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Royal Mage Sprite Sheet_57
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 5
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 375b129d3780ce0b0800000000000000
+      internalID: -5698170134873393805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Royal Mage Sprite Sheet_0: 7397335442232941639
+      Royal Mage Sprite Sheet_1: -5966838629202710898
+      Royal Mage Sprite Sheet_10: 945083199589342917
+      Royal Mage Sprite Sheet_11: -2251115415563035905
+      Royal Mage Sprite Sheet_12: -1606900559013242750
+      Royal Mage Sprite Sheet_13: 7707707546189000078
+      Royal Mage Sprite Sheet_14: -437370406371883640
+      Royal Mage Sprite Sheet_15: 2683377605547273510
+      Royal Mage Sprite Sheet_16: 5990050456232974819
+      Royal Mage Sprite Sheet_17: 6101193745479489360
+      Royal Mage Sprite Sheet_18: 7854503072017918600
+      Royal Mage Sprite Sheet_19: 8020919934173999255
+      Royal Mage Sprite Sheet_2: 2103953747546092823
+      Royal Mage Sprite Sheet_20: 6258704926738088702
+      Royal Mage Sprite Sheet_21: -728759459995242710
+      Royal Mage Sprite Sheet_22: -8496304978521254362
+      Royal Mage Sprite Sheet_23: 2961777729112568071
+      Royal Mage Sprite Sheet_24: 6970043475037916802
+      Royal Mage Sprite Sheet_25: 1996490168183333261
+      Royal Mage Sprite Sheet_26: 4785197376825074252
+      Royal Mage Sprite Sheet_27: -1975379799393962879
+      Royal Mage Sprite Sheet_28: -2576978280787359074
+      Royal Mage Sprite Sheet_29: -8109559242187730579
+      Royal Mage Sprite Sheet_3: -6789867674245616812
+      Royal Mage Sprite Sheet_30: -1449433141100795265
+      Royal Mage Sprite Sheet_31: -7415279250337584638
+      Royal Mage Sprite Sheet_32: -7973294867588262262
+      Royal Mage Sprite Sheet_33: 347989951447136110
+      Royal Mage Sprite Sheet_34: -503562719675112122
+      Royal Mage Sprite Sheet_35: -201662259532848448
+      Royal Mage Sprite Sheet_36: 8065806025029533169
+      Royal Mage Sprite Sheet_37: -1282392417739288697
+      Royal Mage Sprite Sheet_38: 8717995281114166265
+      Royal Mage Sprite Sheet_39: -5898254294562714855
+      Royal Mage Sprite Sheet_4: 3976854232750013696
+      Royal Mage Sprite Sheet_40: 5888063820177118594
+      Royal Mage Sprite Sheet_41: 7120830441257102188
+      Royal Mage Sprite Sheet_42: 6515388654974118249
+      Royal Mage Sprite Sheet_43: 2691170557636553844
+      Royal Mage Sprite Sheet_44: 4776444801435528039
+      Royal Mage Sprite Sheet_45: 5665111598440923636
+      Royal Mage Sprite Sheet_46: 1249624645026679243
+      Royal Mage Sprite Sheet_47: -6861541352254592006
+      Royal Mage Sprite Sheet_48: 945433433779176259
+      Royal Mage Sprite Sheet_49: -5359840152773966074
+      Royal Mage Sprite Sheet_5: 753661092343486580
+      Royal Mage Sprite Sheet_50: -8546439593360109946
+      Royal Mage Sprite Sheet_51: -4881901346987840068
+      Royal Mage Sprite Sheet_52: -895322791333182263
+      Royal Mage Sprite Sheet_53: -5417073442802769042
+      Royal Mage Sprite Sheet_54: 1746623058681272274
+      Royal Mage Sprite Sheet_55: -7407962399679414197
+      Royal Mage Sprite Sheet_56: 695452275048510635
+      Royal Mage Sprite Sheet_57: -5698170134873393805
+      Royal Mage Sprite Sheet_6: 4285274938028288253
+      Royal Mage Sprite Sheet_7: 6046963243001932917
+      Royal Mage Sprite Sheet_8: 2723704602537353244
+      Royal Mage Sprite Sheet_9: 5375467654677022738
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

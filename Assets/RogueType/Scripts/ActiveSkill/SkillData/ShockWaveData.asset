@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad38d4724346429b8737d46b1e3229e, type: 3}
+  m_Name: ShockWaveData
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveSkillData
+  skillType: 2
+  skillName: Shockwave
+  currentLevel: 0
+  maxLevel: 5
+  cooldown: 30
+  durations: []
+  pushDistances: []
+  damages: 3c00000046000000500000005a00000064000000
+  buyCost: 500
+  upgradeCosts: bc020000b6030000e204000040060000
+  essenceCost: 55
+  buyDescription: Unleash a powerful shockwave from the wall that damages nearby
+    enemies.
+  upgradeDescription: Increases the damage dealt by the shockwave.
+  maxDescription: Shockwave damage is at its maximum power.
