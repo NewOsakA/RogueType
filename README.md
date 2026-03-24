@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>A typing-powered roguelite base defense game built in Unity.</strong>
+  <strong>A typing-powered roguelike base defense game built in Unity.</strong>
 </p>
 
 <p align="center">
@@ -14,14 +14,14 @@
 
 <p align="center">
   <img alt="Unity" src="https://img.shields.io/badge/Unity-6000.3.2f1-black?logo=unity">
-  <img alt="Genre" src="https://img.shields.io/badge/Genre-Typing%20Roguelite-blue">
+  <img alt="Genre" src="https://img.shields.io/badge/Genre-Typing%20Roguelike-blue">
   <img alt="Mode" src="https://img.shields.io/badge/Mode-Single%20Player-2ea44f">
   <img alt="Status" src="https://img.shields.io/badge/Status-In%20Development-orange">
 </p>
 
 ## Overview
 
-**RogueType** blends fast typing gameplay with wave defense and roguelite progression.
+**RogueType** blends fast typing gameplay with wave defense and roguelike progression.
 Each correct key press launches attacks at enemies. Between waves, the game shifts into a base-management phase where you spend currency, buy upgrades, unlock active skills, and prepare for the next push.
 
 The project also experiments with **adaptive difficulty**: typing performance is measured during runs and fed into an **ONNX model** to help tune enemy pressure over time.
@@ -30,7 +30,7 @@ The project also experiments with **adaptive difficulty**: typing performance is
 
 - **Typing-to-combat gameplay** where each correct letter drives your attacks in real time.
 - **Wave-based defense loop** with a prep phase between battles.
-- **Roguelite progression** through run upgrades, meta upgrades, and difficulty selection.
+- **Roguelike progression** through run upgrades, meta upgrades, and difficulty selection.
 - **Multiple difficulty modes**: `Casual`, `Normal`, `Hardcore`, and `Deathcore`.
 - **Adaptive difficulty tuning** powered by ONNX Runtime inside Unity.
 - **Word adaptation systems** that track mistakes, finger zones, and performance trends.
