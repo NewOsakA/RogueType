@@ -1496,6 +1496,23 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &713335690 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1949471447524065116, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+  m_PrefabInstance: {fileID: 4243368933261074770}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &713335693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713335690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3b9cf238ffb044728b0581f08bad0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenSetup
 --- !u!1 &720651842
 GameObject:
   m_ObjectHideFlags: 0
@@ -8077,7 +8094,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1949471447524065116, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 713335693}
   m_SourcePrefab: {fileID: 100100000, guid: f2b9ccc67422144a997393ed33e19de2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -65,8 +65,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
-
         if (balancedSettings == null)
             balancedSettings = new DifficultySettings();
 
@@ -327,10 +325,6 @@ public class GameManager : MonoBehaviour
 
         int baseReward = (currentWave - 1) * 10; 
         int reward = Mathf.RoundToInt(baseReward); 
-
-        MetaGameManager.Instance.AddMetaCoins(reward);
-
-        Debug.Log($"Earned {reward} coins from Wave {currentWave}");
 
         if (typingManager != null && GameStats.Instance != null)
         {

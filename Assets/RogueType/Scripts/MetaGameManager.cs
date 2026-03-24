@@ -44,33 +44,6 @@ public class MetaGameManager : MonoBehaviour
         EnsureDifficultyProfiles();
     }
 
-    // เพิ่มกลับมา (แก้ ERROR)
-    public void AddMetaCoins(int amount)
-    {
-        metaCoins += amount;
-        if (metaCoins < 0) metaCoins = 0;
-        SaveToActiveSlot();
-    }
-
-    // โบนัสราคาตามสูตร Hybrid
-    public int GetUpgradeCost(int level)
-    {
-        return Mathf.RoundToInt((10 + level * 5) * Mathf.Pow(1.15f, level));
-    }
-
-    public bool TryUpgrade(ref int level)
-    {
-        if (level >= 20) return false;
-
-        int cost = GetUpgradeCost(level);
-        if (metaCoins < cost) return false;
-
-        metaCoins -= cost;
-        level++;
-        SaveToActiveSlot();
-        return true;
-    }
-
     public void LoadFromActiveSlot()
     {
         if (!SaveSlotManager.TryGetActiveSlotIndex(out int slotIndex))
