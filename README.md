@@ -86,6 +86,7 @@ Assets/
       GameSystem/          Game over flow and run statistics
       Player/              Player stats, projectile logic, wall, health UI
       SkillTree/           Upgrade data and upgrade application
+      Save/                save and difficulty selection systems
       Typing/              Typing loop, word systems, difficulty adjustment
       UI/                  Menu and interface behaviors
 TrainingData/             Dataset, Python training script, ONNX export workflow
@@ -144,7 +145,7 @@ RogueType is not just a typing game and not just a tower defense game. It sits i
 
 - typing trainer
 - action-defense game
-- roguelite progression
+- roguelike progression
 - data-driven difficulty experimentation
 
 That combination makes it a strong portfolio project for gameplay programming, systems design, and applied ML inside a game loop.
