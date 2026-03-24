@@ -59,7 +59,7 @@ The game includes four run profiles with different combat and economy tuning:
 - **Casual**: lower pressure, more forgiving wall health, better rewards
 - **Normal**: the default baseline experience
 - **Hardcore**: faster, tougher enemies with stronger scaling
-- **Deathcore**: extreme mode with `1 HP` wall rules and no meta wall upgrades
+- **Deathcore**: extreme mode with `1 HP` wall rules and no wall upgrades
 
 ## Tech Highlights
 
@@ -148,32 +148,3 @@ RogueType is not just a typing game and not just a tower defense game. It sits i
 - data-driven difficulty experimentation
 
 That combination makes it a strong portfolio project for gameplay programming, systems design, and applied ML inside a game loop.
-
-## Contributing
-
-Contributions, polish, balancing ideas, and gameplay feedback are welcome.
-
-If you want to work on the project, good starting areas are:
-
-- gameplay feel and combat readability
-- menu and UX polish
-- balancing wave progression
-- typing feedback and word systems
-- save data and statistics presentation
-- adaptive difficulty training and evaluation
-
-## Current Status
-
-The project is actively in development and already includes:
-
-- menu flow
-- save slots
-- wave defense gameplay
-- skills and upgrades
-- difficulty selection
-- ML-backed adaptive difficulty experiments
-
-## License
-
-No license file is currently included in this repository.
-If you plan to publish or accept outside contributions, adding a license is recommended.
