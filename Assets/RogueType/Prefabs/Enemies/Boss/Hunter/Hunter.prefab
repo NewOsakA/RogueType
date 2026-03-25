@@ -55,7 +55,7 @@ MonoBehaviour:
   speed: 0.8
   isBoss: 1
   hpText: {fileID: 705027378079290586}
-  currencyReward: 250
+  currencyReward: 500
   essenceReward: 1
   specialAbility: {fileID: 5027453894814157957}
   attackCooldown: 4

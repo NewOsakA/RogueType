@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59239f399e8463842a7f1ccc24fbdef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shieldAmount: 5
+  shieldHits: 5
   shieldObject: {fileID: 4480955651394564118}
 --- !u!1 &1835511350366655920
 GameObject:
@@ -103,7 +103,7 @@ MonoBehaviour:
   speed: 1.8
   isBoss: 0
   hpText: {fileID: 705027378079290586}
-  currencyReward: 15
+  currencyReward: 25
   essenceReward: 1
   specialAbility: {fileID: 7207025332677024258}
   attackCooldown: 2
