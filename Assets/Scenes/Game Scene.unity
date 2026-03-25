@@ -58311,9 +58311,9 @@ MonoBehaviour:
   autoCMin: 0.15
   autoCMax: 1.5
   rewardStatAlpha: 0.15
-  minTargetZoneMistakes: 3
-  minConsistencyTotalMistakes: 6
-  minBalancedTotalMistakes: 5
+  minTargetZoneMistakes: 1
+  minConsistencyTotalMistakes: 2
+  minBalancedTotalMistakes: 3
 --- !u!1 &1626317390
 GameObject:
   m_ObjectHideFlags: 0

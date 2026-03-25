@@ -331,9 +331,9 @@ public class BanditWordTrainer : MonoBehaviour
 
             case TrainingPattern.SpeedTrainer:
             {
-                if (wpmDelta > 2.5f && accDelta > -0.02f)
+                if (wpmDelta > 1.5f)
                     reward = +1f;
-                else if (wpmDelta < -2.5f || accDelta < -0.05f)
+                else if (wpmDelta < -2.5f)
                     reward = -1f;
                 else
                     reward = 0f;
