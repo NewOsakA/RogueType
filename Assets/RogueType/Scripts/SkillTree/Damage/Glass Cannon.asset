@@ -15,7 +15,7 @@ MonoBehaviour:
   upgradeName: Glass Cannon
   description: 'Greatly increase arcane blast damage by 50% but also lost 50% wall
     hp '
-  cost: 1500
+  cost: 750
   prerequisites:
   - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
   prerequisiteMode: 1
@@ -26,5 +26,8 @@ MonoBehaviour:
   - type: 9
     intValue: 0
     floatValue: 0.5
+  legacyEffectType: -1
+  legacyIntValue: 0
+  legacyFloatValue: 0
   exclusive: 1
   exclusiveGroup: 3

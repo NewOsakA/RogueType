@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: Explosive Blast
   description: Deal additional 30% damage to nearby target enemy
-  cost: 1000
+  cost: 500
   prerequisites:
   - {fileID: 11400000, guid: 7c704b6f973b242e694c9d14eef7ba38, type: 2}
   prerequisiteMode: 1
@@ -22,5 +22,8 @@ MonoBehaviour:
   - type: 21
     intValue: 0
     floatValue: 0
+  legacyEffectType: -1
+  legacyIntValue: 0
+  legacyFloatValue: 0
   exclusive: 1
   exclusiveGroup: 3
