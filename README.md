@@ -102,7 +102,13 @@ ProjectSettings/          Unity project configuration
 
 ### Open The Project
 
-1. Clone the repository.
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/NewOsakA/RogueType.git
+   cd RogueType
+   ```
+
 2. Open it with **Unity Hub**.
 3. Use Unity Editor version `6000.3.2f1`.
 4. Let Unity finish importing packages and assets.
@@ -135,17 +141,30 @@ These values are used by the in-game difficulty predictor and by the training wo
 
 To work on the training pipeline:
 
-1. Create a Python environment.
-2. Install dependencies from `TrainingData/requirements.txt`.
-3. Run `TrainingData/train_logistic_to_onnx.py`.
+Run the training script from `TrainingData/` so its relative dataset path resolves correctly:
 
-## Why This Project Is Interesting
+```bash
+cd TrainingData
+python -m venv .venv
+# macOS / Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python train_logistic_to_onnx.py
+```
 
-RogueType is not just a typing game and not just a tower defense game. It sits in a fun design space between:
+The script trains a standardized, class-balanced logistic regression pipeline and exports `logistic_model.onnx` in the current directory. Its labels are generated from typing-performance rules; model scores describe that experiment rather than independently validated improvements in player experience.
 
-- typing trainer
-- action-defense game
-- roguelike progression
-- data-driven difficulty experimentation
+## Engineering Notes
 
-That combination makes it a strong portfolio project for gameplay programming, systems design, and applied ML inside a game loop.
+The adaptive-difficulty experiment connects a Python training pipeline to Unity through ONNX. The project separates typing, enemies, progression, saves, and interface scripts into dedicated systems.
+
+- [Typing and difficulty systems](Assets/RogueType/Scripts/Typing)
+- [Save and difficulty selection](Assets/RogueType/Scripts/Save)
+- [Training and ONNX export](TrainingData/train_logistic_to_onnx.py)
+
+## Contributions and Attribution
+
+RogueType is a collaborative project. Achirawich Phongpanich ([NewOsakA](https://github.com/NewOsakA)) contributed menu and settings interfaces, save-selection UX improvements, game balancing, and asset integration. See the [contribution history](https://github.com/NewOsakA/RogueType/commits?author=NewOsakA) and [all contributors](https://github.com/NewOsakA/RogueType/graphs/contributors) for the wider team's work.
+
+The project remains in development; adaptive difficulty is experimental.
